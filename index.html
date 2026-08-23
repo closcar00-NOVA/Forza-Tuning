@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forza Race Engineer</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --surface-color: #1a1a1a;
+            --text-main: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --accent-green: #00A74A;
+            --accent-gold: #FED141;
+            --border-color: #333333;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        textarea {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        button {
+            background-color: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: opacity 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        /* Dashboard Output Styles */
+        .dashboard {
+            display: none; /* Hidden until data is populated */
+            gap: 1.5rem;
+            flex-direction: column;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .diagnostic-tags {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background-color: #2a2a2a;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .adjustments-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        li span.action {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .engineer-notes {
+            font-style: italic;
+            color: var(--text-muted);
+            line-height: 1.5;
+            border-left: 3px solid var(--border-color);
+            padding-left: 1rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            color: var(--accent-gold);
+            text-align: center;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Race Engineer AI</h1>
+        
+        <div class="input-group">
+            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It snaps out on me as soon as I hit the gas coming out of the corner')"></textarea>
+            <button id="analyze-btn">Analyze Telemetry</button>
+        </div>
+
+        <div id="loading" class="loading">Analyzing physics...</div>
+
+        <div id="dashboard" class="dashboard">
+            <div class="card">
+                <h2>Diagnostics</h2>
+                <div class="diagnostic-tags">
+                    <div class="tag" id="phase-tag">Phase: --</div>
+                    <div class="tag" id="symptom-tag">Symptom: --</div>
+                </div>
+            </div>
+
+            <div class="adjustments-grid">
+                <div class="card">
+                    <h2>Primary Adjustments</h2>
+                    <ul id="primary-list"></ul>
+                </div>
+                <div class="card">
+                    <h2>Secondary Adjustments</h2>
+                    <ul id="secondary-list"></ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Engineer Notes</h2>
+                <div class="engineer-notes" id="notes-text">--</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyze-btn').addEventListener('click', async () => {
+            const input = document.getElementById('driver-input').value;
+            if (!input) return;
+
+            // UI State updates
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            /* 
+            ==================================================================
+            INTEGRATION POINT: Place your Google AI Studio fetch call here.
+            Send the 'input' variable along with the system prompt we wrote.
+            ==================================================================
+            */
+
+            // MOCK API RESPONSE (Simulating the Gemini JSON output)
+            setTimeout(() => {
+                const mockApiResponse = {
+                    "diagnostics": {
+                        "identified_phase": "Exit",
+                        "identified_symptom": "Oversteer"
+                    },
+                    "adjustments": {
+                        "primary": [
+                            {"component": "Rear Anti-Roll Bar", "action": "Decrease"},
+                            {"component": "Rear Springs", "action": "Soften"}
+                        ],
+                        "secondary": [
+                            {"component": "Acceleration Differential", "action": "Decrease"}
+                        ]
+                    },
+                    "engineer_notes": "Softening the rear allows the chassis to squat and load the rear tires under acceleration, preventing the snap oversteer you're feeling."
+                };
+
+                renderDashboard(mockApiResponse);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+            }, 1500); // Simulated network delay
+        });
+
+        function renderDashboard(data) {
+            // Populate Diagnostics
+            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
+            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics.identified_symptom}`;
+            
+            // Populate Notes
+            document.getElementById('notes-text').textContent = data.engineer_notes;
+
+            // Populate Lists
+            const populateList = (elementId, items) => {
+                const ul = document.getElementById(elementId);
+                ul.innerHTML = ''; // clear previous
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
+                    ul.appendChild(li);
+                });
+            };
+
+            populateList('primary-list', data.adjustments.primary);
+            populateList('secondary-list', data.adjustments.secondary);
+        }
+    </script>
+</body>
+</html>
