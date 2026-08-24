@@ -47,18 +47,21 @@
             margin-bottom: 2rem;
         }
 
-        textarea {
+        input[type="password"], textarea {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 1rem;
             border-radius: 8px;
-            resize: vertical;
-            min-height: 100px;
             font-size: 1rem;
         }
 
-        textarea:focus {
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="password"]:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-green);
         }
@@ -82,7 +85,7 @@
 
         /* Dashboard Output Styles */
         .dashboard {
-            display: none; /* Hidden until data is populated */
+            display: none; 
             gap: 1.5rem;
             flex-direction: column;
         }
@@ -148,7 +151,6 @@
             padding-left: 1rem;
         }
 
-        /* Loading State */
         .loading {
             display: none;
             color: var(--accent-gold);
@@ -164,6 +166,8 @@
         <h1>Race Engineer AI</h1>
         
         <div class="input-group">
+            <!-- New secure API key input field -->
+            <input type="password" id="api-key" placeholder="Paste your Gemini API Key here (Secure, browser-only)">
             <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It snaps out on me as soon as I hit the gas coming out of the corner')"></textarea>
             <button id="analyze-btn">Analyze Telemetry</button>
         </div>
@@ -199,25 +203,24 @@
 
     <script>
         document.getElementById('analyze-btn').addEventListener('click', async () => {
-            const input = document.getElementById('driver-input').value;
+            // 1. Grab inputs securely from the UI
+            const apiKey = document.getElementById('api-key').value.trim();
+            const input = document.getElementById('driver-input').value.trim();
+            
+            if (!apiKey) {
+                alert('Please enter your Gemini API Key first.');
+                return;
+            }
             if (!input) return;
 
             // UI State updates
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
 
-            /* 
-            ==================================================================
-            INTEGRATION POINT: Place your Google AI Studio fetch call here.
-            Send the 'input' variable along with the system prompt we wrote.
-            ==================================================================
-            */
+            // 2. Build the Endpoint using the user-provided key
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-            // 1. Define your API Key and Endpoint
-            const API_KEY = 'YOUR_GEMINI_API_KEY'; // Replace before testing
-            const endpoint = `[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){API_KEY}`;
-
-            // 2. Insert the System Prompt we drafted earlier
+            // 3. System Prompt
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
 
             Drivers will often use slang or emotional language (e.g., "The car is a boat," "It snaps on me," "I'm plowing off the track," "The rear end steps out"). 
@@ -247,7 +250,7 @@
               "engineer_notes": "A brief, one-sentence explanation of why this adjustment fixes their specific complaint."
             }`;
 
-            // 3. Execute the Fetch Request
+            // 4. Execute the Fetch Request
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -263,7 +266,6 @@
                             parts: [{ text: input }]
                         }],
                         generationConfig: {
-                            // This guarantees the output is strictly JSON
                             response_mime_type: "application/json" 
                         }
                     })
@@ -275,11 +277,11 @@
 
                 const data = await response.json();
                 
-                // 4. Extract and parse the stringified JSON from the API
+                // Extract and parse the stringified JSON from the API
                 const rawText = data.candidates[0].content.parts[0].text;
                 const parsedData = JSON.parse(rawText);
 
-                // 5. Update the UI
+                // Update the UI
                 renderDashboard(parsedData);
                 
                 document.getElementById('loading').style.display = 'none';
@@ -287,6 +289,30 @@
 
             } catch (error) {
                 console.error("API Error:", error);
-                document.getElementById('loading').textContent = "Error analyzing telemetry. Check console for details.";
+                document.getElementById('loading').textContent = "Error analyzing telemetry. Check your API key and try again.";
                 document.getElementById('loading').style.color = "#ff4444";
             }
+        });
+
+        // Function to update the HTML elements with JSON data
+        function renderDashboard(data) {
+            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
+            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics.identified_symptom}`;
+            document.getElementById('notes-text').textContent = data.engineer_notes;
+
+            const populateList = (elementId, items) => {
+                const ul = document.getElementById(elementId);
+                ul.innerHTML = ''; 
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
+                    ul.appendChild(li);
+                });
+            };
+
+            if (data.adjustments.primary) populateList('primary-list', data.adjustments.primary);
+            if (data.adjustments.secondary) populateList('secondary-list', data.adjustments.secondary);
+        }
+    </script>
+</body>
+</html>
