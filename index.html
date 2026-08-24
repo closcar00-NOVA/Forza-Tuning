@@ -47,13 +47,44 @@
             margin-bottom: 2rem;
         }
 
-        input[type="password"], textarea {
+        .key-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .key-container input {
+            width: 100%;
+            padding-right: 5rem;
+            box-sizing: border-box;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 0.75rem;
+            background: #2a2a2a;
+            color: var(--accent-gold);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .toggle-btn:hover {
+            background: #333333;
+        }
+
+        input[type="password"], input[type="text"], textarea {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 1rem;
             border-radius: 8px;
             font-size: 1rem;
+            font-family: inherit;
         }
 
         textarea {
@@ -61,12 +92,12 @@
             min-height: 100px;
         }
 
-        input[type="password"]:focus, textarea:focus {
+        input:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-green);
         }
 
-        button {
+        .submit-btn {
             background-color: var(--accent-green);
             color: #000;
             border: none;
@@ -79,7 +110,7 @@
             transition: opacity 0.2s ease;
         }
 
-        button:hover {
+        .submit-btn:hover {
             opacity: 0.8;
         }
 
@@ -158,6 +189,18 @@
             font-weight: bold;
             margin-top: 1rem;
         }
+
+        .error-box {
+            display: none;
+            color: #ff5555;
+            background: #2b1111;
+            border: 1px solid #772222;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -166,13 +209,16 @@
         <h1>Race Engineer AI</h1>
         
         <div class="input-group">
-            <!-- New secure API key input field -->
-            <input type="password" id="api-key" placeholder="Paste your Gemini API Key here (Secure, browser-only)">
-            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It snaps out on me as soon as I hit the gas coming out of the corner')"></textarea>
-            <button id="analyze-btn">Analyze Telemetry</button>
+            <div class="key-container">
+                <input type="password" id="api-key" placeholder="Paste your Gemini API Key here">
+                <button type="button" id="toggle-key-visibility" class="toggle-btn">Show</button>
+            </div>
+            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It pushes wide when braking into corner entry')"></textarea>
+            <button id="analyze-btn" class="submit-btn">Analyze Telemetry</button>
         </div>
 
-        <div id="loading" class="loading">Analyzing physics...</div>
+        <div id="loading" class="loading">Analyzing vehicle dynamics...</div>
+        <div id="error-message" class="error-box"></div>
 
         <div id="dashboard" class="dashboard">
             <div class="card">
@@ -202,25 +248,55 @@
     </div>
 
     <script>
+        const apiKeyInput = document.getElementById('api-key');
+        const toggleBtn = document.getElementById('toggle-key-visibility');
+        const errorBox = document.getElementById('error-message');
+        const loadingBox = document.getElementById('loading');
+        const dashboard = document.getElementById('dashboard');
+
+        // 1. Auto-load saved API Key from localStorage
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('forza_gemini_api_key');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+        });
+
+        // 2. Toggle password visibility
+        toggleBtn.addEventListener('click', () => {
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        });
+
+        // 3. Telemetry Analysis Event
         document.getElementById('analyze-btn').addEventListener('click', async () => {
-            // 1. Grab inputs securely from the UI
-            const apiKey = document.getElementById('api-key').value.trim();
+            const apiKey = apiKeyInput.value.trim();
             const input = document.getElementById('driver-input').value.trim();
             
+            errorBox.style.display = 'none';
+            dashboard.style.display = 'none';
+
             if (!apiKey) {
-                alert('Please enter your Gemini API Key first.');
+                showError('Please enter your Gemini API Key.');
                 return;
             }
-            if (!input) return;
+            if (!input) {
+                showError('Please describe what issue the car is having.');
+                return;
+            }
 
-            // UI State updates
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
+            // Save key in browser storage so you don't have to enter it again
+            localStorage.setItem('forza_gemini_api_key', apiKey);
 
-            // 2. Build the Endpoint using the user-provided key
+            loadingBox.style.display = 'block';
+
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-            // 3. System Prompt
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
 
             Drivers will often use slang or emotional language (e.g., "The car is a boat," "It snaps on me," "I'm plowing off the track," "The rear end steps out"). 
@@ -250,8 +326,6 @@
               "engineer_notes": "A brief, one-sentence explanation of why this adjustment fixes their specific complaint."
             }`;
 
-            // 4. Execute the Fetch Request
-// 4. Execute the Fetch Request
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -259,7 +333,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        systemInstruction: {  // <-- Corrected to camelCase
+                        systemInstruction: {
                             parts: [{ text: systemPrompt }]
                         },
                         contents: [{
@@ -267,50 +341,68 @@
                             parts: [{ text: input }]
                         }],
                         generationConfig: {
-                            responseMimeType: "application/json"  // <-- Corrected to camelCase
+                            responseMimeType: "application/json" 
                         }
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    const detailedMessage = errorData.error?.message || `HTTP status: ${response.status} (${response.statusText})`;
+                    throw new Error(detailedMessage);
                 }
 
                 const data = await response.json();
                 
-                // Extract and parse the stringified JSON from the API
-                const rawText = data.candidates[0].content.parts[0].text;
+                let rawText = data.candidates[0].content.parts[0].text.trim();
+                // Clean potential Markdown wrapping
+                if (rawText.startsWith('```json')) {
+                    rawText = rawText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+                } else if (rawText.startsWith('```')) {
+                    rawText = rawText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+                }
+
                 const parsedData = JSON.parse(rawText);
 
-                // Update the UI
                 renderDashboard(parsedData);
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'flex';
+                loadingBox.style.display = 'none';
+                dashboard.style.display = 'flex';
 
             } catch (error) {
                 console.error("API Error:", error);
-                document.getElementById('loading').textContent = "Error analyzing telemetry. Check your API key and try again.";
-                document.getElementById('loading').style.color = "#ff4444";
+                loadingBox.style.display = 'none';
+                showError(`Diagnostic Failure: ${error.message}`);
             }
-        // Function to update the HTML elements with JSON data
+        });
+
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.style.display = 'block';
+        }
+
         function renderDashboard(data) {
-            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
-            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics.identified_symptom}`;
-            document.getElementById('notes-text').textContent = data.engineer_notes;
+            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics?.identified_phase || 'General'}`;
+            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics?.identified_symptom || 'Handling'}`;
+            document.getElementById('notes-text').textContent = data.engineer_notes || 'No telemetry notes provided.';
 
             const populateList = (elementId, items) => {
                 const ul = document.getElementById(elementId);
                 ul.innerHTML = ''; 
-                items.forEach(item => {
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
+                        ul.appendChild(li);
+                    });
+                } else {
                     const li = document.createElement('li');
-                    li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
+                    li.textContent = 'None required';
                     ul.appendChild(li);
-                });
+                }
             };
 
-            if (data.adjustments.primary) populateList('primary-list', data.adjustments.primary);
-            if (data.adjustments.secondary) populateList('secondary-list', data.adjustments.secondary);
+            populateList('primary-list', data.adjustments?.primary);
+            populateList('secondary-list', data.adjustments?.secondary);
         }
     </script>
 </body>
