@@ -251,6 +251,7 @@
             }`;
 
             // 4. Execute the Fetch Request
+// 4. Execute the Fetch Request
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -258,7 +259,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        system_instruction: {
+                        systemInstruction: {  // <-- Corrected to camelCase
                             parts: [{ text: systemPrompt }]
                         },
                         contents: [{
@@ -266,7 +267,7 @@
                             parts: [{ text: input }]
                         }],
                         generationConfig: {
-                            response_mime_type: "application/json" 
+                            responseMimeType: "application/json"  // <-- Corrected to camelCase
                         }
                     })
                 });
@@ -292,8 +293,6 @@
                 document.getElementById('loading').textContent = "Error analyzing telemetry. Check your API key and try again.";
                 document.getElementById('loading').style.color = "#ff4444";
             }
-        });
-
         // Function to update the HTML elements with JSON data
         function renderDashboard(data) {
             document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
