@@ -213,53 +213,80 @@
             ==================================================================
             */
 
-            // MOCK API RESPONSE (Simulating the Gemini JSON output)
-            setTimeout(() => {
-                const mockApiResponse = {
-                    "diagnostics": {
-                        "identified_phase": "Exit",
-                        "identified_symptom": "Oversteer"
-                    },
-                    "adjustments": {
-                        "primary": [
-                            {"component": "Rear Anti-Roll Bar", "action": "Decrease"},
-                            {"component": "Rear Springs", "action": "Soften"}
-                        ],
-                        "secondary": [
-                            {"component": "Acceleration Differential", "action": "Decrease"}
-                        ]
-                    },
-                    "engineer_notes": "Softening the rear allows the chassis to squat and load the rear tires under acceleration, preventing the snap oversteer you're feeling."
-                };
+            // 1. Define your API Key and Endpoint
+            const API_KEY = 'YOUR_GEMINI_API_KEY'; // Replace before testing
+            const endpoint = `[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){API_KEY}`;
 
-                renderDashboard(mockApiResponse);
+            // 2. Insert the System Prompt we drafted earlier
+            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
+
+            Drivers will often use slang or emotional language (e.g., "The car is a boat," "It snaps on me," "I'm plowing off the track," "The rear end steps out"). 
+
+            Your task is to analyze their input and determine two things:
+            1. The Corner Phase: Entry (Braking), Mid-Corner (Coasting), or Exit (Acceleration).
+            2. The Handling Symptom: Understeer (pushing, won't turn, plowing) or Oversteer (loose, spinning, snapping).
+
+            Once identified, apply the standard Forza tuning logic (the end of the car tuned stiffer loses grip first) to provide adjustments. 
+
+            You MUST respond ONLY with a valid JSON object using the exact schema below. Do not include markdown formatting, conversational text, or explanations outside of the JSON structure.
+
+            JSON Schema:
+            {
+              "diagnostics": {
+                "identified_phase": "Entry | Mid-Corner | Exit",
+                "identified_symptom": "Understeer | Oversteer"
+              },
+              "adjustments": {
+                "primary": [
+                  {"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}
+                ],
+                "secondary": [
+                  {"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}
+                ]
+              },
+              "engineer_notes": "A brief, one-sentence explanation of why this adjustment fixes their specific complaint."
+            }`;
+
+            // 3. Execute the Fetch Request
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        system_instruction: {
+                            parts: [{ text: systemPrompt }]
+                        },
+                        contents: [{
+                            role: "user",
+                            parts: [{ text: input }]
+                        }],
+                        generationConfig: {
+                            // This guarantees the output is strictly JSON
+                            response_mime_type: "application/json" 
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 4. Extract and parse the stringified JSON from the API
+                const rawText = data.candidates[0].content.parts[0].text;
+                const parsedData = JSON.parse(rawText);
+
+                // 5. Update the UI
+                renderDashboard(parsedData);
+                
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'flex';
-            }, 1500); // Simulated network delay
-        });
 
-        function renderDashboard(data) {
-            // Populate Diagnostics
-            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
-            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics.identified_symptom}`;
-            
-            // Populate Notes
-            document.getElementById('notes-text').textContent = data.engineer_notes;
-
-            // Populate Lists
-            const populateList = (elementId, items) => {
-                const ul = document.getElementById(elementId);
-                ul.innerHTML = ''; // clear previous
-                items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
-                    ul.appendChild(li);
-                });
-            };
-
-            populateList('primary-list', data.adjustments.primary);
-            populateList('secondary-list', data.adjustments.secondary);
-        }
-    </script>
-</body>
-</html>
+            } catch (error) {
+                console.error("API Error:", error);
+                document.getElementById('loading').textContent = "Error analyzing telemetry. Check console for details.";
+                document.getElementById('loading').style.color = "#ff4444";
+            }
