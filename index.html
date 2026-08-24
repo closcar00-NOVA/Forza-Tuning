@@ -295,7 +295,7 @@
 
             loadingBox.style.display = 'block';
 
-            // Updated endpoint with the supported model alias
+            // Corrected endpoint with the supported model alias
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
@@ -356,6 +356,8 @@
                 const data = await response.json();
                 
                 let rawText = data.candidates[0].content.parts[0].text.trim();
+                
+                // Clean potential Markdown wrapping from API response
                 if (rawText.startsWith('```json')) {
                     rawText = rawText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
                 } else if (rawText.startsWith('```')) {
@@ -405,3 +407,5 @@
             populateList('secondary-list', data.adjustments?.secondary);
         }
     </script>
+</body>
+</html>
