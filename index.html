@@ -296,8 +296,8 @@
             loadingBox.style.display = 'block';
 
             // Corrected endpoint with the supported model alias
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-
+            const endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+            
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
 
             Drivers will often use slang or emotional language (e.g., "The car is a boat," "It snaps on me," "I'm plowing off the track," "The rear end steps out"). 
