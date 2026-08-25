@@ -77,7 +77,12 @@
             background: #333333;
         }
 
-        input[type="password"], input[type="text"], textarea {
+        .profile-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        select, input[type="password"], input[type="text"], textarea {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
@@ -87,12 +92,18 @@
             font-family: inherit;
         }
 
+        select {
+            flex: 1;
+            cursor: pointer;
+            appearance: none;
+        }
+
         textarea {
             resize: vertical;
             min-height: 100px;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--accent-green);
         }
@@ -201,6 +212,16 @@
             font-size: 0.9rem;
             line-height: 1.4;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .profile-group {
+                flex-direction: column;
+            }
+            .adjustments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -213,6 +234,27 @@
                 <input type="password" id="api-key" placeholder="Paste your Gemini API Key here">
                 <button type="button" id="toggle-key-visibility" class="toggle-btn">Show</button>
             </div>
+            
+            <div class="profile-group">
+                <select id="drivetrain" title="Drivetrain">
+                    <option value="">Drivetrain (Optional)</option>
+                    <option value="RWD">RWD</option>
+                    <option value="FWD">FWD</option>
+                    <option value="AWD">AWD</option>
+                </select>
+                <select id="engine" title="Engine Placement">
+                    <option value="">Engine (Optional)</option>
+                    <option value="Front-Engine">Front-Engine</option>
+                    <option value="Mid-Engine">Mid-Engine</option>
+                    <option value="Rear-Engine">Rear-Engine</option>
+                </select>
+                <select id="aero" title="Aero Package">
+                    <option value="">Aero (Optional)</option>
+                    <option value="Stock Aero">Stock Aero</option>
+                    <option value="Adjustable Downforce">Adjustable Downforce</option>
+                </select>
+            </div>
+
             <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It pushes wide when braking into corner entry')"></textarea>
             <button id="analyze-btn" class="submit-btn">Analyze Telemetry</button>
         </div>
@@ -254,7 +296,7 @@
         const loadingBox = document.getElementById('loading');
         const dashboard = document.getElementById('dashboard');
 
-        // 1. Auto-load saved API Key from localStorage
+        // Auto-load saved API Key
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
             if (savedKey) {
@@ -262,7 +304,7 @@
             }
         });
 
-        // 2. Toggle password visibility
+        // Toggle password visibility
         toggleBtn.addEventListener('click', () => {
             if (apiKeyInput.type === 'password') {
                 apiKeyInput.type = 'text';
@@ -273,10 +315,14 @@
             }
         });
 
-        // 3. Telemetry Analysis Event
+        // Telemetry Analysis Event
         document.getElementById('analyze-btn').addEventListener('click', async () => {
             const apiKey = apiKeyInput.value.trim();
-            const input = document.getElementById('driver-input').value.trim();
+            const rawInput = document.getElementById('driver-input').value.trim();
+            
+            const drivetrain = document.getElementById('drivetrain').value;
+            const engine = document.getElementById('engine').value;
+            const aero = document.getElementById('aero').value;
             
             errorBox.style.display = 'none';
             dashboard.style.display = 'none';
@@ -285,30 +331,35 @@
                 showError('Please enter your Gemini API Key.');
                 return;
             }
-            if (!input) {
+            if (!rawInput) {
                 showError('Please describe what issue the car is having.');
                 return;
             }
 
-            // Save key in browser storage
             localStorage.setItem('forza_gemini_api_key', apiKey);
-
             loadingBox.style.display = 'block';
 
-            // Corrected endpoint with the supported model alias
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+            // Construct contextual input if dropdowns are used
+            let finalInput = rawInput;
+            const profileSpecs = [drivetrain, engine, aero].filter(Boolean);
             
+            if (profileSpecs.length > 0) {
+                finalInput = `Vehicle Profile: ${profileSpecs.join(', ')}.\nDriver Complaint: ${rawInput}`;
+            }
+
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Your job is to listen to natural language complaints from a race car driver and translate them into precise, structured vehicle tuning adjustments.
 
-            Drivers will often use slang or emotional language (e.g., "The car is a boat," "It snaps on me," "I'm plowing off the track," "The rear end steps out"). 
-
-            Your task is to analyze their input and determine two things:
+            Drivers will often use slang or emotional language. Your task is to analyze their input and determine two things:
             1. The Corner Phase: Entry (Braking), Mid-Corner (Coasting), or Exit (Acceleration).
-            2. The Handling Symptom: Understeer (pushing, won't turn, plowing) or Oversteer (loose, spinning, snapping).
+            2. The Handling Symptom: Understeer or Oversteer.
 
             Once identified, apply the standard Forza tuning logic (the end of the car tuned stiffer loses grip first) to provide adjustments. 
+            
+            CRITICAL: If a "Vehicle Profile" is provided in the input, you MUST use it to prioritize your adjustments. For example, prioritize acceleration differential changes for AWD setups, or heavily factor in rear weight bias for Mid/Rear engine layouts snapping on exit. If Adjustable Aero is present, include downforce tweaks as secondary options.
 
-            You MUST respond ONLY with a valid JSON object using the exact schema below. Do not include markdown formatting, conversational text, or explanations outside of the JSON structure.
+            You MUST respond ONLY with a valid JSON object using the exact schema below. Do not include markdown formatting or explanations outside of the JSON structure.
 
             JSON Schema:
             {
@@ -324,7 +375,7 @@
                   {"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}
                 ]
               },
-              "engineer_notes": "A brief, one-sentence explanation of why this adjustment fixes their specific complaint."
+              "engineer_notes": "A brief, one-sentence explanation of why this adjustment fixes their specific complaint, explicitly referencing their vehicle profile if one was provided."
             }`;
 
             try {
@@ -339,7 +390,7 @@
                         },
                         contents: [{
                             role: "user",
-                            parts: [{ text: input }]
+                            parts: [{ text: finalInput }]
                         }],
                         generationConfig: {
                             responseMimeType: "application/json" 
@@ -349,15 +400,13 @@
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    const detailedMessage = errorData.error?.message || `HTTP status: ${response.status} (${response.statusText})`;
+                    const detailedMessage = errorData.error?.message || `HTTP status: ${response.status}`;
                     throw new Error(detailedMessage);
                 }
 
                 const data = await response.json();
-                
                 let rawText = data.candidates[0].content.parts[0].text.trim();
                 
-                // Clean potential Markdown wrapping from API response
                 if (rawText.startsWith('```json')) {
                     rawText = rawText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
                 } else if (rawText.startsWith('```')) {
