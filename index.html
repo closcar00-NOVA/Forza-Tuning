@@ -8,6 +8,7 @@
         :root {
             --bg-color: #000000;
             --surface-color: #1a1a1a;
+            --surface-lighter: #2a2a2a;
             --text-main: #f5f5f5;
             --text-muted: #a0a0a0;
             --accent-green: #00A74A;
@@ -26,7 +27,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
         }
 
@@ -62,7 +63,7 @@
         .toggle-btn {
             position: absolute;
             right: 0.75rem;
-            background: #2a2a2a;
+            background: var(--surface-lighter);
             color: var(--accent-gold);
             border: 1px solid var(--border-color);
             padding: 0.4rem 0.8rem;
@@ -154,7 +155,7 @@
         }
 
         .tag {
-            background-color: #2a2a2a;
+            background-color: var(--surface-lighter);
             padding: 0.5rem 1rem;
             border-radius: 4px;
             font-size: 0.9rem;
@@ -174,20 +175,57 @@
         }
 
         li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: var(--surface-lighter);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
-        li span.action {
+        .li-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .component-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .action {
             color: var(--accent-gold);
             font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tuning-details {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .tuning-image {
+            width: 120px;
+            height: auto;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tuning-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         .engineer-notes {
             font-style: italic;
-            color: var(--text-muted);
+            color: var(--text-main);
             line-height: 1.5;
             border-left: 3px solid var(--border-color);
             padding-left: 1rem;
@@ -213,13 +251,19 @@
             line-height: 1.4;
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .profile-group {
                 flex-direction: column;
             }
             .adjustments-grid {
                 grid-template-columns: 1fr;
+            }
+            .tuning-details {
+                flex-direction: column;
+            }
+            .tuning-image {
+                width: 100%;
+                max-width: 200px;
             }
         }
     </style>
@@ -290,13 +334,51 @@
     </div>
 
     <script>
+        // Tuning Database - Maps keywords to images and paraphrased descriptions
+        const tuningDatabase = [
+            {
+                keywords: ["Tire", "Pressure", "PSI"],
+                image: "Tires - Tire Pressure.png",
+                description: "Tire pressure heavily dictates responsiveness and grip. Higher pressures make the car responsive but skittish, while lower pressures allow more flex and forgiveness. For peak racing performance, aim for a warm pressure around 33 PSI."
+            },
+            {
+                keywords: ["Camber", "Alignment"],
+                image: "Alignment - Camber.png",
+                description: "Negative camber angles the top of the wheels inward, greatly increasing the tire's contact patch during hard cornering. While excellent for grip, excessive negative camber increases drag on the straights. A baseline of -1.5 degrees is often optimal."
+            },
+            {
+                keywords: ["Anti-roll", "ARB", "Sway Bar"],
+                image: "Anti-roll Bars - Anti-roll Bars.png",
+                description: "Anti-roll bars connect the left and right suspension to manage body roll during cornering. Stiffening the rear ARB reduces understeer, while stiffening the front ARB mitigates oversteer. They do not affect straight-line acceleration."
+            },
+            {
+                keywords: ["Springs", "Ride Height"],
+                image: "Springs - Springs.png",
+                description: "Springs dictate how much the car compresses under load. Stiffer springs prevent bottoming out but can cause bouncing on rough tracks. Running a stiffer rear spring bias helps induce oversteer, allowing for faster corner entry speeds."
+            },
+            {
+                keywords: ["Bump", "Damping Bump"],
+                image: "Damping - Bump Stiffness.png",
+                description: "Bump stiffness controls how rapidly the suspension compresses over bumps or curbs. It should generally match your spring stiffness to prevent instability. A standard rule of thumb is setting bump stiffness to 65-75% of your rebound stiffness."
+            },
+            {
+                keywords: ["Rebound", "Damping Rebound"],
+                image: "Damping - Rebound Stiffness.png",
+                description: "Rebound stiffness controls how fast the damper extends back down after compressing. Too stiff, and the car skips over bumps; too soft, and it wallows. Reducing front damping while stiffening the rear helps shift weight forward during cornering."
+            },
+            {
+                keywords: ["Aero", "Downforce", "Wing"],
+                image: "Aero - Downforce.png",
+                description: "Aerodynamic downforce forces the car into the track at high speeds, drastically improving grip at the cost of top-speed drag. Adjusting rear downforce stabilizes high-speed oversteer, while front downforce sharpens turn-in response."
+            }
+        ];
+
         const apiKeyInput = document.getElementById('api-key');
         const toggleBtn = document.getElementById('toggle-key-visibility');
         const errorBox = document.getElementById('error-message');
         const loadingBox = document.getElementById('loading');
         const dashboard = document.getElementById('dashboard');
 
-        // Auto-load saved API Key
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
             if (savedKey) {
@@ -304,7 +386,6 @@
             }
         });
 
-        // Toggle password visibility
         toggleBtn.addEventListener('click', () => {
             if (apiKeyInput.type === 'password') {
                 apiKeyInput.type = 'text';
@@ -315,7 +396,6 @@
             }
         });
 
-        // Telemetry Analysis Event
         document.getElementById('analyze-btn').addEventListener('click', async () => {
             const apiKey = apiKeyInput.value.trim();
             const rawInput = document.getElementById('driver-input').value.trim();
@@ -339,7 +419,6 @@
             localStorage.setItem('forza_gemini_api_key', apiKey);
             loadingBox.style.display = 'block';
 
-            // Construct contextual input if dropdowns are used
             let finalInput = rawInput;
             const profileSpecs = [drivetrain, engine, aero].filter(Boolean);
             
@@ -439,10 +518,39 @@
             const populateList = (elementId, items) => {
                 const ul = document.getElementById(elementId);
                 ul.innerHTML = ''; 
+                
                 if (items && items.length > 0) {
                     items.forEach(item => {
                         const li = document.createElement('li');
-                        li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
+                        
+                        // Cross-reference AI output with our Tuning Database
+                        let matchedData = null;
+                        for (const entry of tuningDatabase) {
+                            if (entry.keywords.some(kw => item.component.toLowerCase().includes(kw.toLowerCase()))) {
+                                matchedData = entry;
+                                break;
+                            }
+                        }
+
+                        // Build the inner HTML structure
+                        let innerContent = `
+                            <div class="li-header">
+                                <span class="component-title">${item.component}</span>
+                                <span class="action">${item.action}</span>
+                            </div>
+                        `;
+
+                        // Inject image and text if a match is found
+                        if (matchedData) {
+                            innerContent += `
+                                <div class="tuning-details">
+                                    <img src="${matchedData.image}" alt="${item.component} visualization" class="tuning-image" onerror="this.style.display='none'">
+                                    <div class="tuning-description">${matchedData.description}</div>
+                                </div>
+                            `;
+                        }
+
+                        li.innerHTML = innerContent;
                         ul.appendChild(li);
                     });
                 } else {
