@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forza Race Engineer</title>
-    <!-- Google tag (gtag.js) - Keep your tracking code here -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZWMZXGP4H"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -31,7 +31,7 @@
             padding: 2rem;
             display: flex;
             justify-content: center;
-            overflow-x: hidden; /* Prevents scrollbar from sidebar */
+            overflow-x: hidden;
         }
 
         .container {
@@ -56,23 +56,68 @@
             margin-bottom: 2rem;
         }
 
-        textarea {
+        .key-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .key-container input {
+            width: 100%;
+            padding-right: 5rem;
+            box-sizing: border-box;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 0.75rem;
+            background: #2a2a2a;
+            color: var(--accent-gold);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .toggle-btn:hover {
+            background: #333333;
+        }
+
+        .profile-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        select, input[type="password"], input[type="text"], textarea {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             padding: 1rem;
             border-radius: 8px;
-            resize: vertical;
-            min-height: 100px;
             font-size: 1rem;
+            font-family: inherit;
         }
 
-        textarea:focus, input:focus {
+        select {
+            flex: 1;
+            cursor: pointer;
+            appearance: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--accent-green);
         }
 
-        button {
+        .submit-btn {
             background-color: var(--accent-green);
             color: #000;
             border: none;
@@ -85,13 +130,13 @@
             transition: opacity 0.2s ease;
         }
 
-        button:hover {
+        .submit-btn:hover {
             opacity: 0.8;
         }
 
         /* Dashboard Output Styles */
         .dashboard {
-            display: none;
+            display: none; 
             gap: 1.5rem;
             flex-direction: column;
         }
@@ -138,10 +183,16 @@
         }
 
         li {
-            padding: 0.5rem 0;
+            padding: 0.8rem 0;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            font-size: 1.05rem;
+        }
+
+        li:last-child {
+            border-bottom: none;
         }
 
         li span.action {
@@ -165,7 +216,28 @@
             margin-top: 1rem;
         }
 
-        /* --- New Sidebar Chat Styles --- */
+        .error-box {
+            display: none;
+            color: #ff5555;
+            background: #2b1111;
+            border: 1px solid #772222;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 600px) {
+            .profile-group {
+                flex-direction: column;
+            }
+            .adjustments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Sidebar Chat Styles --- */
         .chat-toggle {
             position: fixed;
             bottom: 2rem;
@@ -173,12 +245,18 @@
             border-radius: 50px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+
+        .chat-toggle.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .sidebar {
             position: fixed;
             top: 0;
-            right: -400px; /* Hidden by default */
+            right: -400px;
             width: 400px;
             height: 100vh;
             background-color: #121212;
@@ -284,11 +362,37 @@
         <h1>Race Engineer AI</h1>
         
         <div class="input-group">
-            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It snaps out on me as soon as I hit the gas coming out of the corner')"></textarea>
-            <button id="analyze-btn">Analyze Telemetry</button>
+            <div class="key-container">
+                <input type="password" id="api-key" placeholder="Paste your Gemini API Key here">
+                <button type="button" id="toggle-key-visibility" class="toggle-btn">Show</button>
+            </div>
+            
+            <div class="profile-group">
+                <select id="drivetrain" title="Drivetrain">
+                    <option value="">Drivetrain (Optional)</option>
+                    <option value="RWD">RWD</option>
+                    <option value="FWD">FWD</option>
+                    <option value="AWD">AWD</option>
+                </select>
+                <select id="engine" title="Engine Placement">
+                    <option value="">Engine (Optional)</option>
+                    <option value="Front-Engine">Front-Engine</option>
+                    <option value="Mid-Engine">Mid-Engine</option>
+                    <option value="Rear-Engine">Rear-Engine</option>
+                </select>
+                <select id="aero" title="Aero Package">
+                    <option value="">Aero (Optional)</option>
+                    <option value="Stock Aero">Stock Aero</option>
+                    <option value="Adjustable Downforce">Adjustable Downforce</option>
+                </select>
+            </div>
+
+            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It pushes wide when braking into corner entry')"></textarea>
+            <button id="analyze-btn" class="submit-btn">Analyze Telemetry</button>
         </div>
 
-        <div id="loading" class="loading">Analyzing physics...</div>
+        <div id="loading" class="loading">Analyzing vehicle dynamics...</div>
+        <div id="error-message" class="error-box"></div>
 
         <div id="dashboard" class="dashboard">
             <div class="card">
@@ -317,8 +421,8 @@
         </div>
     </div>
 
-    <!-- Floating Button -->
-    <button class="chat-toggle" id="open-chat-btn">💬 Consult Engineer</button>
+    <!-- Floating Chat Button -->
+    <button class="chat-toggle submit-btn" id="open-chat-btn">💬 Consult Engineer</button>
 
     <!-- Chat Sidebar -->
     <div class="sidebar" id="chat-sidebar">
@@ -332,26 +436,75 @@
         <div id="chat-loading">Engineer is typing...</div>
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Ask about camber, aero, tire PSI...">
-            <button id="send-chat-btn" style="padding: 0.8rem;">Send</button>
+            <button class="submit-btn" id="send-chat-btn" style="padding: 0.8rem;">Send</button>
         </div>
     </div>
 
     <script>
-        // SHARED API KEY
-        const API_KEY = 'YOUR_GEMINI_API_KEY'; // Replace with your actual key
+        const apiKeyInput = document.getElementById('api-key');
+        const toggleBtn = document.getElementById('toggle-key-visibility');
+        const errorBox = document.getElementById('error-message');
+        const loadingBox = document.getElementById('loading');
+        const dashboard = document.getElementById('dashboard');
+
+        // Load saved API key
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('forza_gemini_api_key');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+        });
+
+        // Show/Hide API key
+        toggleBtn.addEventListener('click', () => {
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleBtn.textContent = 'Hide';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleBtn.textContent = 'Show';
+            }
+        });
 
         /* =========================================
-           PART 1: DIAGNOSTIC DASHBOARD LOGIC
+           PART 1: MAIN DASHBOARD LOGIC
            ========================================= */
         document.getElementById('analyze-btn').addEventListener('click', async () => {
-            const input = document.getElementById('driver-input').value;
-            if (!input) return;
+            const apiKey = apiKeyInput.value.trim();
+            const rawInput = document.getElementById('driver-input').value.trim();
+            
+            const drivetrain = document.getElementById('drivetrain').value;
+            const engine = document.getElementById('engine').value;
+            const aero = document.getElementById('aero').value;
+            
+            errorBox.style.display = 'none';
+            dashboard.style.display = 'none';
 
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
+            if (!apiKey) {
+                showError('Please enter your Gemini API Key.');
+                return;
+            }
+            if (!rawInput) {
+                showError('Please describe what issue the car is having.');
+                return;
+            }
 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate driver complaints into tuning adjustments. Determine: 1. Corner Phase (Entry, Mid-Corner, Exit) and 2. Symptom (Understeer, Oversteer). Apply standard Forza tuning logic. You MUST respond ONLY with a valid JSON object. 
+            localStorage.setItem('forza_gemini_api_key', apiKey);
+            loadingBox.style.display = 'block';
+
+            let finalInput = rawInput;
+            const profileSpecs = [drivetrain, engine, aero].filter(Boolean);
+            
+            if (profileSpecs.length > 0) {
+                finalInput = `Vehicle Profile: ${profileSpecs.join(', ')}.\nDriver Complaint: ${rawInput}`;
+            }
+
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate driver complaints into precise tuning adjustments. 
+            Determine: 1. Corner Phase (Entry, Mid-Corner, Exit) and 2. Symptom (Understeer, Oversteer).
+            CRITICAL: If a "Vehicle Profile" is provided in the input, you MUST use it to prioritize your adjustments.
+            You MUST respond ONLY with a valid JSON object. 
             Schema: {"diagnostics": {"identified_phase": "string", "identified_symptom": "string"}, "adjustments": {"primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}], "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]}, "engineer_notes": "string"}`;
 
             try {
@@ -360,43 +513,56 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         system_instruction: { parts: [{ text: systemPrompt }] },
-                        contents: [{ role: "user", parts: [{ text: input }] }],
+                        contents: [{ role: "user", parts: [{ text: finalInput }] }],
                         generationConfig: { response_mime_type: "application/json" }
                     })
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `HTTP status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 const parsedData = JSON.parse(data.candidates[0].content.parts[0].text);
 
                 renderDashboard(parsedData);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'flex';
+                loadingBox.style.display = 'none';
+                dashboard.style.display = 'flex';
 
             } catch (error) {
                 console.error("Dashboard API Error:", error);
-                document.getElementById('loading').textContent = "Error analyzing telemetry.";
+                loadingBox.style.display = 'none';
+                showError(`Diagnostic Failure: ${error.message}`);
             }
         });
 
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.style.display = 'block';
+        }
+
         function renderDashboard(data) {
-            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics.identified_phase}`;
-            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics.identified_symptom}`;
-            document.getElementById('notes-text').textContent = data.engineer_notes;
+            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics?.identified_phase || 'General'}`;
+            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics?.identified_symptom || 'Handling'}`;
+            document.getElementById('notes-text').textContent = data.engineer_notes || 'No telemetry notes provided.';
 
             const populateList = (elementId, items) => {
                 const ul = document.getElementById(elementId);
                 ul.innerHTML = ''; 
-                items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `${item.component} <span class="action">${item.action}</span>`;
-                    ul.appendChild(li);
-                });
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span>${item.component}</span> <span class="action">${item.action}</span>`;
+                        ul.appendChild(li);
+                    });
+                } else {
+                    ul.innerHTML = '<li>None required</li>';
+                }
             };
 
-            if (data.adjustments.primary) populateList('primary-list', data.adjustments.primary);
-            if (data.adjustments.secondary) populateList('secondary-list', data.adjustments.secondary);
+            populateList('primary-list', data.adjustments?.primary);
+            populateList('secondary-list', data.adjustments?.secondary);
         }
 
         /* =========================================
@@ -410,31 +576,37 @@
         const sendChatBtn = document.getElementById('send-chat-btn');
         const chatLoading = document.getElementById('chat-loading');
 
-        // Toggle Sidebar
-        openBtn.addEventListener('click', () => sidebar.classList.add('open'));
-        closeBtn.addEventListener('click', () => sidebar.classList.remove('open'));
+        // Toggle Sidebar - Hides the floating button when open
+        openBtn.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            openBtn.classList.add('hidden');
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            openBtn.classList.remove('hidden');
+        });
 
-        // Chat History Array (stores the conversation context)
         let chatHistory = [];
         const chatSystemInstruction = "You are an expert Forza Motorsport Race Engineer. Provide concise, accurate advice on car setup, tire pressure, camber, telemetry, and driving techniques. Be direct and helpful. Do not output JSON, speak conversationally to the driver.";
 
         async function handleChatSend() {
+            const apiKey = apiKeyInput.value.trim();
             const userText = chatInput.value.trim();
             if (!userText) return;
 
-            // 1. Render User Message
+            if (!apiKey) {
+                appendMessage("Please enter your Gemini API Key in the main dashboard first.", 'ai');
+                return;
+            }
+
             appendMessage(userText, 'user');
             chatInput.value = '';
             chatLoading.style.display = 'block';
 
-            // 2. Add to History
-            chatHistory.push({
-                role: "user",
-                parts: [{ text: userText }]
-            });
+            chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
-            // 3. Fetch from API
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
             try {
                 const response = await fetch(endpoint, {
@@ -442,7 +614,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         system_instruction: { parts: [{ text: chatSystemInstruction }] },
-                        contents: chatHistory // Pass the whole array for context
+                        contents: chatHistory 
                     })
                 });
 
@@ -451,16 +623,12 @@
                 const data = await response.json();
                 const aiResponseText = data.candidates[0].content.parts[0].text;
 
-                // 4. Render AI Message & update history
                 appendMessage(aiResponseText, 'ai');
-                chatHistory.push({
-                    role: "model",
-                    parts: [{ text: aiResponseText }]
-                });
+                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
 
             } catch (error) {
                 console.error(error);
-                appendMessage("Comm link broken. Check your API key.", 'ai');
+                appendMessage("Comm link broken. Check your API key or network connection.", 'ai');
             } finally {
                 chatLoading.style.display = 'none';
             }
@@ -472,10 +640,9 @@
             msgDiv.classList.add(sender === 'user' ? 'msg-user' : 'msg-ai');
             msgDiv.textContent = text;
             chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Trigger send on button click or Enter key
         sendChatBtn.addEventListener('click', handleChatSend);
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleChatSend();
