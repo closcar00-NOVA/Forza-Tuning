@@ -56,16 +56,6 @@
         
         .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
         
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 16px; width: 8px; border-radius: 2px;
-            background: #00FA9A; cursor: pointer; margin-top: -6px;
-            box-shadow: 0 0 8px rgba(0, 250, 154, 0.6);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer; background: #2d313b; border-radius: 2px;
-        }
-        
         .g-meter-container {
             position: relative; width: 200px; height: 200px; border-radius: 50%;
             border: 2px solid #2d313b;
@@ -104,6 +94,12 @@
         .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 85%; }
         .chat-msg.user { background: #2d313b; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
+        
+        .garage-input {
+            background-color: #1e2128; border: 1px solid #2d313b; border-radius: 4px; 
+            padding: 4px 8px; color: white; width: 100%; transition: border-color 0.2s;
+        }
+        .garage-input:focus { outline: none; border-color: #FFD700; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-6 lg:p-8 font-sans">
@@ -121,7 +117,6 @@
             <div class="flex items-center gap-3">
                 <input type="password" id="api-key" placeholder="Gemini API Key" class="bg-dark-800 border border-dark-600 rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono w-48">
                 
-                <!-- NEW GARAGE BUTTON -->
                 <button onclick="toggleGarage()" class="ml-2 bg-dark-700 hover:bg-brand-gold text-brand-gold hover:text-black border border-brand-gold font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs">
                     Garage
                 </button>
@@ -149,7 +144,6 @@
                         <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer when accelerating out of corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full min-h-[120px] resize-none font-mono"></textarea>
                     </div>
 
-                    <!-- Make / Model & Horsepower Grid -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
                             <label class="text-xs text-gray-400 font-mono uppercase">Make / Model</label>
@@ -161,7 +155,6 @@
                         </div>
                     </div>
 
-                    <!-- Drivetrain & Engine Pos Grid -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
                             <label class="text-xs text-gray-400 font-mono uppercase">Drivetrain</label>
@@ -304,21 +297,58 @@
         </div>
     </div>
 
-    <!-- Garage Side Panel -->
-    <div id="garage-panel" class="fixed right-0 top-0 h-full w-80 bg-dark-900 border-l border-dark-600 transform translate-x-full transition-transform duration-300 z-50 flex flex-col shadow-2xl">
-        <div class="p-4 border-b border-dark-600 flex justify-between items-center bg-dark-800">
+    <!-- Garage Side Panel (WIDENED for Grid) -->
+    <div id="garage-panel" class="fixed right-0 top-0 h-full w-96 bg-dark-900 border-l border-dark-600 transform translate-x-full transition-transform duration-300 z-50 flex flex-col shadow-2xl">
+        <div class="p-4 border-b border-dark-600 flex justify-between items-center bg-dark-800 shrink-0">
             <h2 class="text-brand-gold font-bold font-mono tracking-widest uppercase">Vehicle Repository</h2>
             <button onclick="toggleGarage()" class="text-gray-400 hover:text-white text-xl">&times;</button>
         </div>
         
-        <div class="p-4 overflow-y-auto flex-grow flex flex-col gap-4">
+        <div class="p-4 overflow-y-auto flex-grow flex flex-col gap-6">
             <div class="bg-dark-800 p-3 rounded border border-dark-600">
-                <h3 class="text-xs text-gray-400 font-mono uppercase mb-3">Save Active Setup</h3>
-                <div class="flex flex-col gap-2 font-mono text-xs">
-                    <input type="text" id="save-car-name" placeholder="Save As (e.g., Wet Track NSX)" class="bg-dark-700 border border-dark-600 rounded px-2 py-1 text-white focus:border-brand-gold">
-                    <input type="text" id="baseline-aero" placeholder="Baseline Aero (e.g., High Front)" class="bg-dark-700 border border-dark-600 rounded px-2 py-1 text-white focus:border-brand-gold">
-                    <input type="text" id="baseline-diff" placeholder="Baseline Diff (e.g., 80% Accel)" class="bg-dark-700 border border-dark-600 rounded px-2 py-1 text-white focus:border-brand-gold">
-                    <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-1.5 rounded mt-1 hover:opacity-80">SAVE TO REPOSITORY</button>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs text-gray-400 font-mono uppercase">Save Active Setup</h3>
+                    <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear</button>
+                </div>
+                
+                <div class="flex flex-col gap-3 font-mono text-xs">
+                    <input type="hidden" id="edit-id" value="">
+                    <input type="text" id="save-car-name" placeholder="Save As (e.g., Wet Track NSX)" class="garage-input font-bold text-brand-gold border-brand-gold/30">
+                    
+                    <!-- Deep Data Grid -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="set-tireF" placeholder="Tire F (psi)" class="garage-input">
+                        <input type="text" id="set-tireR" placeholder="Tire R (psi)" class="garage-input">
+                        
+                        <input type="text" id="set-camF" placeholder="Camber F" class="garage-input">
+                        <input type="text" id="set-camR" placeholder="Camber R" class="garage-input">
+                        
+                        <input type="text" id="set-arbF" placeholder="ARB F" class="garage-input">
+                        <input type="text" id="set-arbR" placeholder="ARB R" class="garage-input">
+                        
+                        <input type="text" id="set-sprF" placeholder="Springs F" class="garage-input">
+                        <input type="text" id="set-sprR" placeholder="Springs R" class="garage-input">
+                        
+                        <input type="text" id="set-hgtF" placeholder="Ride Hgt F" class="garage-input">
+                        <input type="text" id="set-hgtR" placeholder="Ride Hgt R" class="garage-input">
+                        
+                        <input type="text" id="set-bmpF" placeholder="Bump F" class="garage-input">
+                        <input type="text" id="set-bmpR" placeholder="Bump R" class="garage-input">
+                        
+                        <input type="text" id="set-rebF" placeholder="Rebound F" class="garage-input">
+                        <input type="text" id="set-rebR" placeholder="Rebound R" class="garage-input">
+                        
+                        <input type="text" id="set-aerF" placeholder="Aero F" class="garage-input">
+                        <input type="text" id="set-aerR" placeholder="Aero R" class="garage-input">
+                        
+                        <input type="text" id="set-brkBal" placeholder="Brake Bal (F/R)" class="garage-input">
+                        <input type="text" id="set-brkPres" placeholder="Brake Pres (%)" class="garage-input">
+                        
+                        <input type="text" id="set-difAcc" placeholder="Diff Accel" class="garage-input">
+                        <input type="text" id="set-difDec" placeholder="Diff Decel" class="garage-input">
+                    </div>
+                    
+                    <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-2 rounded mt-2 hover:opacity-80">SAVE TO REPOSITORY</button>
                 </div>
             </div>
 
@@ -338,18 +368,13 @@
         // -- Initialization & Key Management --
         const apiKeyInput = document.getElementById('api-key');
         
-        // -- Garage Repository Variables --
         let activeBaseline = ""; 
-        let garage = JSON.parse(localStorage.getItem('forza_garage')) || [
-            { id: 1, name: "Veloster N (Bryan Herta)", make: "2020 Hyundai Veloster N", hp: 350, drive: "FWD", engine: "Front", aero: "Stock", diff: "Strong Accel Lock" },
-            { id: 2, name: "Acura NSX (Wet Track)", make: "2017 Acura NSX", hp: 865, drive: "AWD", engine: "Mid", aero: "Max Downforce", diff: "Low Decel Lock" }
-        ];
+        let garage = JSON.parse(localStorage.getItem('forza_garage_v2')) || [];
         
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
             if (savedKey) apiKeyInput.value = savedKey;
             
-            // Set default cold tires
             updateTemps({fl: 100, fr: 100, rl: 100, rr: 100});
             renderGarageList();
         });
@@ -367,11 +392,25 @@
         function renderGarageList() {
             const list = document.getElementById('garage-list');
             list.innerHTML = '';
+            
+            if (garage.length === 0) {
+                list.innerHTML = `<li class="text-xs text-gray-500 font-mono italic p-2 text-center">No saved profiles.</li>`;
+                return;
+            }
+
             garage.forEach(car => {
                 list.innerHTML += `
-                    <li class="bg-dark-700 p-2 rounded border border-dark-600 flex flex-col gap-1 cursor-pointer hover:border-brand-gold transition-colors" onclick="loadCar(${car.id})">
-                        <span class="text-brand-gold font-bold text-xs uppercase">${car.name}</span>
-                        <span class="text-gray-400 text-[10px] font-mono">${car.make} | ${car.hp}HP | ${car.drive}</span>
+                    <li class="bg-dark-700 p-2 rounded border border-dark-600 flex flex-col gap-1 group transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div class="flex flex-col cursor-pointer flex-grow" onclick="loadCar(${car.id})">
+                                <span class="text-brand-gold font-bold text-xs uppercase group-hover:text-white transition-colors">${car.name}</span>
+                                <span class="text-gray-400 text-[10px] font-mono">${car.make} | ${car.hp}HP | ${car.drive}</span>
+                            </div>
+                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="editCar(${car.id})" class="text-[10px] text-brand-blue font-mono font-bold hover:underline">EDIT</button>
+                                <button onclick="deleteCar(${car.id})" class="text-[10px] text-brand-red font-mono font-bold hover:underline">DEL</button>
+                            </div>
+                        </div>
                     </li>`;
             });
         }
@@ -380,41 +419,96 @@
             const car = garage.find(c => c.id === id);
             if (!car) return;
             
-            // Populate active UI inputs
             document.getElementById('make-model').value = car.make;
             document.getElementById('hp').value = car.hp;
             document.getElementById('drivetrain').value = car.drive;
             document.getElementById('engine-pos').value = car.engine;
             
-            // Set hidden baseline for AI context
-            activeBaseline = `Baseline Aero: ${car.aero}, Baseline Differential: ${car.diff}.`;
+            // Build the giant context string for Gemini
+            activeBaseline = `Deep Setup Info: Tires (F/R): ${car.tireF}/${car.tireR}, Camber: ${car.camF}/${car.camR}, ARB: ${car.arbF}/${car.arbR}, Springs: ${car.sprF}/${car.sprR}, Ride Height: ${car.hgtF}/${car.hgtR}, Bump: ${car.bmpF}/${car.bmpR}, Rebound: ${car.rebF}/${car.rebR}, Aero: ${car.aerF}/${car.aerR}, Brake Bias/Pres: ${car.brkBal}/${car.brkPres}, Diff Acc/Dec: ${car.difAcc}/${car.difDec}.`;
             
             toggleGarage();
-            alert(`${car.name} loaded to active telemetry block.`);
+            alert(`Loaded: ${car.name}\nDeep telemetry applied to background context.`);
         }
 
         function saveToGarage() {
             const name = document.getElementById('save-car-name').value;
             if(!name) { alert("Please name this setup."); return; }
             
+            const editId = document.getElementById('edit-id').value;
+            
             const newCar = {
-                id: Date.now(),
+                id: editId ? parseInt(editId) : Date.now(),
                 name: name,
                 make: document.getElementById('make-model').value || 'Unknown',
                 hp: document.getElementById('hp').value || 0,
                 drive: document.getElementById('drivetrain').value,
                 engine: document.getElementById('engine-pos').value,
-                aero: document.getElementById('baseline-aero').value || 'Stock',
-                diff: document.getElementById('baseline-diff').value || 'Stock'
+                tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
+                camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
+                arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
+                sprF: document.getElementById('set-sprF').value || '-', sprR: document.getElementById('set-sprR').value || '-',
+                hgtF: document.getElementById('set-hgtF').value || '-', hgtR: document.getElementById('set-hgtR').value || '-',
+                bmpF: document.getElementById('set-bmpF').value || '-', bmpR: document.getElementById('set-bmpR').value || '-',
+                rebF: document.getElementById('set-rebF').value || '-', rebR: document.getElementById('set-rebR').value || '-',
+                aerF: document.getElementById('set-aerF').value || '-', aerR: document.getElementById('set-aerR').value || '-',
+                brkBal: document.getElementById('set-brkBal').value || '-', brkPres: document.getElementById('set-brkPres').value || '-',
+                difAcc: document.getElementById('set-difAcc').value || '-', difDec: document.getElementById('set-difDec').value || '-'
             };
             
-            garage.push(newCar);
-            localStorage.setItem('forza_garage', JSON.stringify(garage));
-            renderGarageList();
+            if (editId) {
+                const index = garage.findIndex(c => c.id === parseInt(editId));
+                if (index !== -1) garage[index] = newCar;
+            } else {
+                garage.push(newCar);
+            }
             
+            localStorage.setItem('forza_garage_v2', JSON.stringify(garage));
+            clearForm();
+            renderGarageList();
+        }
+
+        function editCar(id) {
+            const car = garage.find(c => c.id === id);
+            if (!car) return;
+            
+            document.getElementById('edit-id').value = car.id;
+            document.getElementById('save-car-name').value = car.name;
+            document.getElementById('set-tireF').value = car.tireF !== '-' ? car.tireF : '';
+            document.getElementById('set-tireR').value = car.tireR !== '-' ? car.tireR : '';
+            document.getElementById('set-camF').value = car.camF !== '-' ? car.camF : '';
+            document.getElementById('set-camR').value = car.camR !== '-' ? car.camR : '';
+            document.getElementById('set-arbF').value = car.arbF !== '-' ? car.arbF : '';
+            document.getElementById('set-arbR').value = car.arbR !== '-' ? car.arbR : '';
+            document.getElementById('set-sprF').value = car.sprF !== '-' ? car.sprF : '';
+            document.getElementById('set-sprR').value = car.sprR !== '-' ? car.sprR : '';
+            document.getElementById('set-hgtF').value = car.hgtF !== '-' ? car.hgtF : '';
+            document.getElementById('set-hgtR').value = car.hgtR !== '-' ? car.hgtR : '';
+            document.getElementById('set-bmpF').value = car.bmpF !== '-' ? car.bmpF : '';
+            document.getElementById('set-bmpR').value = car.bmpR !== '-' ? car.bmpR : '';
+            document.getElementById('set-rebF').value = car.rebF !== '-' ? car.rebF : '';
+            document.getElementById('set-rebR').value = car.rebR !== '-' ? car.rebR : '';
+            document.getElementById('set-aerF').value = car.aerF !== '-' ? car.aerF : '';
+            document.getElementById('set-aerR').value = car.aerR !== '-' ? car.aerR : '';
+            document.getElementById('set-brkBal').value = car.brkBal !== '-' ? car.brkBal : '';
+            document.getElementById('set-brkPres').value = car.brkPres !== '-' ? car.brkPres : '';
+            document.getElementById('set-difAcc').value = car.difAcc !== '-' ? car.difAcc : '';
+            document.getElementById('set-difDec').value = car.difDec !== '-' ? car.difDec : '';
+        }
+
+        function deleteCar(id) {
+            if (confirm("Delete this setup from your garage?")) {
+                garage = garage.filter(c => c.id !== id);
+                localStorage.setItem('forza_garage_v2', JSON.stringify(garage));
+                renderGarageList();
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('edit-id').value = '';
             document.getElementById('save-car-name').value = '';
-            document.getElementById('baseline-aero').value = '';
-            document.getElementById('baseline-diff').value = '';
+            const inputs = document.querySelectorAll('.garage-input');
+            inputs.forEach(input => input.value = '');
         }
 
         // -- Animation Logic for Sensors --
@@ -430,7 +524,7 @@
             
             let jitterX = (Math.random() - 0.5) * 2;
             let jitterY = (Math.random() - 0.5) * 2;
-            if(targetTx === 0 && targetTy === 0) { jitterX = 0; jitterY = 0; } // smooth when idle
+            if(targetTx === 0 && targetTy === 0) { jitterX = 0; jitterY = 0; } 
 
             gDot.style.transform = `translate(calc(-50% + ${currentTx + jitterX}px), calc(-50% + ${currentTy + jitterY}px))`;
             
@@ -457,7 +551,6 @@
             });
         }
 
-        // Simulates visual sensor data based on AI diagnosis
         function simulateSensors(phase, symptom) {
             document.getElementById('sensor-status').innerText = "LIVE SIMULATION";
             document.getElementById('sensor-status').className = "text-xs text-brand-green font-mono border border-brand-green px-2 py-0.5 rounded";
@@ -465,26 +558,24 @@
             let p = (phase || '').toLowerCase();
             let s = (symptom || '').toLowerCase();
 
-            // Default warm tires
             let temps = {fl: 180, fr: 180, rl: 180, rr: 180};
             let gx = 0, gy = 0;
 
             if (p.includes('entry') || p.includes('brak')) {
-                gy = -1.2; // braking
-                if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } // sliding fronts
-                if (s.includes('over')) { temps.rl = 210; temps.rr = 210; } // sliding rears
+                gy = -1.2; 
+                if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } 
+                if (s.includes('over')) { temps.rl = 210; temps.rr = 210; } 
             } 
             else if (p.includes('exit') || p.includes('accel')) {
-                gy = 0.9; // accelerating
-                if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } // spinning rears
-                if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } // pushing fronts
+                gy = 0.9; 
+                if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } 
+                if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } 
             }
             else if (p.includes('mid')) {
-                gx = 1.3; // cornering hard
-                temps = {fl: 210, fr: 170, rl: 215, rr: 175}; // outside tires hot
+                gx = 1.3; 
+                temps = {fl: 210, fr: 170, rl: 215, rr: 175}; 
             }
 
-            // Set targets for animation loop
             targetTx = (gx / 1.5) * 100;
             targetTy = (gy / 1.5) * 100;
             updateTemps(temps);
@@ -503,7 +594,6 @@
             if (!apiKey) { alert('Please enter your Gemini API Key in the top right.'); return; }
             if (!input) { alert('Please describe the car behavior first.'); return; }
 
-            // UI Loading State
             document.getElementById('diag-empty').classList.add('hidden');
             document.getElementById('diag-results').classList.add('hidden');
             document.getElementById('diag-error').classList.add('hidden');
@@ -545,10 +635,8 @@
                 let rawText = data.candidates[0].content.parts[0].text.trim();
                 const parsedData = JSON.parse(rawText);
 
-                // Update Visual Sensors based on findings
                 simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
 
-                // Render Diagnostics
                 document.getElementById('res-phase').innerText = `PHASE: ${parsedData.diagnostics?.identified_phase || '--'}`;
                 document.getElementById('res-symptom').innerText = `SYMPTOM: ${parsedData.diagnostics?.identified_symptom || '--'}`;
                 document.getElementById('res-notes').innerText = parsedData.engineer_notes || 'No notes provided.';
@@ -564,7 +652,6 @@
                 document.getElementById('res-primary').innerHTML = (parsedData.adjustments?.primary || []).map(createListItem).join('') || '<li>None</li>';
                 document.getElementById('res-secondary').innerHTML = (parsedData.adjustments?.secondary || []).map(createListItem).join('') || '<li>None</li>';
 
-                // Swap UI states
                 document.getElementById('diag-loading').classList.add('hidden');
                 document.getElementById('diag-loading').classList.remove('flex');
                 document.getElementById('diag-results').classList.remove('hidden');
@@ -578,7 +665,6 @@
                 document.getElementById('diag-error').classList.add('flex');
                 document.getElementById('error-msg').innerText = "Diagnostic Failure: Could not parse telemetry data.";
                 
-                // Reset sensors to idle
                 targetTx = 0; targetTy = 0;
                 document.getElementById('sensor-status').innerText = "ERROR";
                 document.getElementById('sensor-status').className = "text-xs text-brand-red font-mono border border-brand-red px-2 py-0.5 rounded";
@@ -598,7 +684,6 @@
             const apiKey = apiKeyInput.value.trim();
             const chatBox = document.getElementById('chat-box');
 
-            // Capture car data for context
             const makeModel = document.getElementById('make-model').value.trim() || 'the car';
             const hp = document.getElementById('hp').value.trim() || 'Unknown';
             const drivetrain = document.getElementById('drivetrain').value;
@@ -608,12 +693,10 @@
             if (!text) return;
             if (!apiKey) { alert('API Key required for comms.'); return; }
 
-            // Add user message
             chatBox.innerHTML += `<div class="chat-msg user">${text}</div>`;
             inputEl.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Add typing indicator
             const typingId = 'typing-' + Date.now();
             chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
