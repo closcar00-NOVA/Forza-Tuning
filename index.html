@@ -554,7 +554,7 @@
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
             const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Bias), Engine: ${enginePos}, Drivetrain: ${drivetrain}. ${activeBaseline} Driver Complaint: ${input}`;
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first. If the driver does not specify a corner phase, default to "Mid-Corner".
             Respond ONLY with a valid JSON object matching this schema exactly without any markdown formatting:
@@ -655,7 +655,7 @@
             chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). ${activeBaseline} The driver previously noted: "${driverInput}".`;
             
             try {
