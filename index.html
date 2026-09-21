@@ -499,7 +499,7 @@
                 finalInput = `Vehicle Profile: ${profileSpecs.join(', ')}.\nDriver Complaint: ${rawInput}`;
             }
 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate driver complaints into precise tuning adjustments. 
             Determine: 1. Corner Phase (Entry, Mid-Corner, Exit) and 2. Symptom (Understeer, Oversteer).
@@ -606,7 +606,7 @@
 
             chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
             try {
                 const response = await fetch(endpoint, {
