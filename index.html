@@ -3,686 +3,519 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forza Race Engineer</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZWMZXGP4H"></script>
+    <title>Forza Telemetry Super-App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-QZWMZXGP4H');
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0a0a0c', 
+                            800: '#121418', 
+                            700: '#1e2128', 
+                            600: '#2d313b', 
+                        },
+                        brand: {
+                            green: '#00FA9A', 
+                            gold: '#FFD700',  
+                            red: '#FF3366',   
+                            blue: '#00E5FF'   
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    }
+                }
+            }
+        }
     </script>
     <style>
-        :root {
-            --bg-color: #000000;
-            --surface-color: #1a1a1a;
-            --text-main: #f5f5f5;
-            --text-muted: #a0a0a0;
-            --accent-green: #00A74A;
-            --accent-gold: #FED141;
-            --border-color: #333333;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            overflow-x: hidden;
+            background-color: #0a0a0c;
+            color: #e2e8f0;
+            background-image: 
+                linear-gradient(to right, rgba(30, 33, 40, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 33, 40, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0c; }
+        ::-webkit-scrollbar-thumb { background: #2d313b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4a5568; }
+
+        .telemetry-panel {
+            background: linear-gradient(145deg, #121418 0%, #0d0f12 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid #1e2128;
         }
 
-        h1 {
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.5rem;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 1rem;
-            margin-bottom: 2rem;
+        .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
+
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 8px; border-radius: 2px;
+            background: #00FA9A; cursor: pointer; margin-top: -6px;
+            box-shadow: 0 0 8px rgba(0, 250, 154, 0.6);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: #2d313b; border-radius: 2px;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
+        .g-meter-container {
+            position: relative; width: 200px; height: 200px; border-radius: 50%;
+            border: 2px solid #2d313b;
+            background: repeating-radial-gradient(circle, transparent, transparent 20px, rgba(45, 49, 59, 0.4) 21px, rgba(45, 49, 59, 0.4) 22px);
+        }
+        .g-meter-crosshair {
+            position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1);
+        }
+        .g-meter-crosshair.vert {
+            top: 0; bottom: 0; left: 50%; width: 1px; height: 100%;
+        }
+        .g-dot {
+            position: absolute; width: 12px; height: 12px; background-color: #FFD700; border-radius: 50%;
+            top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px #FFD700;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .key-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .rec-dot { animation: blink 2s infinite; }
 
-        .key-container input {
-            width: 100%;
-            padding-right: 5rem;
-            box-sizing: border-box;
+        /* Floating Chat Widget Styles */
+        .chat-widget {
+            position: fixed; bottom: 20px; right: 20px; z-index: 50;
+            width: 350px; background: #121418; border: 1px solid #00FA9A;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1);
+            display: flex; flex-direction: column; transform: translateY(120%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 500px;
         }
-
-        .toggle-btn {
-            position: absolute;
-            right: 0.75rem;
-            background: #2a2a2a;
-            color: var(--accent-gold);
-            border: 1px solid var(--border-color);
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            text-transform: uppercase;
+        .chat-widget.open { transform: translateY(0); }
+        .chat-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 40;
+            background: #00FA9A; color: #000; border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,250,154,0.3); font-weight: bold; font-size: 24px;
+            border: 2px solid #121418; transition: transform 0.2s;
         }
-
-        .toggle-btn:hover {
-            background: #333333;
-        }
-
-        .profile-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        select, input[type="password"], input[type="text"], input[type="number"], textarea {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        
-        .profile-group input[type="text"] {
-            flex: 2;
-            min-width: 200px;
-        }
-
-        .profile-group input[type="number"] {
-            flex: 1;
-            min-width: 100px;
-        }
-
-        select {
-            flex: 1;
-            min-width: 150px;
-            cursor: pointer;
-            appearance: none;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-green);
-        }
-
-        .submit-btn {
-            background-color: var(--accent-green);
-            color: #000;
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: opacity 0.2s ease;
-        }
-
-        .submit-btn:hover {
-            opacity: 0.8;
-        }
-
-        /* Dashboard Output Styles */
-        .dashboard {
-            display: none; 
-            gap: 1.5rem;
-            flex-direction: column;
-        }
-
-        .card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            font-size: 1.1rem;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .diagnostic-tags {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .tag {
-            background-color: #2a2a2a;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            border-left: 3px solid var(--accent-green);
-        }
-
-        .adjustments-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        li {
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.05rem;
-        }
-
-        li:last-child {
-            border-bottom: none;
-        }
-
-        li span.action {
-            color: var(--accent-gold);
-            font-weight: bold;
-        }
-
-        .engineer-notes {
-            font-style: italic;
-            color: var(--text-muted);
-            line-height: 1.5;
-            border-left: 3px solid var(--border-color);
-            padding-left: 1rem;
-        }
-
-        .loading {
-            display: none;
-            color: var(--accent-gold);
-            text-align: center;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .error-box {
-            display: none;
-            color: #ff5555;
-            background: #2b1111;
-            border: 1px solid #772222;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        @media (max-width: 600px) {
-            .adjustments-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* --- Sidebar Chat Styles --- */
-        .chat-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            z-index: 1000;
-            transition: opacity 0.3s ease;
-        }
-
-        .chat-toggle.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100vh;
-            background-color: #121212;
-            border-left: 2px solid var(--border-color);
-            box-shadow: -5px 0 15px rgba(0,0,0,0.8);
-            transition: right 0.3s ease-in-out;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar.open {
-            right: 0;
-        }
-
-        .sidebar-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h2 {
-            margin: 0;
-            color: var(--accent-gold);
-            font-size: 1.2rem;
-        }
-
-        .close-btn {
-            background: none;
-            color: var(--text-muted);
-            border: none;
-            font-size: 1.5rem;
-            padding: 0;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: var(--text-main);
-        }
-
-        .chat-history {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .chat-msg {
-            max-width: 85%;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            line-height: 1.4;
-            font-size: 0.95rem;
-        }
-
-        .msg-user {
-            background-color: var(--border-color);
-            color: var(--text-main);
-            align-self: flex-end;
-            border-bottom-right-radius: 0;
-        }
-
-        .msg-ai {
-            background-color: rgba(0, 167, 74, 0.1);
-            border: 1px solid var(--accent-green);
-            color: var(--text-main);
-            align-self: flex-start;
-            border-bottom-left-radius: 0;
-        }
-
-        .chat-input-area {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.8rem;
-            border-radius: 4px;
-        }
-        
-        #chat-loading {
-            display: none;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 0.5rem;
-        }
+        .chat-btn:hover { transform: scale(1.05); }
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; height: 300px; }
+        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 85%; }
+        .chat-msg.user { background: #2d313b; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
     </style>
 </head>
-<body>
+<body class="min-h-screen p-4 md:p-6 lg:p-8 font-sans">
 
-    <div class="container">
-        <h1>Race Engineer AI</h1>
-        
-        <div class="input-group">
-            <div class="key-container">
-                <input type="password" id="api-key" placeholder="Paste your Gemini API Key here">
-                <button type="button" id="toggle-key-visibility" class="toggle-btn">Show</button>
+    <div class="max-w-7xl mx-auto flex flex-col gap-6">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-dark-600 pb-4 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white tracking-widest uppercase flex items-center gap-3">
+                    <div class="w-3 h-3 bg-brand-red rounded-full rec-dot"></div>
+                    Telemetry <span class="text-brand-green font-light">//</span> Race Engineer
+                </h1>
+                <p class="text-gray-500 font-mono text-sm mt-1 uppercase tracking-wider">Live Diagnostics & Tuning Interface</p>
             </div>
             
-            <div class="profile-group">
-                <input type="text" id="car-model" placeholder="Make & Model (e.g. Veloster N)">
-                <input type="number" id="car-hp" placeholder="HP">
-                <select id="drivetrain" title="Drivetrain">
-                    <option value="">Drivetrain (Optional)</option>
-                    <option value="RWD">RWD</option>
-                    <option value="FWD">FWD</option>
-                    <option value="AWD">AWD</option>
-                </select>
-                <select id="engine" title="Engine Placement">
-                    <option value="">Engine (Optional)</option>
-                    <option value="Front-Engine">Front-Engine</option>
-                    <option value="Mid-Engine">Mid-Engine</option>
-                    <option value="Rear-Engine">Rear-Engine</option>
-                </select>
-                <select id="aero" title="Aero Package">
-                    <option value="">Aero (Optional)</option>
-                    <option value="Stock Aero">Stock Aero</option>
-                    <option value="Adjustable Downforce">Adjustable Downforce</option>
-                </select>
-            </div>
-
-            <textarea id="driver-input" placeholder="Describe what the car is doing... (e.g., 'It pushes wide when braking into corner entry')"></textarea>
-            <button id="analyze-btn" class="submit-btn">Analyze Telemetry</button>
-        </div>
-
-        <div id="loading" class="loading">Analyzing vehicle dynamics...</div>
-        <div id="error-message" class="error-box"></div>
-
-        <div id="dashboard" class="dashboard">
-            <div class="card">
-                <h2>Diagnostics</h2>
-                <div class="diagnostic-tags">
-                    <div class="tag" id="phase-tag">Phase: --</div>
-                    <div class="tag" id="symptom-tag">Symptom: --</div>
+            <div class="flex items-center gap-3">
+                <input type="password" id="api-key" placeholder="Gemini API Key" class="bg-dark-800 border border-dark-600 rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono w-48">
+                <div class="hidden md:flex gap-4 font-mono text-xs text-gray-400 ml-4">
+                    <div class="flex flex-col items-end">
+                        <span>SYS STATUS</span>
+                        <span class="text-brand-green">ONLINE</span>
+                    </div>
                 </div>
             </div>
+        </header>
 
-            <div class="adjustments-grid">
-                <div class="card">
-                    <h2>Primary Adjustments</h2>
-                    <ul id="primary-list"></ul>
-                </div>
-                <div class="card">
-                    <h2>Secondary Adjustments</h2>
-                    <ul id="secondary-list"></ul>
-                </div>
-            </div>
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <div class="card">
-                <h2>Engineer Notes</h2>
-                <div class="engineer-notes" id="notes-text">--</div>
-            </div>
-        </div>
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-full">
+                <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
+                    <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
+                </div>
+
+                <div class="flex flex-col gap-4 flex-grow">
+                    
+                    <div class="flex flex-col gap-1 flex-grow">
+                        <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
+                        <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer when accelerating out of corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full min-h-[120px] resize-none font-mono"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs text-gray-400 font-mono uppercase">Drivetrain</label>
+                            <select class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-green">
+                                <option>AWD</option>
+                                <option>RWD</option>
+                                <option>FWD</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs text-gray-400 font-mono uppercase">Engine Pos</label>
+                            <select class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-green">
+                                <option>Front</option>
+                                <option>Mid</option>
+                                <option>Rear</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="analyzeTelemetry()" id="analyze-btn" class="mt-4 w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-3 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-sm flex justify-center items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Analyze Telemetry
+                </button>
+            </section>
+
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col items-center">
+                <div class="w-full flex items-center justify-between gap-2 mb-6 border-b border-dark-600 pb-2">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <h2 class="text-lg font-bold text-white tracking-wide uppercase">Live Sensors</h2>
+                    </div>
+                    <span id="sensor-status" class="text-xs text-brand-red animate-pulse font-mono border border-brand-red px-2 py-0.5 rounded">AWAITING DATA</span>
+                </div>
+
+                <div class="flex flex-col w-full h-full justify-around items-center gap-6">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="text-xs text-gray-400 font-mono uppercase tracking-widest">Estimated Load (G)</div>
+                        <div class="g-meter-container" id="g-meter">
+                            <div class="g-meter-crosshair"></div>
+                            <div class="g-meter-crosshair vert"></div>
+                            <div class="g-dot" id="g-dot"></div>
+                            <div class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono">Accel</div>
+                            <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono">Brake</div>
+                        </div>
+                        <div class="font-mono text-2xl font-bold text-white data-glow w-24 text-center" id="g-text">0.00 G</div>
+                    </div>
+
+                    <div class="w-full mt-4">
+                        <div class="text-xs text-gray-400 font-mono uppercase tracking-widest text-center mb-4">Tire Surface Temps (F)</div>
+                        <div class="relative w-48 h-64 mx-auto border border-dark-600 rounded-2xl p-4 flex flex-col justify-between" style="background: rgba(45, 49, 59, 0.1);">
+                            <div class="absolute inset-x-8 inset-y-4 border border-dashed border-dark-600 rounded-lg pointer-events-none"></div>
+                            <div class="flex justify-between z-10">
+                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fl">
+                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
+                                </div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fr">
+                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between z-10">
+                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rl">
+                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
+                                </div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rr">
+                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col">
+                <div class="flex items-center gap-2 mb-6 border-b border-dark-600 pb-2">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
+                </div>
+
+                <div id="diag-empty" class="flex-grow flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-6">
+                    <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    WAITING FOR TELEMETRY INPUT
+                </div>
+
+                <div id="diag-loading" class="hidden flex-grow flex flex-col items-center justify-center text-brand-green font-mono text-sm">
+                    <div class="w-8 h-8 border-2 border-brand-green border-t-transparent rounded-full animate-spin mb-4"></div>
+                    PROCESSING PHYSICS DATA...
+                </div>
+
+                <div id="diag-error" class="hidden flex-grow flex-col items-center justify-center text-brand-red font-mono text-sm text-center p-4">
+                    <span id="error-msg">Error</span>
+                </div>
+
+                <div id="diag-results" class="hidden flex-col gap-6 h-full overflow-y-auto pr-2">
+                    <div class="flex gap-2 font-mono text-xs">
+                        <div class="bg-dark-600 border-l-2 border-brand-red px-3 py-1 text-white flex-1" id="res-phase">PHASE: --</div>
+                        <div class="bg-dark-600 border-l-2 border-brand-gold px-3 py-1 text-white flex-1" id="res-symptom">SYMPTOM: --</div>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-dark-800 border border-dark-600 rounded p-4">
+                            <h3 class="text-xs text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Primary Adjustments</h3>
+                            <ul class="font-mono text-sm flex flex-col gap-2" id="res-primary"></ul>
+                        </div>
+                        <div class="bg-dark-800 border border-dark-600 rounded p-4">
+                            <h3 class="text-xs text-gray-400 font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Secondary Options</h3>
+                            <ul class="font-mono text-sm flex flex-col gap-2" id="res-secondary"></ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto bg-dark-700/50 p-4 rounded border-l-4 border-brand-blue text-sm text-gray-300 italic">
+                        <strong class="text-white block not-italic mb-1 text-xs font-mono tracking-wider uppercase">Engineer Notes:</strong>
+                        <span id="res-notes">--</span>
+                    </div>
+                </div>
+            </section>
+        </main>
     </div>
 
-    <!-- Floating Chat Button -->
-    <button class="chat-toggle submit-btn" id="open-chat-btn">💬 Consult Engineer</button>
-
-    <!-- Chat Sidebar -->
-    <div class="sidebar" id="chat-sidebar">
-        <div class="sidebar-header">
-            <h2>Pit Wall Comms</h2>
-            <button class="close-btn" id="close-chat-btn">&times;</button>
+    <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
+    <div class="chat-widget" id="chat-widget">
+        <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center">
+            <span class="text-white font-bold font-mono tracking-wide text-sm flex items-center gap-2">
+                <div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS
+            </span>
+            <button onclick="toggleChat()" class="text-gray-400 hover:text-white">&times;</button>
         </div>
-        <div class="chat-history" id="chat-box">
-            <div class="chat-msg msg-ai">Driver, this is the pit wall. What setup questions do you have?</div>
+        <div class="chat-messages" id="chat-box">
+            <div class="chat-msg bot">Engineer: Comms check. Let me know if you need clarification on any setup changes.</div>
         </div>
-        <div id="chat-loading">Engineer is typing...</div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Ask about camber, aero, tire PSI...">
-            <button class="submit-btn" id="send-chat-btn" style="padding: 0.8rem;">Send</button>
+        <div class="p-3 border-t border-dark-600 bg-dark-800 rounded-b-xl flex gap-2">
+            <input type="text" id="chat-input" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-2 rounded font-bold hover:opacity-80">SEND</button>
         </div>
     </div>
 
     <script>
+        // -- Initialization & Key Management --
         const apiKeyInput = document.getElementById('api-key');
-        const toggleBtn = document.getElementById('toggle-key-visibility');
-        const errorBox = document.getElementById('error-message');
-        const loadingBox = document.getElementById('loading');
-        const dashboard = document.getElementById('dashboard');
-
-        // Load saved API key
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
-            if (savedKey) {
-                apiKeyInput.value = savedKey;
-            }
+            if (savedKey) apiKeyInput.value = savedKey;
+            
+            // Set default cold tires
+            updateTemps({fl: 100, fr: 100, rl: 100, rr: 100});
         });
 
-        // Show/Hide API key
-        toggleBtn.addEventListener('click', () => {
-            if (apiKeyInput.type === 'password') {
-                apiKeyInput.type = 'text';
-                toggleBtn.textContent = 'Hide';
-            } else {
-                apiKeyInput.type = 'password';
-                toggleBtn.textContent = 'Show';
-            }
+        apiKeyInput.addEventListener('change', () => {
+            localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
 
-        /* =========================================
-           PART 1: MAIN DASHBOARD LOGIC
-           ========================================= */
-        document.getElementById('analyze-btn').addEventListener('click', async () => {
-            const apiKey = apiKeyInput.value.trim();
-            const rawInput = document.getElementById('driver-input').value.trim();
+        // -- Animation Logic for Sensors --
+        let gDot = document.getElementById('g-dot');
+        let gText = document.getElementById('g-text');
+        let currentTx = 0, currentTy = 0;
+        let targetTx = 0, targetTy = 0;
+
+        function animateTelemetry() {
+            currentTx += (targetTx - currentTx) * 0.1;
+            currentTy += (targetTy - currentTy) * 0.1;
             
-            const carModel = document.getElementById('car-model').value.trim();
-            const carHp = document.getElementById('car-hp').value.trim();
-            const drivetrain = document.getElementById('drivetrain').value;
-            const engine = document.getElementById('engine').value;
-            const aero = document.getElementById('aero').value;
+            let jitterX = (Math.random() - 0.5) * 2;
+            let jitterY = (Math.random() - 0.5) * 2;
+            if(targetTx === 0 && targetTy === 0) { jitterX = 0; jitterY = 0; } // smooth when idle
+
+            gDot.style.transform = `translate(calc(-50% + ${currentTx + jitterX}px), calc(-50% + ${currentTy + jitterY}px))`;
             
-            errorBox.style.display = 'none';
-            dashboard.style.display = 'none';
+            let gVal = Math.sqrt(Math.pow(currentTx, 2) + Math.pow(currentTy, 2)) / (100 / 1.5);
+            gText.innerText = gVal.toFixed(2) + ' G';
 
-            if (!apiKey) {
-                showError('Please enter your Gemini API Key.');
-                return;
-            }
-            if (!rawInput) {
-                showError('Please describe what issue the car is having.');
-                return;
-            }
-
-            localStorage.setItem('forza_gemini_api_key', apiKey);
-            loadingBox.style.display = 'block';
-
-            let finalInput = rawInput;
-            const profileSpecs = [];
-            
-            if (carModel) profileSpecs.push(`Model: ${carModel}`);
-            if (carHp) profileSpecs.push(`Power: ${carHp} HP`);
-            if (drivetrain) profileSpecs.push(drivetrain);
-            if (engine) profileSpecs.push(engine);
-            if (aero) profileSpecs.push(aero);
-            
-            if (profileSpecs.length > 0) {
-                finalInput = `Vehicle Profile: ${profileSpecs.join(', ')}.\nDriver Complaint: ${rawInput}`;
-            }
-
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-
-            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate driver complaints into precise tuning adjustments. 
-            Determine: 1. Corner Phase (Entry, Mid-Corner, Exit) and 2. Symptom (Understeer, Oversteer).
-            CRITICAL: If a "Vehicle Profile" is provided in the input, you MUST use it to prioritize your adjustments. Take into account the car model and horsepower if provided.
-            You MUST respond ONLY with a valid JSON object. 
-            Schema: {"diagnostics": {"identified_phase": "string", "identified_symptom": "string"}, "adjustments": {"primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}], "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]}, "engineer_notes": "string"}`;
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        system_instruction: { parts: [{ text: systemPrompt }] },
-                        contents: [{ role: "user", parts: [{ text: finalInput }] }],
-                        generationConfig: { response_mime_type: "application/json" }
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error?.message || `HTTP status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                const parsedData = JSON.parse(data.candidates[0].content.parts[0].text);
-
-                renderDashboard(parsedData);
-                loadingBox.style.display = 'none';
-                dashboard.style.display = 'flex';
-
-            } catch (error) {
-                console.error("Dashboard API Error:", error);
-                loadingBox.style.display = 'none';
-                showError(`Diagnostic Failure: ${error.message}`);
-            }
-        });
-
-        function showError(msg) {
-            errorBox.textContent = msg;
-            errorBox.style.display = 'block';
+            requestAnimationFrame(animateTelemetry);
         }
+        animateTelemetry();
 
-        function renderDashboard(data) {
-            document.getElementById('phase-tag').textContent = `Phase: ${data.diagnostics?.identified_phase || 'General'}`;
-            document.getElementById('symptom-tag').textContent = `Symptom: ${data.diagnostics?.identified_symptom || 'Handling'}`;
-            document.getElementById('notes-text').textContent = data.engineer_notes || 'No telemetry notes provided.';
-
-            const populateList = (elementId, items) => {
-                const ul = document.getElementById(elementId);
-                ul.innerHTML = ''; 
-                if (items && items.length > 0) {
-                    items.forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span>${item.component}</span> <span class="action">${item.action}</span>`;
-                        ul.appendChild(li);
-                    });
-                } else {
-                    ul.innerHTML = '<li>None required</li>';
-                }
+        function updateTemps(tData) {
+            const getColor = (temp) => {
+                if(temp < 150) return 'from-brand-blue to-blue-500 text-white'; 
+                if(temp < 210) return 'from-brand-blue to-green-400 text-black shadow-[0_0_10px_rgba(0,250,154,0.3)]'; 
+                return 'from-yellow-400 to-brand-red text-black shadow-[0_0_15px_rgba(255,51,102,0.6)]'; 
             };
 
-            populateList('primary-list', data.adjustments?.primary);
-            populateList('secondary-list', data.adjustments?.secondary);
+            const tires = ['fl', 'fr', 'rl', 'rr'];
+            tires.forEach(pos => {
+                let el = document.getElementById(`tire-${pos}`);
+                let temp = tData[pos] + Math.floor(Math.random()*3); 
+                el.className = `w-8 h-12 rounded bg-gradient-to-t flex items-center justify-center border border-black transition-all duration-700 ${getColor(temp)}`;
+                el.innerHTML = `<span class="text-[10px] font-mono font-bold transform -rotate-90">${temp}°</span>`;
+            });
         }
 
-        /* =========================================
-           PART 2: SIDEBAR CHAT LOGIC
-           ========================================= */
-        const sidebar = document.getElementById('chat-sidebar');
-        const openBtn = document.getElementById('open-chat-btn');
-        const closeBtn = document.getElementById('close-chat-btn');
-        const chatBox = document.getElementById('chat-box');
-        const chatInput = document.getElementById('chat-input');
-        const sendChatBtn = document.getElementById('send-chat-btn');
-        const chatLoading = document.getElementById('chat-loading');
+        // Simulates visual sensor data based on AI diagnosis
+        function simulateSensors(phase, symptom) {
+            document.getElementById('sensor-status').innerText = "LIVE SIMULATION";
+            document.getElementById('sensor-status').className = "text-xs text-brand-green font-mono border border-brand-green px-2 py-0.5 rounded";
 
-        openBtn.addEventListener('click', () => {
-            sidebar.classList.add('open');
-            openBtn.classList.add('hidden');
-        });
-        
-        closeBtn.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            openBtn.classList.remove('hidden');
-        });
+            let p = (phase || '').toLowerCase();
+            let s = (symptom || '').toLowerCase();
 
-        let chatHistory = [];
-        
-        async function handleChatSend() {
-            const apiKey = apiKeyInput.value.trim();
-            const userText = chatInput.value.trim();
-            if (!userText) return;
+            // Default warm tires
+            let temps = {fl: 180, fr: 180, rl: 180, rr: 180};
+            let gx = 0, gy = 0;
 
-            if (!apiKey) {
-                appendMessage("Please enter your Gemini API Key in the main dashboard first.", 'ai');
-                return;
+            if (p.includes('entry') || p.includes('brak')) {
+                gy = -1.2; // braking
+                if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } // sliding fronts
+                if (s.includes('over')) { temps.rl = 210; temps.rr = 210; } // sliding rears
+            } 
+            else if (p.includes('exit') || p.includes('accel')) {
+                gy = 0.9; // accelerating
+                if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } // spinning rears
+                if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } // pushing fronts
+            }
+            else if (p.includes('mid')) {
+                gx = 1.3; // cornering hard
+                temps = {fl: 210, fr: 170, rl: 215, rr: 175}; // outside tires hot
             }
 
-            appendMessage(userText, 'user');
-            chatInput.value = '';
-            chatLoading.style.display = 'block';
+            // Set targets for animation loop
+            targetTx = (gx / 1.5) * 100;
+            targetTy = (gy / 1.5) * 100;
+            updateTemps(temps);
+        }
 
-            // Fetch vehicle profile dynamically for the chat context
-            const carModel = document.getElementById('car-model').value.trim();
-            const carHp = document.getElementById('car-hp').value.trim();
-            const drivetrain = document.getElementById('drivetrain').value;
-            const engine = document.getElementById('engine').value;
-            const aero = document.getElementById('aero').value;
+        // -- Main Gemini API Logic --
+        async function analyzeTelemetry() {
+            const apiKey = apiKeyInput.value.trim();
+            const input = document.getElementById('driver-input').value.trim();
+            const btn = document.getElementById('analyze-btn');
             
-            const profileSpecs = [];
-            if (carModel) profileSpecs.push(`Model: ${carModel}`);
-            if (carHp) profileSpecs.push(`Power: ${carHp} HP`);
-            if (drivetrain) profileSpecs.push(drivetrain);
-            if (engine) profileSpecs.push(engine);
-            if (aero) profileSpecs.push(aero);
-            
-            const profileContext = profileSpecs.length > 0 
-                ? `The driver is currently in a ${profileSpecs.join(', ')}. Keep this in mind. ` 
-                : "";
+            if (!apiKey) { alert('Please enter your Gemini API Key in the top right.'); return; }
+            if (!input) { alert('Please describe the car behavior first.'); return; }
 
-            const chatSystemInstruction = `You are an expert Forza Motorsport Race Engineer. ${profileContext}Provide concise, accurate advice on car setup, tire pressure, camber, telemetry, and driving techniques. Be direct and helpful. Do not output JSON, speak conversationally to the driver.`;
+            // UI Loading State
+            document.getElementById('diag-empty').classList.add('hidden');
+            document.getElementById('diag-results').classList.add('hidden');
+            document.getElementById('diag-error').classList.add('hidden');
+            document.getElementById('diag-loading').classList.remove('hidden');
+            document.getElementById('diag-loading').classList.add('flex');
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
 
-            chatHistory.push({ role: "user", parts: [{ text: userText }] });
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first.
+            Respond ONLY with a valid JSON object matching this schema exactly:
+            {
+              "diagnostics": {
+                "identified_phase": "Entry | Mid-Corner | Exit",
+                "identified_symptom": "Understeer | Oversteer"
+              },
+              "adjustments": {
+                "primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}],
+                "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]
+              },
+              "engineer_notes": "One-sentence explanation of why this fixes the issue."
+            }`;
 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-            
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        system_instruction: { parts: [{ text: chatSystemInstruction }] },
-                        contents: chatHistory 
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        contents: [{ role: "user", parts: [{ text: input }] }],
+                        generationConfig: { responseMimeType: "application/json" }
                     })
                 });
 
-                if (!response.ok) throw new Error("Chat API Error");
-                
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
                 const data = await response.json();
-                const aiResponseText = data.candidates[0].content.parts[0].text;
+                
+                let rawText = data.candidates[0].content.parts[0].text.trim();
+                const parsedData = JSON.parse(rawText);
 
-                appendMessage(aiResponseText, 'ai');
-                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+                // Update Visual Sensors based on findings
+                simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
+
+                // Render Diagnostics
+                document.getElementById('res-phase').innerText = `PHASE: ${parsedData.diagnostics?.identified_phase || '--'}`;
+                document.getElementById('res-symptom').innerText = `SYMPTOM: ${parsedData.diagnostics?.identified_symptom || '--'}`;
+                document.getElementById('res-notes').innerText = parsedData.engineer_notes || 'No notes provided.';
+
+                const createListItem = (item) => {
+                    let color = (item.action.toLowerCase().includes('soften') || item.action.toLowerCase().includes('decrease')) ? 'text-brand-green' : 'text-brand-red';
+                    return `<li class="flex justify-between items-center border-b border-dark-600/50 pb-2 last:border-0 last:pb-0">
+                                <span>${item.component}</span>
+                                <span class="${color} font-bold bg-dark-900 px-2 py-0.5 rounded text-xs border border-dark-600">${item.action.toUpperCase()}</span>
+                            </li>`;
+                };
+
+                document.getElementById('res-primary').innerHTML = (parsedData.adjustments?.primary || []).map(createListItem).join('') || '<li>None</li>';
+                document.getElementById('res-secondary').innerHTML = (parsedData.adjustments?.secondary || []).map(createListItem).join('') || '<li>None</li>';
+
+                // Swap UI states
+                document.getElementById('diag-loading').classList.add('hidden');
+                document.getElementById('diag-loading').classList.remove('flex');
+                document.getElementById('diag-results').classList.remove('hidden');
+                document.getElementById('diag-results').classList.add('flex');
 
             } catch (error) {
                 console.error(error);
-                appendMessage("Comm link broken. Check your API key or network connection.", 'ai');
+                document.getElementById('diag-loading').classList.add('hidden');
+                document.getElementById('diag-loading').classList.remove('flex');
+                document.getElementById('diag-error').classList.remove('hidden');
+                document.getElementById('diag-error').classList.add('flex');
+                document.getElementById('error-msg').innerText = "Diagnostic Failure: Could not parse telemetry data.";
+                
+                // Reset sensors to idle
+                targetTx = 0; targetTy = 0;
+                document.getElementById('sensor-status').innerText = "ERROR";
+                document.getElementById('sensor-status').className = "text-xs text-brand-red font-mono border border-brand-red px-2 py-0.5 rounded";
             } finally {
-                chatLoading.style.display = 'none';
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        function appendMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('chat-msg');
-            msgDiv.classList.add(sender === 'user' ? 'msg-user' : 'msg-ai');
-            msgDiv.textContent = text;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        // -- Chat Widget Logic --
+        function toggleChat() {
+            document.getElementById('chat-widget').classList.toggle('open');
         }
 
-        sendChatBtn.addEventListener('click', handleChatSend);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleChatSend();
-        });
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const text = inputEl.value.trim();
+            const apiKey = apiKeyInput.value.trim();
+            const chatBox = document.getElementById('chat-box');
+
+            if (!text) return;
+            if (!apiKey) { alert('API Key required for comms.'); return; }
+
+            // Add user message
+            chatBox.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            inputEl.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Add typing indicator
+            const typingId = 'typing-' + Date.now();
+            chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        systemInstruction: { parts: [{ text: "You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology." }] },
+                        contents: [{ role: "user", parts: [{ text: text }] }]
+                    })
+                });
+
+                document.getElementById(typingId).remove();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const reply = data.candidates[0].content.parts[0].text;
+                    chatBox.innerHTML += `<div class="chat-msg bot">Engineer: ${reply}</div>`;
+                } else {
+                    chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Radio interference. Say again?</div>`;
+                }
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } catch (err) {
+                document.getElementById(typingId).remove();
+                chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`;
+            }
+        }
     </script>
 </body>
 </html>
