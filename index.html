@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forza Race Engineer</title>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZWMZXGP4H"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -89,9 +88,10 @@
         .profile-group {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
-        select, input[type="password"], input[type="text"], textarea {
+        select, input[type="password"], input[type="text"], input[type="number"], textarea {
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             color: var(--text-main);
@@ -100,9 +100,20 @@
             font-size: 1rem;
             font-family: inherit;
         }
+        
+        .profile-group input[type="text"] {
+            flex: 2;
+            min-width: 200px;
+        }
+
+        .profile-group input[type="number"] {
+            flex: 1;
+            min-width: 100px;
+        }
 
         select {
             flex: 1;
+            min-width: 150px;
             cursor: pointer;
             appearance: none;
         }
@@ -229,9 +240,6 @@
         }
 
         @media (max-width: 600px) {
-            .profile-group {
-                flex-direction: column;
-            }
             .adjustments-grid {
                 grid-template-columns: 1fr;
             }
@@ -368,6 +376,8 @@
             </div>
             
             <div class="profile-group">
+                <input type="text" id="car-model" placeholder="Make & Model (e.g. Veloster N)">
+                <input type="number" id="car-hp" placeholder="HP">
                 <select id="drivetrain" title="Drivetrain">
                     <option value="">Drivetrain (Optional)</option>
                     <option value="RWD">RWD</option>
@@ -473,6 +483,8 @@
             const apiKey = apiKeyInput.value.trim();
             const rawInput = document.getElementById('driver-input').value.trim();
             
+            const carModel = document.getElementById('car-model').value.trim();
+            const carHp = document.getElementById('car-hp').value.trim();
             const drivetrain = document.getElementById('drivetrain').value;
             const engine = document.getElementById('engine').value;
             const aero = document.getElementById('aero').value;
@@ -493,17 +505,23 @@
             loadingBox.style.display = 'block';
 
             let finalInput = rawInput;
-            const profileSpecs = [drivetrain, engine, aero].filter(Boolean);
+            const profileSpecs = [];
+            
+            if (carModel) profileSpecs.push(`Model: ${carModel}`);
+            if (carHp) profileSpecs.push(`Power: ${carHp} HP`);
+            if (drivetrain) profileSpecs.push(drivetrain);
+            if (engine) profileSpecs.push(engine);
+            if (aero) profileSpecs.push(aero);
             
             if (profileSpecs.length > 0) {
                 finalInput = `Vehicle Profile: ${profileSpecs.join(', ')}.\nDriver Complaint: ${rawInput}`;
             }
 
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-            
+
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate driver complaints into precise tuning adjustments. 
             Determine: 1. Corner Phase (Entry, Mid-Corner, Exit) and 2. Symptom (Understeer, Oversteer).
-            CRITICAL: If a "Vehicle Profile" is provided in the input, you MUST use it to prioritize your adjustments.
+            CRITICAL: If a "Vehicle Profile" is provided in the input, you MUST use it to prioritize your adjustments. Take into account the car model and horsepower if provided.
             You MUST respond ONLY with a valid JSON object. 
             Schema: {"diagnostics": {"identified_phase": "string", "identified_symptom": "string"}, "adjustments": {"primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}], "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]}, "engineer_notes": "string"}`;
 
@@ -576,7 +594,6 @@
         const sendChatBtn = document.getElementById('send-chat-btn');
         const chatLoading = document.getElementById('chat-loading');
 
-        // Toggle Sidebar - Hides the floating button when open
         openBtn.addEventListener('click', () => {
             sidebar.classList.add('open');
             openBtn.classList.add('hidden');
@@ -588,8 +605,7 @@
         });
 
         let chatHistory = [];
-        const chatSystemInstruction = "You are an expert Forza Motorsport Race Engineer. Provide concise, accurate advice on car setup, tire pressure, camber, telemetry, and driving techniques. Be direct and helpful. Do not output JSON, speak conversationally to the driver.";
-
+        
         async function handleChatSend() {
             const apiKey = apiKeyInput.value.trim();
             const userText = chatInput.value.trim();
@@ -603,6 +619,26 @@
             appendMessage(userText, 'user');
             chatInput.value = '';
             chatLoading.style.display = 'block';
+
+            // Fetch vehicle profile dynamically for the chat context
+            const carModel = document.getElementById('car-model').value.trim();
+            const carHp = document.getElementById('car-hp').value.trim();
+            const drivetrain = document.getElementById('drivetrain').value;
+            const engine = document.getElementById('engine').value;
+            const aero = document.getElementById('aero').value;
+            
+            const profileSpecs = [];
+            if (carModel) profileSpecs.push(`Model: ${carModel}`);
+            if (carHp) profileSpecs.push(`Power: ${carHp} HP`);
+            if (drivetrain) profileSpecs.push(drivetrain);
+            if (engine) profileSpecs.push(engine);
+            if (aero) profileSpecs.push(aero);
+            
+            const profileContext = profileSpecs.length > 0 
+                ? `The driver is currently in a ${profileSpecs.join(', ')}. Keep this in mind. ` 
+                : "";
+
+            const chatSystemInstruction = `You are an expert Forza Motorsport Race Engineer. ${profileContext}Provide concise, accurate advice on car setup, tire pressure, camber, telemetry, and driving techniques. Be direct and helpful. Do not output JSON, speak conversationally to the driver.`;
 
             chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
