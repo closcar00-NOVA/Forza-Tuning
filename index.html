@@ -100,7 +100,6 @@
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Driver Feedback Panel -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-full">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -157,7 +156,6 @@
                 </button>
             </section>
 
-            <!-- Live Sensors Panel -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col items-center">
                 <div class="w-full flex items-center justify-between gap-2 mb-6 border-b border-dark-600 pb-2">
                     <div class="flex items-center gap-2">
@@ -196,7 +194,6 @@
                 </div>
             </section>
 
-            <!-- AI Diagnostics Panel -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col">
                 <div class="flex items-center gap-2 mb-6 border-b border-dark-600 pb-2">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -243,7 +240,6 @@
         </main>
     </div>
 
-    <!-- Floating Chat Widget -->
     <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
     <div class="chat-widget" id="chat-widget">
         <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center">
@@ -277,7 +273,6 @@
                     <input type="hidden" id="edit-id" value="">
                     <input type="text" id="save-car-name" placeholder="Save As (e.g., Wet Track NSX)" class="garage-input font-bold text-brand-gold border-brand-gold/30">
                     
-                    <!-- Core Car Info -->
                     <div class="grid grid-cols-2 gap-2 pb-2 border-b border-dark-600">
                         <input type="text" id="set-make" placeholder="Make / Model" class="garage-input">
                         <input type="text" id="set-hp" placeholder="Horsepower" class="garage-input">
@@ -287,8 +282,10 @@
                         <select id="set-eng" class="garage-input appearance-none text-gray-400"><option value="">Engine Pos...</option><option>Front</option><option>Mid</option><option>Rear</option></select>
                     </div>
 
-                    <!-- Deep Data Grid -->
+                    <!-- Deep Data Grid with Width & Rim additions -->
                     <div class="grid grid-cols-2 gap-2 pt-1">
+                        <input type="text" id="set-widthF" placeholder="Tire Width F" class="garage-input"><input type="text" id="set-widthR" placeholder="Tire Width R" class="garage-input">
+                        <input type="text" id="set-rimF" placeholder="Rim Size F" class="garage-input"><input type="text" id="set-rimR" placeholder="Rim Size R" class="garage-input">
                         <input type="text" id="set-tireF" placeholder="Tire F (psi)" class="garage-input"><input type="text" id="set-tireR" placeholder="Tire R (psi)" class="garage-input">
                         <input type="text" id="set-camF" placeholder="Camber F" class="garage-input"><input type="text" id="set-camR" placeholder="Camber R" class="garage-input">
                         <input type="text" id="set-arbF" placeholder="ARB F" class="garage-input"><input type="text" id="set-arbR" placeholder="ARB R" class="garage-input">
@@ -372,7 +369,7 @@
             document.getElementById('drivetrain').value = car.drive;
             document.getElementById('engine-pos').value = car.engine;
             
-            activeBaseline = `Deep Setup Info: Tires (F/R): ${car.tireF}/${car.tireR}, Camber: ${car.camF}/${car.camR}, ARB: ${car.arbF}/${car.arbR}, Springs: ${car.sprF}/${car.sprR}, Ride Height: ${car.hgtF}/${car.hgtR}, Bump: ${car.bmpF}/${car.bmpR}, Rebound: ${car.rebF}/${car.rebR}, Aero: ${car.aerF}/${car.aerR}, Brake Bias/Pres: ${car.brkBal}/${car.brkPres}, Diff Acc/Dec: ${car.difAcc}/${car.difDec}.`;
+            activeBaseline = `Deep Setup Info: Tire Width (F/R): ${car.widthF || '-'}/${car.widthR || '-'}, Rim Size: ${car.rimF || '-'}/${car.rimR || '-'}, Tires (F/R): ${car.tireF}/${car.tireR}, Camber: ${car.camF}/${car.camR}, ARB: ${car.arbF}/${car.arbR}, Springs: ${car.sprF}/${car.sprR}, Ride Height: ${car.hgtF}/${car.hgtR}, Bump: ${car.bmpF}/${car.bmpR}, Rebound: ${car.rebF}/${car.rebR}, Aero: ${car.aerF}/${car.aerR}, Brake Bias/Pres: ${car.brkBal}/${car.brkPres}, Diff Acc/Dec: ${car.difAcc}/${car.difDec}.`;
             
             toggleGarage();
             alert(`Loaded: ${car.name}\nDeep telemetry applied to background context.`);
@@ -393,6 +390,8 @@
                 bias: document.getElementById('set-bias').value || 50,
                 drive: document.getElementById('set-drive').value || 'RWD',
                 engine: document.getElementById('set-eng').value || 'Front',
+                widthF: document.getElementById('set-widthF').value || '-', widthR: document.getElementById('set-widthR').value || '-',
+                rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
                 tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
                 camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
                 arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
@@ -430,26 +429,30 @@
             document.getElementById('set-drive').value = car.drive;
             document.getElementById('set-eng').value = car.engine;
             
-            document.getElementById('set-tireF').value = car.tireF !== '-' ? car.tireF : '';
-            document.getElementById('set-tireR').value = car.tireR !== '-' ? car.tireR : '';
-            document.getElementById('set-camF').value = car.camF !== '-' ? car.camF : '';
-            document.getElementById('set-camR').value = car.camR !== '-' ? car.camR : '';
-            document.getElementById('set-arbF').value = car.arbF !== '-' ? car.arbF : '';
-            document.getElementById('set-arbR').value = car.arbR !== '-' ? car.arbR : '';
-            document.getElementById('set-sprF').value = car.sprF !== '-' ? car.sprF : '';
-            document.getElementById('set-sprR').value = car.sprR !== '-' ? car.sprR : '';
-            document.getElementById('set-hgtF').value = car.hgtF !== '-' ? car.hgtF : '';
-            document.getElementById('set-hgtR').value = car.hgtR !== '-' ? car.hgtR : '';
-            document.getElementById('set-bmpF').value = car.bmpF !== '-' ? car.bmpF : '';
-            document.getElementById('set-bmpR').value = car.bmpR !== '-' ? car.bmpR : '';
-            document.getElementById('set-rebF').value = car.rebF !== '-' ? car.rebF : '';
-            document.getElementById('set-rebR').value = car.rebR !== '-' ? car.rebR : '';
-            document.getElementById('set-aerF').value = car.aerF !== '-' ? car.aerF : '';
-            document.getElementById('set-aerR').value = car.aerR !== '-' ? car.aerR : '';
-            document.getElementById('set-brkBal').value = car.brkBal !== '-' ? car.brkBal : '';
-            document.getElementById('set-brkPres').value = car.brkPres !== '-' ? car.brkPres : '';
-            document.getElementById('set-difAcc').value = car.difAcc !== '-' ? car.difAcc : '';
-            document.getElementById('set-difDec').value = car.difDec !== '-' ? car.difDec : '';
+            document.getElementById('set-widthF').value = car.widthF && car.widthF !== '-' ? car.widthF : '';
+            document.getElementById('set-widthR').value = car.widthR && car.widthR !== '-' ? car.widthR : '';
+            document.getElementById('set-rimF').value = car.rimF && car.rimF !== '-' ? car.rimF : '';
+            document.getElementById('set-rimR').value = car.rimR && car.rimR !== '-' ? car.rimR : '';
+            document.getElementById('set-tireF').value = car.tireF && car.tireF !== '-' ? car.tireF : '';
+            document.getElementById('set-tireR').value = car.tireR && car.tireR !== '-' ? car.tireR : '';
+            document.getElementById('set-camF').value = car.camF && car.camF !== '-' ? car.camF : '';
+            document.getElementById('set-camR').value = car.camR && car.camR !== '-' ? car.camR : '';
+            document.getElementById('set-arbF').value = car.arbF && car.arbF !== '-' ? car.arbF : '';
+            document.getElementById('set-arbR').value = car.arbR && car.arbR !== '-' ? car.arbR : '';
+            document.getElementById('set-sprF').value = car.sprF && car.sprF !== '-' ? car.sprF : '';
+            document.getElementById('set-sprR').value = car.sprR && car.sprR !== '-' ? car.sprR : '';
+            document.getElementById('set-hgtF').value = car.hgtF && car.hgtF !== '-' ? car.hgtF : '';
+            document.getElementById('set-hgtR').value = car.hgtR && car.hgtR !== '-' ? car.hgtR : '';
+            document.getElementById('set-bmpF').value = car.bmpF && car.bmpF !== '-' ? car.bmpF : '';
+            document.getElementById('set-bmpR').value = car.bmpR && car.bmpR !== '-' ? car.bmpR : '';
+            document.getElementById('set-rebF').value = car.rebF && car.rebF !== '-' ? car.rebF : '';
+            document.getElementById('set-rebR').value = car.rebR && car.rebR !== '-' ? car.rebR : '';
+            document.getElementById('set-aerF').value = car.aerF && car.aerF !== '-' ? car.aerF : '';
+            document.getElementById('set-aerR').value = car.aerR && car.aerR !== '-' ? car.aerR : '';
+            document.getElementById('set-brkBal').value = car.brkBal && car.brkBal !== '-' ? car.brkBal : '';
+            document.getElementById('set-brkPres').value = car.brkPres && car.brkPres !== '-' ? car.brkPres : '';
+            document.getElementById('set-difAcc').value = car.difAcc && car.difAcc !== '-' ? car.difAcc : '';
+            document.getElementById('set-difDec').value = car.difDec && car.difDec !== '-' ? car.difDec : '';
         }
 
         function deleteCar(id) {
@@ -585,7 +588,7 @@
                 const data = await response.json();
                 
                 let rawText = data.candidates[0].content.parts[0].text.trim();
-                rawText = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim(); // Sanitize any markdown formatting
+                rawText = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim(); 
                 const parsedData = JSON.parse(rawText);
 
                 simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
