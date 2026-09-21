@@ -10,18 +10,8 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: {
-                            900: '#0a0a0c', 
-                            800: '#121418', 
-                            700: '#1e2128', 
-                            600: '#2d313b', 
-                        },
-                        brand: {
-                            green: '#00FA9A', 
-                            gold: '#FFD700',  
-                            red: '#FF3366',   
-                            blue: '#00E5FF'   
-                        }
+                        dark: { 900: '#0a0a0c', 800: '#121418', 700: '#1e2128', 600: '#2d313b' },
+                        brand: { green: '#00FA9A', gold: '#FFD700', red: '#FF3366', blue: '#00E5FF' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -35,11 +25,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         
         body {
-            background-color: #0a0a0c;
-            color: #e2e8f0;
-            background-image: 
-                linear-gradient(to right, rgba(30, 33, 40, 0.2) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 33, 40, 0.2) 1px, transparent 1px);
+            background-color: #0a0a0c; color: #e2e8f0;
+            background-image: linear-gradient(to right, rgba(30, 33, 40, 0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(30, 33, 40, 0.2) 1px, transparent 1px);
             background-size: 40px 40px;
         }
         
@@ -50,15 +37,12 @@
         
         .telemetry-panel {
             background: linear-gradient(145deg, #121418 0%, #0d0f12 100%);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.5);
-            border: 1px solid #1e2128;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #1e2128;
         }
-        
         .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
         
         .g-meter-container {
-            position: relative; width: 200px; height: 200px; border-radius: 50%;
-            border: 2px solid #2d313b;
+            position: relative; width: 200px; height: 200px; border-radius: 50%; border: 2px solid #2d313b;
             background: repeating-radial-gradient(circle, transparent, transparent 20px, rgba(45, 49, 59, 0.4) 21px, rgba(45, 49, 59, 0.4) 22px);
         }
         .g-meter-crosshair { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
@@ -68,25 +52,18 @@
             top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px #FFD700;
             transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .rec-dot { animation: blink 2s infinite; }
         
-        /* Floating Chat Widget Styles */
         .chat-widget {
-            position: fixed; bottom: 20px; right: 20px; z-index: 50;
-            width: 350px; background: #121418; border: 1px solid #00FA9A;
-            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1);
-            display: flex; flex-direction: column; transform: translateY(120%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 500px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 50; width: 350px; background: #121418; border: 1px solid #00FA9A;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1); display: flex; flex-direction: column; transform: translateY(120%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 500px;
         }
         .chat-widget.open { transform: translateY(0); }
         .chat-btn {
-            position: fixed; bottom: 20px; right: 20px; z-index: 40;
-            background: #00FA9A; color: #000; border-radius: 50%; width: 60px; height: 60px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,250,154,0.3); font-weight: bold; font-size: 24px;
+            position: fixed; bottom: 20px; right: 20px; z-index: 40; background: #00FA9A; color: #000; border-radius: 50%; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,250,154,0.3); font-weight: bold; font-size: 24px;
             border: 2px solid #121418; transition: transform 0.2s;
         }
         .chat-btn:hover { transform: scale(1.05); }
@@ -96,8 +73,7 @@
         .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
         
         .garage-input {
-            background-color: #1e2128; border: 1px solid #2d313b; border-radius: 4px; 
-            padding: 4px 8px; color: white; width: 100%; transition: border-color 0.2s;
+            background-color: #1e2128; border: 1px solid #2d313b; border-radius: 4px; padding: 4px 8px; color: white; width: 100%; transition: border-color 0.2s;
         }
         .garage-input:focus { outline: none; border-color: #FFD700; }
     </style>
@@ -116,16 +92,9 @@
             
             <div class="flex items-center gap-3">
                 <input type="password" id="api-key" placeholder="Gemini API Key" class="bg-dark-800 border border-dark-600 rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono w-48">
-                
-                <button onclick="toggleGarage()" class="ml-2 bg-dark-700 hover:bg-brand-gold text-brand-gold hover:text-black border border-brand-gold font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs">
-                    Garage
-                </button>
-
+                <button onclick="toggleGarage()" class="ml-2 bg-dark-700 hover:bg-brand-gold text-brand-gold hover:text-black border border-brand-gold font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs">Garage</button>
                 <div class="hidden md:flex gap-4 font-mono text-xs text-gray-400 ml-4">
-                    <div class="flex flex-col items-end">
-                        <span>SYS STATUS</span>
-                        <span class="text-brand-green">ONLINE</span>
-                    </div>
+                    <div class="flex flex-col items-end"><span>SYS STATUS</span><span class="text-brand-green">ONLINE</span></div>
                 </div>
             </div>
         </header>
@@ -141,7 +110,7 @@
                 <div class="flex flex-col gap-4 flex-grow">
                     <div class="flex flex-col gap-1 flex-grow">
                         <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
-                        <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer when accelerating out of corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full min-h-[120px] resize-none font-mono"></textarea>
+                        <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer entering the corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full min-h-[120px] resize-none font-mono"></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -154,22 +123,29 @@
                             <input type="number" id="hp" placeholder="e.g. 250" class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
                         </div>
                     </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs text-gray-400 font-mono uppercase">Weight (LBS)</label>
+                            <input type="number" id="weight" placeholder="e.g. 2800" class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs text-gray-400 font-mono uppercase">Front Bias (%)</label>
+                            <input type="number" id="weight-bias" placeholder="e.g. 52" class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
                             <label class="text-xs text-gray-400 font-mono uppercase">Drivetrain</label>
                             <select id="drivetrain" class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-green font-mono">
-                                <option>AWD</option>
-                                <option>RWD</option>
-                                <option>FWD</option>
+                                <option>RWD</option><option>AWD</option><option>FWD</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-1">
                             <label class="text-xs text-gray-400 font-mono uppercase">Engine Pos</label>
                             <select id="engine-pos" class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-green font-mono">
-                                <option>Front</option>
-                                <option>Mid</option>
-                                <option>Rear</option>
+                                <option>Front</option><option>Mid</option><option>Rear</option>
                             </select>
                         </div>
                     </div>
@@ -195,9 +171,7 @@
                     <div class="flex flex-col items-center gap-4">
                         <div class="text-xs text-gray-400 font-mono uppercase tracking-widest">Estimated Load (G)</div>
                         <div class="g-meter-container" id="g-meter">
-                            <div class="g-meter-crosshair"></div>
-                            <div class="g-meter-crosshair vert"></div>
-                            <div class="g-dot" id="g-dot"></div>
+                            <div class="g-meter-crosshair"></div><div class="g-meter-crosshair vert"></div><div class="g-dot" id="g-dot"></div>
                             <div class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono">Accel</div>
                             <div class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-mono">Brake</div>
                         </div>
@@ -210,20 +184,12 @@
                             <div class="absolute inset-x-8 inset-y-4 border border-dashed border-dark-600 rounded-lg pointer-events-none"></div>
                             
                             <div class="flex justify-between z-10">
-                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fl">
-                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
-                                </div>
-                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fr">
-                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
-                                </div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fl"><span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span></div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-fr"><span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span></div>
                             </div>
                             <div class="flex justify-between z-10">
-                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rl">
-                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
-                                </div>
-                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rr">
-                                    <span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span>
-                                </div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rl"><span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span></div>
+                                <div class="w-8 h-12 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black transition-all duration-500" id="tire-rr"><span class="text-[10px] font-mono text-white font-bold transform -rotate-90">---</span></div>
                             </div>
                         </div>
                     </div>
@@ -281,15 +247,11 @@
     <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
     <div class="chat-widget" id="chat-widget">
         <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center">
-            <span class="text-white font-bold font-mono tracking-wide text-sm flex items-center gap-2">
-                <div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS
-            </span>
+            <span class="text-white font-bold font-mono tracking-wide text-sm flex items-center gap-2"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
             <button onclick="toggleChat()" class="text-gray-400 hover:text-white">&times;</button>
         </div>
         
-        <div class="chat-messages" id="chat-box">
-            <div class="chat-msg bot">Engineer: Comms check. Let me know if you need clarification on any setup changes.</div>
-        </div>
+        <div class="chat-messages" id="chat-box"><div class="chat-msg bot">Engineer: Comms check. Let me know if you need clarification on any setup changes.</div></div>
 
         <div class="p-3 border-t border-dark-600 bg-dark-800 rounded-b-xl flex items-end gap-2">
             <textarea id="chat-input" rows="2" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono resize-y min-h-[44px] max-h-[150px]" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
@@ -297,7 +259,7 @@
         </div>
     </div>
 
-    <!-- Garage Side Panel (WIDENED for Grid) -->
+    <!-- Garage Side Panel -->
     <div id="garage-panel" class="fixed right-0 top-0 h-full w-96 bg-dark-900 border-l border-dark-600 transform translate-x-full transition-transform duration-300 z-50 flex flex-col shadow-2xl">
         <div class="p-4 border-b border-dark-600 flex justify-between items-center bg-dark-800 shrink-0">
             <h2 class="text-brand-gold font-bold font-mono tracking-widest uppercase">Vehicle Repository</h2>
@@ -315,37 +277,28 @@
                     <input type="hidden" id="edit-id" value="">
                     <input type="text" id="save-car-name" placeholder="Save As (e.g., Wet Track NSX)" class="garage-input font-bold text-brand-gold border-brand-gold/30">
                     
+                    <!-- Core Car Info -->
+                    <div class="grid grid-cols-2 gap-2 pb-2 border-b border-dark-600">
+                        <input type="text" id="set-make" placeholder="Make / Model" class="garage-input">
+                        <input type="text" id="set-hp" placeholder="Horsepower" class="garage-input">
+                        <input type="text" id="set-weight" placeholder="Weight (lbs)" class="garage-input">
+                        <input type="text" id="set-bias" placeholder="Front Bias (%)" class="garage-input">
+                        <select id="set-drive" class="garage-input appearance-none text-gray-400"><option value="">Drivetrain...</option><option>AWD</option><option>RWD</option><option>FWD</option></select>
+                        <select id="set-eng" class="garage-input appearance-none text-gray-400"><option value="">Engine Pos...</option><option>Front</option><option>Mid</option><option>Rear</option></select>
+                    </div>
+
                     <!-- Deep Data Grid -->
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="set-tireF" placeholder="Tire F (psi)" class="garage-input">
-                        <input type="text" id="set-tireR" placeholder="Tire R (psi)" class="garage-input">
-                        
-                        <input type="text" id="set-camF" placeholder="Camber F" class="garage-input">
-                        <input type="text" id="set-camR" placeholder="Camber R" class="garage-input">
-                        
-                        <input type="text" id="set-arbF" placeholder="ARB F" class="garage-input">
-                        <input type="text" id="set-arbR" placeholder="ARB R" class="garage-input">
-                        
-                        <input type="text" id="set-sprF" placeholder="Springs F" class="garage-input">
-                        <input type="text" id="set-sprR" placeholder="Springs R" class="garage-input">
-                        
-                        <input type="text" id="set-hgtF" placeholder="Ride Hgt F" class="garage-input">
-                        <input type="text" id="set-hgtR" placeholder="Ride Hgt R" class="garage-input">
-                        
-                        <input type="text" id="set-bmpF" placeholder="Bump F" class="garage-input">
-                        <input type="text" id="set-bmpR" placeholder="Bump R" class="garage-input">
-                        
-                        <input type="text" id="set-rebF" placeholder="Rebound F" class="garage-input">
-                        <input type="text" id="set-rebR" placeholder="Rebound R" class="garage-input">
-                        
-                        <input type="text" id="set-aerF" placeholder="Aero F" class="garage-input">
-                        <input type="text" id="set-aerR" placeholder="Aero R" class="garage-input">
-                        
-                        <input type="text" id="set-brkBal" placeholder="Brake Bal (F/R)" class="garage-input">
-                        <input type="text" id="set-brkPres" placeholder="Brake Pres (%)" class="garage-input">
-                        
-                        <input type="text" id="set-difAcc" placeholder="Diff Accel" class="garage-input">
-                        <input type="text" id="set-difDec" placeholder="Diff Decel" class="garage-input">
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <input type="text" id="set-tireF" placeholder="Tire F (psi)" class="garage-input"><input type="text" id="set-tireR" placeholder="Tire R (psi)" class="garage-input">
+                        <input type="text" id="set-camF" placeholder="Camber F" class="garage-input"><input type="text" id="set-camR" placeholder="Camber R" class="garage-input">
+                        <input type="text" id="set-arbF" placeholder="ARB F" class="garage-input"><input type="text" id="set-arbR" placeholder="ARB R" class="garage-input">
+                        <input type="text" id="set-sprF" placeholder="Springs F" class="garage-input"><input type="text" id="set-sprR" placeholder="Springs R" class="garage-input">
+                        <input type="text" id="set-hgtF" placeholder="Ride Hgt F" class="garage-input"><input type="text" id="set-hgtR" placeholder="Ride Hgt R" class="garage-input">
+                        <input type="text" id="set-bmpF" placeholder="Bump F" class="garage-input"><input type="text" id="set-bmpR" placeholder="Bump R" class="garage-input">
+                        <input type="text" id="set-rebF" placeholder="Rebound F" class="garage-input"><input type="text" id="set-rebR" placeholder="Rebound R" class="garage-input">
+                        <input type="text" id="set-aerF" placeholder="Aero F" class="garage-input"><input type="text" id="set-aerR" placeholder="Aero R" class="garage-input">
+                        <input type="text" id="set-brkBal" placeholder="Brake Bal (F/R)" class="garage-input"><input type="text" id="set-brkPres" placeholder="Brake Pres (%)" class="garage-input">
+                        <input type="text" id="set-difAcc" placeholder="Diff Accel" class="garage-input"><input type="text" id="set-difDec" placeholder="Diff Decel" class="garage-input">
                     </div>
                     
                     <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-2 rounded mt-2 hover:opacity-80">SAVE TO REPOSITORY</button>
@@ -354,27 +307,21 @@
 
             <div class="flex flex-col gap-2">
                 <h3 class="text-xs text-gray-400 font-mono uppercase border-b border-dark-600 pb-1">Saved Profiles</h3>
-                <ul id="garage-list" class="flex flex-col gap-2">
-                    <!-- Javascript will populate this list -->
-                </ul>
+                <ul id="garage-list" class="flex flex-col gap-2"></ul>
             </div>
         </div>
     </div>
     
-    <!-- Dark Overlay -->
     <div id="garage-overlay" onclick="toggleGarage()" class="fixed inset-0 bg-black/50 hidden z-40"></div>
 
     <script>
-        // -- Initialization & Key Management --
         const apiKeyInput = document.getElementById('api-key');
-        
         let activeBaseline = ""; 
-        let garage = JSON.parse(localStorage.getItem('forza_garage_v2')) || [];
+        let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
         
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
             if (savedKey) apiKeyInput.value = savedKey;
-            
             updateTemps({fl: 100, fr: 100, rl: 100, rr: 100});
             renderGarageList();
         });
@@ -383,7 +330,6 @@
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
 
-        // -- Garage Repository Logic --
         function toggleGarage() {
             document.getElementById('garage-panel').classList.toggle('translate-x-full');
             document.getElementById('garage-overlay').classList.toggle('hidden');
@@ -404,7 +350,7 @@
                         <div class="flex justify-between items-start">
                             <div class="flex flex-col cursor-pointer flex-grow" onclick="loadCar(${car.id})">
                                 <span class="text-brand-gold font-bold text-xs uppercase group-hover:text-white transition-colors">${car.name}</span>
-                                <span class="text-gray-400 text-[10px] font-mono">${car.make} | ${car.hp}HP | ${car.drive}</span>
+                                <span class="text-gray-400 text-[10px] font-mono">${car.make} | ${car.hp}HP | ${car.weight}lbs | ${car.drive}</span>
                             </div>
                             <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button onclick="editCar(${car.id})" class="text-[10px] text-brand-blue font-mono font-bold hover:underline">EDIT</button>
@@ -421,10 +367,11 @@
             
             document.getElementById('make-model').value = car.make;
             document.getElementById('hp').value = car.hp;
+            document.getElementById('weight').value = car.weight;
+            document.getElementById('weight-bias').value = car.bias;
             document.getElementById('drivetrain').value = car.drive;
             document.getElementById('engine-pos').value = car.engine;
             
-            // Build the giant context string for Gemini
             activeBaseline = `Deep Setup Info: Tires (F/R): ${car.tireF}/${car.tireR}, Camber: ${car.camF}/${car.camR}, ARB: ${car.arbF}/${car.arbR}, Springs: ${car.sprF}/${car.sprR}, Ride Height: ${car.hgtF}/${car.hgtR}, Bump: ${car.bmpF}/${car.bmpR}, Rebound: ${car.rebF}/${car.rebR}, Aero: ${car.aerF}/${car.aerR}, Brake Bias/Pres: ${car.brkBal}/${car.brkPres}, Diff Acc/Dec: ${car.difAcc}/${car.difDec}.`;
             
             toggleGarage();
@@ -440,10 +387,12 @@
             const newCar = {
                 id: editId ? parseInt(editId) : Date.now(),
                 name: name,
-                make: document.getElementById('make-model').value || 'Unknown',
-                hp: document.getElementById('hp').value || 0,
-                drive: document.getElementById('drivetrain').value,
-                engine: document.getElementById('engine-pos').value,
+                make: document.getElementById('set-make').value || 'Unknown',
+                hp: document.getElementById('set-hp').value || 0,
+                weight: document.getElementById('set-weight').value || 0,
+                bias: document.getElementById('set-bias').value || 50,
+                drive: document.getElementById('set-drive').value || 'RWD',
+                engine: document.getElementById('set-eng').value || 'Front',
                 tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
                 camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
                 arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
@@ -463,7 +412,7 @@
                 garage.push(newCar);
             }
             
-            localStorage.setItem('forza_garage_v2', JSON.stringify(garage));
+            localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
             clearForm();
             renderGarageList();
         }
@@ -474,6 +423,13 @@
             
             document.getElementById('edit-id').value = car.id;
             document.getElementById('save-car-name').value = car.name;
+            document.getElementById('set-make').value = car.make;
+            document.getElementById('set-hp').value = car.hp;
+            document.getElementById('set-weight').value = car.weight;
+            document.getElementById('set-bias').value = car.bias;
+            document.getElementById('set-drive').value = car.drive;
+            document.getElementById('set-eng').value = car.engine;
+            
             document.getElementById('set-tireF').value = car.tireF !== '-' ? car.tireF : '';
             document.getElementById('set-tireR').value = car.tireR !== '-' ? car.tireR : '';
             document.getElementById('set-camF').value = car.camF !== '-' ? car.camF : '';
@@ -499,7 +455,7 @@
         function deleteCar(id) {
             if (confirm("Delete this setup from your garage?")) {
                 garage = garage.filter(c => c.id !== id);
-                localStorage.setItem('forza_garage_v2', JSON.stringify(garage));
+                localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
                 renderGarageList();
             }
         }
@@ -511,10 +467,8 @@
             inputs.forEach(input => input.value = '');
         }
 
-        // -- Animation Logic for Sensors --
         let gDot = document.getElementById('g-dot');
         let gText = document.getElementById('g-text');
-        
         let currentTx = 0, currentTy = 0;
         let targetTx = 0, targetTy = 0;
 
@@ -557,7 +511,6 @@
 
             let p = (phase || '').toLowerCase();
             let s = (symptom || '').toLowerCase();
-
             let temps = {fl: 180, fr: 180, rl: 180, rr: 180};
             let gx = 0, gy = 0;
 
@@ -565,13 +518,11 @@
                 gy = -1.2; 
                 if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } 
                 if (s.includes('over')) { temps.rl = 210; temps.rr = 210; } 
-            } 
-            else if (p.includes('exit') || p.includes('accel')) {
+            } else if (p.includes('exit') || p.includes('accel')) {
                 gy = 0.9; 
                 if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } 
                 if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } 
-            }
-            else if (p.includes('mid')) {
+            } else if (p.includes('mid')) {
                 gx = 1.3; 
                 temps = {fl: 210, fr: 170, rl: 215, rr: 175}; 
             }
@@ -581,12 +532,13 @@
             updateTemps(temps);
         }
 
-        // -- Main Gemini API Logic --
         async function analyzeTelemetry() {
             const apiKey = apiKeyInput.value.trim();
             const input = document.getElementById('driver-input').value.trim();
             const makeModel = document.getElementById('make-model').value.trim() || 'Unknown Vehicle';
             const hp = document.getElementById('hp').value.trim() || 'Unknown';
+            const weight = document.getElementById('weight').value.trim() || 'Unknown';
+            const bias = document.getElementById('weight-bias').value.trim() || '50';
             const drivetrain = document.getElementById('drivetrain').value;
             const enginePos = document.getElementById('engine-pos').value;
             const btn = document.getElementById('analyze-btn');
@@ -601,11 +553,11 @@
             document.getElementById('diag-loading').classList.add('flex');
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
-            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, Engine: ${enginePos}, Drivetrain: ${drivetrain}. ${activeBaseline} Driver Complaint: ${input}`;
+            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Bias), Engine: ${enginePos}, Drivetrain: ${drivetrain}. ${activeBaseline} Driver Complaint: ${input}`;
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
-            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first.
-            Respond ONLY with a valid JSON object matching this schema exactly:
+            const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first. If the driver does not specify a corner phase, default to "Mid-Corner".
+            Respond ONLY with a valid JSON object matching this schema exactly without any markdown formatting:
             {
               "diagnostics": {
                 "identified_phase": "Entry | Mid-Corner | Exit",
@@ -633,6 +585,7 @@
                 const data = await response.json();
                 
                 let rawText = data.candidates[0].content.parts[0].text.trim();
+                rawText = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim(); // Sanitize any markdown formatting
                 const parsedData = JSON.parse(rawText);
 
                 simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
@@ -673,7 +626,6 @@
             }
         }
 
-        // -- Chat Widget Logic --
         function toggleChat() {
             document.getElementById('chat-widget').classList.toggle('open');
         }
@@ -686,6 +638,8 @@
 
             const makeModel = document.getElementById('make-model').value.trim() || 'the car';
             const hp = document.getElementById('hp').value.trim() || 'Unknown';
+            const weight = document.getElementById('weight').value.trim() || 'Unknown';
+            const bias = document.getElementById('weight-bias').value.trim() || '50';
             const drivetrain = document.getElementById('drivetrain').value;
             const enginePos = document.getElementById('engine-pos').value;
             const driverInput = document.getElementById('driver-input').value.trim();
@@ -702,7 +656,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel} (${drivetrain}, ${enginePos} engine). ${activeBaseline} The driver previously noted: "${driverInput}".`;
+            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). ${activeBaseline} The driver previously noted: "${driverInput}".`;
             
             try {
                 const response = await fetch(endpoint, {
