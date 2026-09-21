@@ -291,9 +291,9 @@
             <div class="chat-msg bot">Engineer: Comms check. Let me know if you need clarification on any setup changes.</div>
         </div>
 
-        <div class="p-3 border-t border-dark-600 bg-dark-800 rounded-b-xl flex gap-2">
-            <input type="text" id="chat-input" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-2 rounded font-bold hover:opacity-80">SEND</button>
+        <div class="p-3 border-t border-dark-600 bg-dark-800 rounded-b-xl flex items-end gap-2">
+            <textarea id="chat-input" rows="2" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green font-mono resize-y min-h-[44px] max-h-[150px]" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
+            <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-2 rounded font-bold hover:opacity-80 h-[44px]">SEND</button>
         </div>
     </div>
 
