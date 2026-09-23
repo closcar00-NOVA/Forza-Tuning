@@ -282,7 +282,6 @@
                         <select id="set-eng" class="garage-input appearance-none text-gray-400"><option value="">Engine Pos...</option><option>Front</option><option>Mid</option><option>Rear</option></select>
                     </div>
 
-                    <!-- Deep Data Grid with Width & Rim additions -->
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <input type="text" id="set-widthF" placeholder="Tire Width F" class="garage-input"><input type="text" id="set-widthR" placeholder="Tire Width R" class="garage-input">
                         <input type="text" id="set-rimF" placeholder="Rim Size F" class="garage-input"><input type="text" id="set-rimR" placeholder="Rim Size R" class="garage-input">
@@ -306,6 +305,19 @@
                 <h3 class="text-xs text-gray-400 font-mono uppercase border-b border-dark-600 pb-1">Saved Profiles</h3>
                 <ul id="garage-list" class="flex flex-col gap-2"></ul>
             </div>
+            
+            <!-- NEW: Backup / Restore Section -->
+            <div class="flex flex-col gap-2 mt-auto border-t border-dark-600 pt-4">
+                <h3 class="text-xs text-gray-400 font-mono uppercase">Data Management</h3>
+                <div class="flex gap-2">
+                    <button onclick="exportGarage()" class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-green border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-green">Export Backup</button>
+                    <label class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-gold border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-gold text-center cursor-pointer flex items-center justify-center">
+                        Import Backup
+                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importGarage(event)">
+                    </label>
+                </div>
+            </div>
+
         </div>
     </div>
     
@@ -468,6 +480,49 @@
             document.getElementById('save-car-name').value = '';
             const inputs = document.querySelectorAll('.garage-input');
             inputs.forEach(input => input.value = '');
+        }
+
+        // NEW: Export / Import Logic
+        function exportGarage() {
+            if (garage.length === 0) {
+                alert("Your Garage is empty. There is nothing to export.");
+                return;
+            }
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(garage, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "forza_garage_backup.json");
+            document.body.appendChild(downloadAnchorNode); // Required for Firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importGarage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedGarage = JSON.parse(e.target.result);
+                    
+                    if (Array.isArray(importedGarage)) {
+                        garage = importedGarage;
+                        localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
+                        renderGarageList();
+                        alert("Garage backup successfully imported!");
+                    } else {
+                        alert("Error: The uploaded file is not a valid Garage backup.");
+                    }
+                } catch (error) {
+                    alert("Error: Could not read the file. Ensure it is a valid JSON backup.");
+                }
+                
+                // Clear the input so the user can import the exact same file again if needed
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         let gDot = document.getElementById('g-dot');
