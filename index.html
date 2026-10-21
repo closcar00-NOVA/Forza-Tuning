@@ -91,14 +91,12 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <!-- NEW: Collapsible Live Sensors Toggle -->
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
-                    <!-- Hidden Sensors Modal -->
                     <div id="live-sensors-modal" class="hidden absolute top-full mt-3 right-0 w-80 z-50 telemetry-panel rounded-xl p-5 flex-col items-center shadow-2xl border border-brand-blue">
                         <div class="w-full flex items-center justify-between gap-2 mb-4 border-b border-dark-600 pb-2">
                             <h2 class="text-sm font-bold text-white tracking-wide uppercase">Live Sensors</h2>
@@ -138,10 +136,8 @@
             </div>
         </header>
 
-        <!-- 3-COLUMN MAIN LAYOUT -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- COLUMN 1: Driver Feedback -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -198,7 +194,6 @@
                 </button>
             </section>
 
-            <!-- COLUMN 2: AI Diagnostics (Moved to middle) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[650px]">
                 <div class="flex items-center gap-2 mb-6 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -243,14 +238,12 @@
                 </div>
             </section>
 
-            <!-- COLUMN 3: Vehicle Repository (Permanently Docked) -->
             <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[650px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
                 </div>
                 
                 <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-6">
-                    <!-- Save Active Setup -->
                     <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="text-xs text-gray-400 font-mono uppercase">Save Active Setup</h3>
@@ -289,14 +282,12 @@
                         </div>
                     </div>
 
-                    <!-- Saved Profiles List -->
                     <div class="flex flex-col gap-3">
                         <h3 class="text-xs text-gray-400 font-mono uppercase border-b border-dark-600 pb-1">Saved Profiles</h3>
                         <ul id="garage-list" class="flex flex-col gap-2"></ul>
                     </div>
                 </div>
 
-                <!-- Backup Management -->
                 <div class="p-5 border-t border-dark-600 shrink-0 bg-dark-800/50 rounded-b-xl">
                     <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-2 text-center">Data Management</h3>
                     <div class="flex gap-2">
@@ -311,7 +302,6 @@
         </main>
     </div>
 
-    <!-- Floating Chat Widget -->
     <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
     <div class="chat-widget" id="chat-widget">
         <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center cursor-pointer" onclick="toggleChat()">
@@ -329,7 +319,6 @@
 
     <script>
         const apiKeyInput = document.getElementById('api-key');
-        let activeBaseline = ""; 
         let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
         
         window.addEventListener('DOMContentLoaded', () => {
@@ -344,49 +333,56 @@
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
 
-        // -- Auto Sync from Feedback to Garage Form --
         function setupAutoSync() {
             const syncMap = {
-                'make-model': 'set-make',
-                'hp': 'set-hp',
-                'weight': 'set-weight',
-                'weight-bias': 'set-bias',
-                'drivetrain': 'set-drive',
-                'engine-pos': 'set-eng'
+                'make-model': 'set-make', 'hp': 'set-hp', 'weight': 'set-weight',
+                'weight-bias': 'set-bias', 'drivetrain': 'set-drive', 'engine-pos': 'set-eng'
             };
-            
             for (let sourceId in syncMap) {
                 const srcEl = document.getElementById(sourceId);
                 const destEl = document.getElementById(syncMap[sourceId]);
-                
-                // Copy value when user types or changes dropdown
                 srcEl.addEventListener('input', () => { destEl.value = srcEl.value; });
                 srcEl.addEventListener('change', () => { destEl.value = srcEl.value; });
             }
         }
 
-        // -- Live Sensors Toggle --
+        // -- Reads the LIVE form inputs and tags empty fields as "LOCKED" --
+        function getLiveSetupInfo() {
+            const getVal = (id) => {
+                let v = document.getElementById(id).value.trim();
+                return (v === '' || v === '-') ? 'LOCKED' : v;
+            };
+            return `Available Tuning Options:
+Tire Width (F/R): ${getVal('set-widthF')} / ${getVal('set-widthR')}
+Rim Size (F/R): ${getVal('set-rimF')} / ${getVal('set-rimR')}
+Tire Pressures (F/R): ${getVal('set-tireF')} / ${getVal('set-tireR')}
+Camber (F/R): ${getVal('set-camF')} / ${getVal('set-camR')}
+Anti-Roll Bars (F/R): ${getVal('set-arbF')} / ${getVal('set-arbR')}
+Springs (F/R): ${getVal('set-sprF')} / ${getVal('set-sprR')}
+Ride Height (F/R): ${getVal('set-hgtF')} / ${getVal('set-hgtR')}
+Bump (F/R): ${getVal('set-bmpF')} / ${getVal('set-bmpR')}
+Rebound (F/R): ${getVal('set-rebF')} / ${getVal('set-rebR')}
+Aero (F/R): ${getVal('set-aerF')} / ${getVal('set-aerR')}
+Brake Bias & Pres: ${getVal('set-brkBal')} / ${getVal('set-brkPres')}
+Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
+        }
+
         function toggleSensors() {
             const modal = document.getElementById('live-sensors-modal');
             if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                modal.classList.remove('hidden'); modal.classList.add('flex');
             } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                modal.classList.add('hidden'); modal.classList.remove('flex');
             }
         }
 
-        // -- Garage Repository Logic --
         function renderGarageList() {
             const list = document.getElementById('garage-list');
             list.innerHTML = '';
-            
             if (garage.length === 0) {
                 list.innerHTML = `<li class="text-xs text-gray-500 font-mono italic p-2 text-center">No saved profiles.</li>`;
                 return;
             }
-
             garage.forEach(car => {
                 list.innerHTML += `
                     <li class="bg-dark-700 p-2 rounded border border-dark-600 flex flex-col gap-1 group transition-colors">
@@ -408,83 +404,12 @@
             const car = garage.find(c => c.id === id);
             if (!car) return;
             
-            document.getElementById('make-model').value = car.make;
-            document.getElementById('hp').value = car.hp;
-            document.getElementById('weight').value = car.weight;
-            document.getElementById('weight-bias').value = car.bias;
-            document.getElementById('drivetrain').value = car.drive;
-            document.getElementById('engine-pos').value = car.engine;
-            
-            // Trigger the auto-sync so the garage form matches the loaded car
-            document.getElementById('set-make').value = car.make;
-            document.getElementById('set-hp').value = car.hp;
-            document.getElementById('set-weight').value = car.weight;
-            document.getElementById('set-bias').value = car.bias;
-            document.getElementById('set-drive').value = car.drive;
-            document.getElementById('set-eng').value = car.engine;
-            
-            activeBaseline = `Deep Setup Info: Tire Width (F/R): ${car.widthF || '-'}/${car.widthR || '-'}, Rim Size: ${car.rimF || '-'}/${car.rimR || '-'}, Tires (F/R): ${car.tireF}/${car.tireR}, Camber: ${car.camF}/${car.camR}, ARB: ${car.arbF}/${car.arbR}, Springs: ${car.sprF}/${car.sprR}, Ride Height: ${car.hgtF}/${car.hgtR}, Bump: ${car.bmpF}/${car.bmpR}, Rebound: ${car.rebF}/${car.rebR}, Aero: ${car.aerF}/${car.aerR}, Brake Bias/Pres: ${car.brkBal}/${car.brkPres}, Diff Acc/Dec: ${car.difAcc}/${car.difDec}.`;
-            
-            alert(`Loaded: ${car.name}\nDeep telemetry applied to background context.`);
-        }
-
-        function saveToGarage() {
-            const name = document.getElementById('save-car-name').value;
-            if(!name) { alert("Please name this setup."); return; }
-            
-            const editId = document.getElementById('edit-id').value;
-            
-            const newCar = {
-                id: editId ? parseInt(editId) : Date.now(),
-                name: name,
-                make: document.getElementById('set-make').value || 'Unknown',
-                hp: document.getElementById('set-hp').value || 0,
-                weight: document.getElementById('set-weight').value || 0,
-                bias: document.getElementById('set-bias').value || 50,
-                drive: document.getElementById('set-drive').value || 'RWD',
-                engine: document.getElementById('set-eng').value || 'Front',
-                widthF: document.getElementById('set-widthF').value || '-', widthR: document.getElementById('set-widthR').value || '-',
-                rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
-                tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
-                camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
-                arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
-                sprF: document.getElementById('set-sprF').value || '-', sprR: document.getElementById('set-sprR').value || '-',
-                hgtF: document.getElementById('set-hgtF').value || '-', hgtR: document.getElementById('set-hgtR').value || '-',
-                bmpF: document.getElementById('set-bmpF').value || '-', bmpR: document.getElementById('set-bmpR').value || '-',
-                rebF: document.getElementById('set-rebF').value || '-', rebR: document.getElementById('set-rebR').value || '-',
-                aerF: document.getElementById('set-aerF').value || '-', aerR: document.getElementById('set-aerR').value || '-',
-                brkBal: document.getElementById('set-brkBal').value || '-', brkPres: document.getElementById('set-brkPres').value || '-',
-                difAcc: document.getElementById('set-difAcc').value || '-', difDec: document.getElementById('set-difDec').value || '-'
-            };
-            
-            if (editId) {
-                const index = garage.findIndex(c => c.id === parseInt(editId));
-                if (index !== -1) garage[index] = newCar;
-            } else {
-                garage.push(newCar);
-            }
-            
-            localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
-            
-            // Reset Edit ID so next save creates a copy unless explicitly editing
-            document.getElementById('edit-id').value = '';
-            
-            renderGarageList();
-            alert(`Setup "${name}" saved to repository.`);
-        }
-
-        function editCar(id) {
-            const car = garage.find(c => c.id === id);
-            if (!car) return;
-            
-            document.getElementById('edit-id').value = car.id;
-            document.getElementById('save-car-name').value = car.name;
-            document.getElementById('set-make').value = car.make;
-            document.getElementById('set-hp').value = car.hp;
-            document.getElementById('set-weight').value = car.weight;
-            document.getElementById('set-bias').value = car.bias;
-            document.getElementById('set-drive').value = car.drive;
-            document.getElementById('set-eng').value = car.engine;
+            document.getElementById('make-model').value = car.make; document.getElementById('set-make').value = car.make;
+            document.getElementById('hp').value = car.hp; document.getElementById('set-hp').value = car.hp;
+            document.getElementById('weight').value = car.weight; document.getElementById('set-weight').value = car.weight;
+            document.getElementById('weight-bias').value = car.bias; document.getElementById('set-bias').value = car.bias;
+            document.getElementById('drivetrain').value = car.drive; document.getElementById('set-drive').value = car.drive;
+            document.getElementById('engine-pos').value = car.engine; document.getElementById('set-eng').value = car.engine;
             
             document.getElementById('set-widthF').value = car.widthF && car.widthF !== '-' ? car.widthF : '';
             document.getElementById('set-widthR').value = car.widthR && car.widthR !== '-' ? car.widthR : '';
@@ -510,6 +435,55 @@
             document.getElementById('set-brkPres').value = car.brkPres && car.brkPres !== '-' ? car.brkPres : '';
             document.getElementById('set-difAcc').value = car.difAcc && car.difAcc !== '-' ? car.difAcc : '';
             document.getElementById('set-difDec').value = car.difDec && car.difDec !== '-' ? car.difDec : '';
+            
+            alert(`Loaded: ${car.name}\nLive telemetry boxes updated.`);
+        }
+
+        function saveToGarage() {
+            const name = document.getElementById('save-car-name').value;
+            if(!name) { alert("Please name this setup."); return; }
+            const editId = document.getElementById('edit-id').value;
+            const newCar = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name: name,
+                make: document.getElementById('set-make').value || 'Unknown',
+                hp: document.getElementById('set-hp').value || 0,
+                weight: document.getElementById('set-weight').value || 0,
+                bias: document.getElementById('set-bias').value || 50,
+                drive: document.getElementById('set-drive').value || 'RWD',
+                engine: document.getElementById('set-eng').value || 'Front',
+                widthF: document.getElementById('set-widthF').value || '-', widthR: document.getElementById('set-widthR').value || '-',
+                rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
+                tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
+                camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
+                arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
+                sprF: document.getElementById('set-sprF').value || '-', sprR: document.getElementById('set-sprR').value || '-',
+                hgtF: document.getElementById('set-hgtF').value || '-', hgtR: document.getElementById('set-hgtR').value || '-',
+                bmpF: document.getElementById('set-bmpF').value || '-', bmpR: document.getElementById('set-bmpR').value || '-',
+                rebF: document.getElementById('set-rebF').value || '-', rebR: document.getElementById('set-rebR').value || '-',
+                aerF: document.getElementById('set-aerF').value || '-', aerR: document.getElementById('set-aerR').value || '-',
+                brkBal: document.getElementById('set-brkBal').value || '-', brkPres: document.getElementById('set-brkPres').value || '-',
+                difAcc: document.getElementById('set-difAcc').value || '-', difDec: document.getElementById('set-difDec').value || '-'
+            };
+            if (editId) {
+                const index = garage.findIndex(c => c.id === parseInt(editId));
+                if (index !== -1) garage[index] = newCar;
+            } else {
+                garage.push(newCar);
+            }
+            localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
+            document.getElementById('edit-id').value = '';
+            renderGarageList();
+            alert(`Setup "${name}" saved to repository.`);
+        }
+
+        function editCar(id) {
+            loadCar(id); 
+            const car = garage.find(c => c.id === id);
+            if (car) {
+                document.getElementById('edit-id').value = car.id;
+                document.getElementById('save-car-name').value = car.name;
+            }
         }
 
         function deleteCar(id) {
@@ -527,13 +501,8 @@
             inputs.forEach(input => input.value = '');
         }
 
-        // -- Export / Import Logic --
         function exportGarage() {
-            if (garage.length === 0) {
-                alert("Your Garage is empty. There is nothing to export.");
-                return;
-            }
-            
+            if (garage.length === 0) { alert("Your Garage is empty. There is nothing to export."); return; }
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(garage, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
@@ -546,7 +515,6 @@
         function importGarage(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -556,18 +524,13 @@
                         localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
                         renderGarageList();
                         alert("Garage backup successfully imported!");
-                    } else {
-                        alert("Error: The uploaded file is not a valid Garage backup.");
-                    }
-                } catch (error) {
-                    alert("Error: Could not read the file. Ensure it is a valid JSON backup.");
-                }
+                    } else { alert("Error: The uploaded file is not a valid Garage backup."); }
+                } catch (error) { alert("Error: Could not read the file. Ensure it is a valid JSON backup."); }
                 event.target.value = '';
             };
             reader.readAsText(file);
         }
 
-        // -- Sensors & API Logic --
         let gDot = document.getElementById('g-dot');
         let gText = document.getElementById('g-text');
         let currentTx = 0, currentTy = 0, targetTx = 0, targetTy = 0;
@@ -575,8 +538,7 @@
         function animateTelemetry() {
             currentTx += (targetTx - currentTx) * 0.1;
             currentTy += (targetTy - currentTy) * 0.1;
-            let jitterX = (Math.random() - 0.5) * 2;
-            let jitterY = (Math.random() - 0.5) * 2;
+            let jitterX = (Math.random() - 0.5) * 2; let jitterY = (Math.random() - 0.5) * 2;
             if(targetTx === 0 && targetTy === 0) { jitterX = 0; jitterY = 0; } 
             gDot.style.transform = `translate(calc(-50% + ${currentTx + jitterX}px), calc(-50% + ${currentTy + jitterY}px))`;
             let gVal = Math.sqrt(Math.pow(currentTx, 2) + Math.pow(currentTy, 2)) / (100 / 1.5);
@@ -603,12 +565,9 @@
         function simulateSensors(phase, symptom) {
             document.getElementById('sensor-status').innerText = "LIVE SIMULATION";
             document.getElementById('sensor-status').className = "text-[10px] text-brand-green font-mono border border-brand-green px-1 py-0.5 rounded";
-
-            let p = (phase || '').toLowerCase();
-            let s = (symptom || '').toLowerCase();
+            let p = (phase || '').toLowerCase(); let s = (symptom || '').toLowerCase();
             let temps = {fl: 180, fr: 180, rl: 180, rr: 180};
             let gx = 0, gy = 0;
-
             if (p.includes('entry') || p.includes('brak')) {
                 gy = -1.2; 
                 if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } 
@@ -618,12 +577,9 @@
                 if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } 
                 if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } 
             } else if (p.includes('mid')) {
-                gx = 1.3; 
-                temps = {fl: 210, fr: 170, rl: 215, rr: 175}; 
+                gx = 1.3; temps = {fl: 210, fr: 170, rl: 215, rr: 175}; 
             }
-
-            targetTx = (gx / 1.5) * 100;
-            targetTy = (gy / 1.5) * 100;
+            targetTx = (gx / 1.5) * 100; targetTy = (gy / 1.5) * 100;
             updateTemps(temps);
         }
 
@@ -648,22 +604,26 @@
             document.getElementById('diag-loading').classList.add('flex');
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
-            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Bias), Engine: ${enginePos}, Drivetrain: ${drivetrain}. ${activeBaseline} Driver Complaint: ${input}`;
+            const liveSetup = getLiveSetupInfo();
+            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Bias), Engine: ${enginePos}, Drivetrain: ${drivetrain}.\n\n${liveSetup}\n\nDriver Complaint: ${input}`;
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first. If the driver does not specify a corner phase, default to "Mid-Corner".
-            Respond ONLY with a valid JSON object matching this schema exactly without any markdown formatting:
-            {
-              "diagnostics": {
-                "identified_phase": "Entry | Mid-Corner | Exit",
-                "identified_symptom": "Understeer | Oversteer"
-              },
-              "adjustments": {
-                "primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}],
-                "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]
-              },
-              "engineer_notes": "One-sentence explanation of why this fixes the issue."
-            }`;
+            
+CRITICAL RULE: Review the 'Available Tuning Options' in the user prompt. If a component's value is 'LOCKED', the driver has not unlocked that upgrade yet. You MUST ONLY suggest adjustments for components that are NOT locked. Do not suggest adjusting locked components under any circumstances.
+
+Respond ONLY with a valid JSON object matching this schema exactly without any markdown formatting:
+{
+  "diagnostics": {
+    "identified_phase": "Entry | Mid-Corner | Exit",
+    "identified_symptom": "Understeer | Oversteer"
+  },
+  "adjustments": {
+    "primary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}],
+    "secondary": [{"component": "string", "action": "Increase | Decrease | Soften | Stiffen"}]
+  },
+  "engineer_notes": "One-sentence explanation of why this fixes the issue."
+}`;
 
             try {
                 const response = await fetch(endpoint, {
@@ -721,10 +681,6 @@
             }
         }
 
-        function toggleChat() {
-            document.getElementById('chat-widget').classList.toggle('open');
-        }
-
         async function sendChatMessage() {
             const inputEl = document.getElementById('chat-input');
             const text = inputEl.value.trim();
@@ -750,8 +706,9 @@
             chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            const liveSetup = getLiveSetupInfo();
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). ${activeBaseline} The driver previously noted: "${driverInput}".`;
+            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".`;
             
             try {
                 const response = await fetch(endpoint, {
