@@ -55,12 +55,12 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .rec-dot { animation: blink 2s infinite; }
         
-        .chat-widget {
-            position: fixed; bottom: 20px; right: 20px; z-index: 50; width: 350px; background: #121418; border: 1px solid #00FA9A;
-            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1); display: flex; flex-direction: column; transform: translateY(120%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); max-height: 500px;
-        }
-        .chat-widget.open { transform: translateY(0); }
+    .pit-comms-panel {
+        position: fixed; right: 20px; z-index: 50; width: 350px; background: #121418; border: 1px solid #00FA9A;
+        border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1); display: flex; flex-direction: column; 
+        bottom: -600px; transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: 500px;
+    }
+    .pit-comms-panel.open { bottom: 20px; }
         .chat-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 40; background: #00FA9A; color: #000; border-radius: 50%; width: 60px; height: 60px;
             display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,250,154,0.3); font-weight: bold; font-size: 24px;
@@ -303,8 +303,8 @@
     </div>
 
     <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
-    <div class="chat-widget" id="chat-widget">
-        <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center cursor-pointer" onclick="toggleChat()">
+    <div class="pit-comms-panel" id="pit-comms-panel">        
+    <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center cursor-pointer" onclick="toggleChat()">
             <span class="text-white font-bold font-mono tracking-wide text-sm flex items-center gap-2"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
             <button class="text-gray-400 hover:text-white">&times;</button>
         </div>
