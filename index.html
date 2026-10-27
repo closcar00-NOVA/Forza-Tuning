@@ -55,12 +55,12 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .rec-dot { animation: blink 2s infinite; }
         
-    .pit-comms-panel {
-        position: fixed; right: 20px; z-index: 50; width: 350px; background: #121418; border: 1px solid #00FA9A;
-        border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1); display: flex; flex-direction: column; 
-        bottom: -600px; transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: 500px;
-    }
-    .pit-comms-panel.open { bottom: 20px; }
+        .pit-comms-panel {
+            position: fixed; right: 20px; z-index: 50; width: 350px; background: #121418; border: 1px solid #00FA9A;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,250,154,0.1); display: flex; flex-direction: column; 
+            bottom: -600px; transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: 500px;
+        }
+        .pit-comms-panel.open { bottom: 20px; }
         .chat-btn {
             position: fixed; bottom: 20px; right: 20px; z-index: 40; background: #00FA9A; color: #000; border-radius: 50%; width: 60px; height: 60px;
             display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,250,154,0.3); font-weight: bold; font-size: 24px;
@@ -136,9 +136,11 @@
             </div>
         </header>
 
+        <!-- Main Dashboard: 4-3-5 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col">
+            <!-- Driver Feedback (Width: 4) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
@@ -147,7 +149,7 @@
                 <div class="flex flex-col gap-4 flex-grow">
                     <div class="flex flex-col gap-1 flex-grow">
                         <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
-                        <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer entering the corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full min-h-[160px] resize-none font-mono"></textarea>
+                        <textarea id="driver-input" placeholder="Describe the car's behavior... (e.g., 'Heavy understeer entering the corner')" class="bg-dark-700 border border-dark-600 rounded px-3 py-3 text-sm text-white focus:outline-none focus:border-brand-green h-full resize-none font-mono"></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -194,13 +196,14 @@
                 </button>
             </section>
 
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[650px]">
+            <!-- AI Diagnostics (Width: 3, Narrower) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-6 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
                 </div>
 
-                <div id="diag-empty" class="flex-grow flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-6">
+                <div id="diag-empty" class="flex-grow flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-4">
                     <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     WAITING FOR TELEMETRY INPUT
                 </div>
@@ -215,19 +218,19 @@
                 </div>
 
                 <div id="diag-results" class="hidden flex-col gap-6 h-full overflow-y-auto pr-2">
-                    <div class="flex gap-2 font-mono text-xs shrink-0">
-                        <div class="bg-dark-600 border-l-2 border-brand-red px-3 py-1 text-white flex-1" id="res-phase">PHASE: --</div>
-                        <div class="bg-dark-600 border-l-2 border-brand-gold px-3 py-1 text-white flex-1" id="res-symptom">SYMPTOM: --</div>
+                    <div class="flex flex-col gap-2 font-mono text-xs shrink-0">
+                        <div class="bg-dark-600 border-l-2 border-brand-red px-3 py-1 text-white w-full" id="res-phase">PHASE: --</div>
+                        <div class="bg-dark-600 border-l-2 border-brand-gold px-3 py-1 text-white w-full" id="res-symptom">SYMPTOM: --</div>
                     </div>
                     
                     <div class="flex flex-col gap-4 shrink-0">
                         <div class="bg-dark-800 border border-dark-600 rounded p-4">
-                            <h3 class="text-xs text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Primary Adjustments</h3>
-                            <ul class="font-mono text-sm flex flex-col gap-2" id="res-primary"></ul>
+                            <h3 class="text-xs text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Primary Fix</h3>
+                            <ul class="font-mono text-xs flex flex-col gap-2" id="res-primary"></ul>
                         </div>
                         <div class="bg-dark-800 border border-dark-600 rounded p-4">
                             <h3 class="text-xs text-gray-400 font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Secondary Options</h3>
-                            <ul class="font-mono text-sm flex flex-col gap-2" id="res-secondary"></ul>
+                            <ul class="font-mono text-xs flex flex-col gap-2" id="res-secondary"></ul>
                         </div>
                     </div>
 
@@ -238,47 +241,77 @@
                 </div>
             </section>
 
-            <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[650px]">
+            <!-- Vehicle Repository (Width: 5, Wider) -->
+            <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-5 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
                 </div>
                 
                 <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-6">
                     <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
-                        <div class="flex justify-between items-center mb-3">
+                        <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xs text-gray-400 font-mono uppercase">Save Active Setup</h3>
                             <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear Form</button>
                         </div>
                         
                         <div class="flex flex-col gap-3 font-mono text-xs">
                             <input type="hidden" id="edit-id" value="">
-                            <input type="text" id="save-car-name" placeholder="Save As (e.g., Wet Track NSX)" class="garage-input font-bold text-brand-gold border-brand-gold/30">
                             
-                            <div class="grid grid-cols-2 gap-2 pb-3 border-b border-dark-600">
-                                <input type="text" id="set-make" placeholder="Make / Model" class="garage-input">
-                                <input type="text" id="set-hp" placeholder="Horsepower" class="garage-input">
-                                <input type="text" id="set-weight" placeholder="Weight (lbs)" class="garage-input">
-                                <input type="text" id="set-bias" placeholder="Front Bias (%)" class="garage-input">
-                                <select id="set-drive" class="garage-input appearance-none text-gray-400"><option value="">Drivetrain...</option><option>AWD</option><option>RWD</option><option>FWD</option></select>
-                                <select id="set-eng" class="garage-input appearance-none text-gray-400"><option value="">Engine Pos...</option><option>Front</option><option>Mid</option><option>Rear</option></select>
+                            <div class="flex flex-col gap-0.5">
+                                <label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Setup Name</label>
+                                <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
+                            </div>
+                            
+                            <!-- Garage Top Inputs (With Labels) -->
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 border-b border-dark-600">
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-2 pt-1">
-                                <input type="text" id="set-widthF" placeholder="Tire Width F" class="garage-input"><input type="text" id="set-widthR" placeholder="Tire Width R" class="garage-input">
-                                <input type="text" id="set-rimF" placeholder="Rim Size F" class="garage-input"><input type="text" id="set-rimR" placeholder="Rim Size R" class="garage-input">
-                                <input type="text" id="set-tireF" placeholder="Tire F (psi)" class="garage-input"><input type="text" id="set-tireR" placeholder="Tire R (psi)" class="garage-input">
-                                <input type="text" id="set-camF" placeholder="Camber F" class="garage-input"><input type="text" id="set-camR" placeholder="Camber R" class="garage-input">
-                                <input type="text" id="set-arbF" placeholder="ARB F" class="garage-input"><input type="text" id="set-arbR" placeholder="ARB R" class="garage-input">
-                                <input type="text" id="set-sprF" placeholder="Springs F" class="garage-input"><input type="text" id="set-sprR" placeholder="Springs R" class="garage-input">
-                                <input type="text" id="set-hgtF" placeholder="Ride Hgt F" class="garage-input"><input type="text" id="set-hgtR" placeholder="Ride Hgt R" class="garage-input">
-                                <input type="text" id="set-bmpF" placeholder="Bump F" class="garage-input"><input type="text" id="set-bmpR" placeholder="Bump R" class="garage-input">
-                                <input type="text" id="set-rebF" placeholder="Rebound F" class="garage-input"><input type="text" id="set-rebR" placeholder="Rebound R" class="garage-input">
-                                <input type="text" id="set-aerF" placeholder="Aero F" class="garage-input"><input type="text" id="set-aerR" placeholder="Aero R" class="garage-input">
-                                <input type="text" id="set-brkBal" placeholder="Brake Bal (F/R)" class="garage-input"><input type="text" id="set-brkPres" placeholder="Brake Pres (%)" class="garage-input">
-                                <input type="text" id="set-difAcc" placeholder="Diff Accel" class="garage-input"><input type="text" id="set-difDec" placeholder="Diff Decel" class="garage-input">
+                            <!-- Deep Tuning Inputs (With Permanent Labels) -->
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pt-1">
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-brand-blue font-mono uppercase tracking-wider">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-brand-blue font-mono uppercase tracking-wider">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-brand-blue font-mono uppercase tracking-wider">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-brand-blue font-mono uppercase tracking-wider">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
+                                
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[9px] text-gray-500 font-mono uppercase tracking-wider">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
                             </div>
                             
-                            <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-2 rounded mt-2 hover:opacity-80 transition-opacity">SAVE TO REPOSITORY</button>
+                            <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-3 rounded mt-4 hover:opacity-80 transition-opacity">SAVE TO REPOSITORY</button>
                         </div>
                     </div>
 
@@ -346,6 +379,7 @@
             }
         }
 
+        // -- Reads the LIVE form inputs and tags empty fields as "LOCKED" --
         function getLiveSetupInfo() {
             const getVal = (id) => {
                 let v = document.getElementById(id).value.trim();
