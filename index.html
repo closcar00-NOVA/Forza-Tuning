@@ -137,10 +137,8 @@
             </div>
         </header>
 
-        <!-- Main Dashboard: 4-3-5 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- Driver Feedback (Width: 4) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -197,7 +195,6 @@
                 </button>
             </section>
 
-            <!-- AI Diagnostics (Width: 3, Narrower) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-6 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -242,7 +239,6 @@
                 </div>
             </section>
 
-            <!-- Vehicle Repository (Width: 5, Wider) -->
             <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-5 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
@@ -312,7 +308,11 @@
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
                             </div>
                             
-                            <button onclick="saveToGarage()" class="w-full bg-brand-gold text-black font-bold py-3 rounded mt-4 hover:opacity-80 transition-opacity">SAVE TO REPOSITORY</button>
+                            <!-- Split Save Buttons -->
+                            <div class="flex gap-2 mt-4">
+                                <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-3 rounded hover:opacity-80 transition-opacity tracking-widest text-[11px] uppercase">Save Active</button>
+                                <button onclick="saveToGarage(true)" class="flex-1 bg-dark-700 text-brand-gold border border-brand-gold font-bold py-3 rounded hover:bg-brand-gold hover:text-black transition-colors tracking-widest text-[11px] uppercase">Save As New</button>
+                            </div>
                         </div>
                     </div>
 
@@ -322,7 +322,6 @@
                     </div>
                 </div>
 
-                <!-- Backup Management -->
                 <div class="p-5 border-t border-dark-600 shrink-0 bg-dark-800/50 rounded-b-xl">
                     <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-2 text-center">Data Management</h3>
                     <div class="flex gap-2">
@@ -337,7 +336,6 @@
         </main>
     </div>
 
-    <!-- Floating Chat Widget -->
     <div class="chat-btn" id="chat-toggle" onclick="toggleChat()">🎧</div>
     <div class="pit-comms-panel" id="pit-comms-panel">        
     <div class="bg-dark-700 p-3 border-b border-dark-600 rounded-t-xl flex justify-between items-center cursor-pointer" onclick="toggleChat()">
@@ -439,6 +437,10 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             const car = garage.find(c => c.id === id);
             if (!car) return;
             
+            // Set the active edit ID so saving overwrites this profile instead of duplicating
+            document.getElementById('edit-id').value = car.id;
+            document.getElementById('save-car-name').value = car.name;
+            
             document.getElementById('make-model').value = car.make; document.getElementById('set-make').value = car.make;
             document.getElementById('hp').value = car.hp; document.getElementById('set-hp').value = car.hp;
             document.getElementById('weight').value = car.weight; document.getElementById('set-weight').value = car.weight;
@@ -474,10 +476,15 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             alert(`Loaded: ${car.name}\nLive telemetry boxes updated.`);
         }
 
-        function saveToGarage() {
+        function saveToGarage(isNew = false) {
             const name = document.getElementById('save-car-name').value;
             if(!name) { alert("Please name this setup."); return; }
-            const editId = document.getElementById('edit-id').value;
+            
+            let editId = document.getElementById('edit-id').value;
+            if (isNew) {
+                editId = ''; // Force it to generate a new ID
+            }
+            
             const newCar = {
                 id: editId ? parseInt(editId) : Date.now(),
                 name: name,
@@ -500,25 +507,27 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
                 brkBal: document.getElementById('set-brkBal').value || '-', brkPres: document.getElementById('set-brkPres').value || '-',
                 difAcc: document.getElementById('set-difAcc').value || '-', difDec: document.getElementById('set-difDec').value || '-'
             };
+            
             if (editId) {
                 const index = garage.findIndex(c => c.id === parseInt(editId));
                 if (index !== -1) garage[index] = newCar;
             } else {
                 garage.push(newCar);
+                document.getElementById('edit-id').value = newCar.id; // Lock onto the new car for future saves
             }
+            
             localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
-            document.getElementById('edit-id').value = '';
             renderGarageList();
-            alert(`Setup "${name}" saved to repository.`);
+            
+            if (isNew) {
+                alert(`New setup "${name}" saved to repository.`);
+            } else {
+                alert(`Setup "${name}" updated successfully.`);
+            }
         }
 
         function editCar(id) {
             loadCar(id); 
-            const car = garage.find(c => c.id === id);
-            if (car) {
-                document.getElementById('edit-id').value = car.id;
-                document.getElementById('save-car-name').value = car.name;
-            }
         }
 
         function deleteCar(id) {
