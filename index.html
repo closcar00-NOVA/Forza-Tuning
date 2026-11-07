@@ -82,7 +82,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -562,6 +562,7 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
         }
 
         function mapComponentToId(componentName) {
+            if (!componentName) return null;
             const name = componentName.toLowerCase();
             if (name.includes('front') && name.includes('tire')) return 'set-tireF';
             if (name.includes('rear') && name.includes('tire')) return 'set-tireR';
@@ -644,7 +645,20 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 const data = await response.json();
                 
                 let rawText = data.candidates[0].content.parts[0].text.trim();
-                rawText = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim(); 
+                
+                // Bulletproof JSON Extraction
+                const jsonMatch = rawText.match(/```json\s*([\s\S]*?)\s*```/i);
+                if (jsonMatch) {
+                    rawText = jsonMatch[1].trim();
+                } else {
+                    rawText = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+                    const startIdx = rawText.indexOf('{');
+                    const endIdx = rawText.lastIndexOf('}');
+                    if (startIdx !== -1 && endIdx !== -1) {
+                        rawText = rawText.substring(startIdx, endIdx + 1);
+                    }
+                }
+                
                 const parsedData = JSON.parse(rawText);
 
                 simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
@@ -654,13 +668,15 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 document.getElementById('res-notes').innerText = parsedData.engineer_notes || 'No notes provided.';
 
                 const createListItem = (item) => {
-                    let color = (item.action.toLowerCase().includes('soften') || item.action.toLowerCase().includes('decrease')) ? 'text-brand-green' : 'text-brand-red';
-                    let inputId = mapComponentToId(item.component) || '';
-                    let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${item.component}', '${item.action}', '${inputId}')" class="ml-3 text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-2 py-0.5 text-[9px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
+                    let comp = item.component || 'Unknown Part';
+                    let act = item.action || '';
+                    let color = (act.toLowerCase().includes('soften') || act.toLowerCase().includes('decrease')) ? 'text-brand-green' : 'text-brand-red';
+                    let inputId = mapComponentToId(comp) || '';
+                    let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${comp}', '${act}', '${inputId}')" class="ml-3 text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-2 py-0.5 text-[9px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
                     
                     return `<li class="flex justify-between items-center border-b border-dark-600/50 pb-3 pt-1 last:border-0 last:pb-0">
-                                <span class="font-montserrat font-bold text-sm text-white flex items-center">${item.component} ${askBtn}</span>
-                                <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-xs border border-dark-600 tracking-widest">${item.action.toUpperCase()}</span>
+                                <span class="font-montserrat font-bold text-sm text-white flex items-center">${comp} ${askBtn}</span>
+                                <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-xs border border-dark-600 tracking-widest">${act.toUpperCase()}</span>
                             </li>`;
                 };
 
@@ -680,7 +696,13 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 document.getElementById('diag-loading').classList.remove('flex');
                 document.getElementById('diag-error').classList.remove('hidden');
                 document.getElementById('diag-error').classList.add('flex');
-                document.getElementById('error-msg').innerText = "Diagnostic Failure: Could not parse telemetry data.";
+                
+                // Enhanced error logging to the UI so you can see exactly what broke
+                let shortError = error.message;
+                if (shortError.includes('Unexpected token') || shortError.includes('JSON')) {
+                    shortError = "AI returned conversational text instead of raw code.";
+                }
+                document.getElementById('error-msg').innerText = `Diagnostic Failure: ${shortError}`;
                 
                 targetTx = 0; targetTy = 0;
                 document.getElementById('sensor-status').innerText = "ERROR";
