@@ -11,7 +11,7 @@
                 extend: {
                     colors: {
                         dark: { 900: '#0a0a0c', 800: '#121418', 700: '#1e2128', 600: '#2d313b' },
-                        brand: { green: '#00FA9A', gold: '#FFD700', red: '#FF3366', blue: '#00E5FF' }
+                        brand: { green: '#00FA9A', gold: '#FFD700', red: '#FF3366', blue: '#00E5FF', orange: '#E37A2F' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -23,7 +23,7 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@500;600;700&display=swap');
         
         body {
             background-color: #0a0a0c; color: #e2e8f0;
@@ -57,7 +57,7 @@
         .rec-dot { animation: blink 2s infinite; }
         
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 85%; }
+        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 95%; }
         .chat-msg.user { background: #2d313b; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
         
@@ -138,7 +138,6 @@
                 <div class="flex flex-col gap-4 shrink-0">
                     <div class="flex flex-col gap-1">
                         <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
-                        <!-- Shrunk text area by 60% -->
                         <textarea id="driver-input" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] h-[64px] resize-y font-mono"></textarea>
                     </div>
 
@@ -241,7 +240,7 @@
                     </div>
                     
                     <div class="chat-messages bg-dark-800/50 border-x border-dark-600 flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
-                        <div class="chat-msg bot">Engineer: Comms check. Let me know if you need clarification on any setup changes.</div>
+                        <div class="chat-msg bot">Engineer: Comms check. Select 'ASK' next to a diagnostic fix, or type a question below.</div>
                     </div>
 
                     <div class="p-2 border border-dark-600 bg-dark-800 rounded-b-xl flex items-end gap-2 shrink-0">
@@ -268,57 +267,57 @@
                             <input type="hidden" id="edit-id" value="">
                             
                             <div class="flex flex-col gap-0.5">
-                                <label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Setup Name</label>
+                                <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Setup Name</label>
                                 <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
                             </div>
                             
                             <!-- Garage Top Inputs (With Labels) -->
                             <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 border-b border-dark-600">
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
                             </div>
 
                             <!-- Deep Tuning Inputs (With Permanent Labels) -->
                             <div class="grid grid-cols-2 gap-x-3 gap-y-2 pt-1">
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-semibold text-brand-blue font-montserrat uppercase tracking-widest">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
+                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
                             </div>
                             
                             <!-- Split Save Buttons -->
@@ -420,11 +419,11 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
                     <li class="bg-dark-700 p-2 rounded border border-dark-600 flex flex-col gap-1 group transition-colors">
                         <div class="flex justify-between items-start">
                             <div class="flex flex-col cursor-pointer flex-grow" onclick="loadCar(${car.id})">
-                                <span class="text-brand-gold font-bold text-xs uppercase group-hover:text-white transition-colors">${car.name}</span>
+                                <span class="text-brand-gold font-semibold text-xs uppercase tracking-widest group-hover:text-white transition-colors">${car.name}</span>
                                 <span class="text-gray-400 text-[10px] font-mono">${car.make} | ${car.hp}HP | ${car.weight}lbs | ${car.drive}</span>
                             </div>
                             <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="editCar(${car.id}); event.stopPropagation();" class="text-[10px] text-brand-red font-mono font-bold hover:underline">DEL</button>
+                                <button onclick="deleteCar(${car.id}); event.stopPropagation();" class="text-[10px] text-brand-red font-mono font-bold hover:underline">DEL</button>
                             </div>
                         </div>
                     </li>`;
@@ -435,7 +434,6 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             const car = garage.find(c => c.id === id);
             if (!car) return;
             
-            // Set the active edit ID so saving overwrites this profile instead of duplicating
             document.getElementById('edit-id').value = car.id;
             document.getElementById('save-car-name').value = car.name;
             
@@ -522,10 +520,6 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             } else {
                 alert(`Setup "${name}" updated successfully.`);
             }
-        }
-
-        function editCar(id) {
-            deleteCar(id);
         }
 
         function deleteCar(id) {
@@ -625,6 +619,29 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             updateTemps(temps);
         }
 
+        function mapComponentToId(componentName) {
+            const name = componentName.toLowerCase();
+            if (name.includes('front') && name.includes('tire')) return 'set-tireF';
+            if (name.includes('rear') && name.includes('tire')) return 'set-tireR';
+            if (name.includes('front') && name.includes('roll')) return 'set-arbF';
+            if (name.includes('rear') && name.includes('roll')) return 'set-arbR';
+            if (name.includes('front') && name.includes('spring')) return 'set-sprF';
+            if (name.includes('rear') && name.includes('spring')) return 'set-sprR';
+            if ((name.includes('front') && name.includes('ride')) || (name.includes('front') && name.includes('height'))) return 'set-hgtF';
+            if ((name.includes('rear') && name.includes('ride')) || (name.includes('rear') && name.includes('height'))) return 'set-hgtR';
+            if (name.includes('front') && name.includes('bump')) return 'set-bmpF';
+            if (name.includes('rear') && name.includes('bump')) return 'set-bmpR';
+            if (name.includes('front') && name.includes('rebound')) return 'set-rebF';
+            if (name.includes('rear') && name.includes('rebound')) return 'set-rebR';
+            if (name.includes('front') && name.includes('aero')) return 'set-aerF';
+            if (name.includes('rear') && name.includes('aero')) return 'set-aerR';
+            if (name.includes('brake') && name.includes('bal')) return 'set-brkBal';
+            if (name.includes('brake') && name.includes('press')) return 'set-brkPres';
+            if (name.includes('accel')) return 'set-difAcc';
+            if (name.includes('decel')) return 'set-difDec';
+            return null; 
+        }
+
         async function analyzeTelemetry() {
             const apiKey = apiKeyInput.value.trim();
             const input = document.getElementById('driver-input').value.trim();
@@ -694,8 +711,11 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 
                 const createListItem = (item) => {
                     let color = (item.action.toLowerCase().includes('soften') || item.action.toLowerCase().includes('decrease')) ? 'text-brand-green' : 'text-brand-red';
+                    let inputId = mapComponentToId(item.component) || '';
+                    let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${item.component}', '${item.action}', '${inputId}')" class="ml-3 text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-2 py-0.5 text-[9px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
+                    
                     return `<li class="flex justify-between items-center border-b border-dark-600/50 pb-3 pt-1 last:border-0 last:pb-0">
-                                <span class="font-montserrat font-bold text-sm text-white">${item.component}</span>
+                                <span class="font-montserrat font-bold text-sm text-white flex items-center">${item.component} ${askBtn}</span>
                                 <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-xs border border-dark-600 tracking-widest">${item.action.toUpperCase()}</span>
                             </li>`;
                 };
@@ -723,6 +743,60 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 document.getElementById('sensor-status').className = "text-[10px] text-brand-red font-mono border border-brand-red px-1 py-0.5 rounded";
             } finally {
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        async function askEngineerForSpecifics(component, action, inputId) {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) { alert('API Key required for comms.'); return; }
+            
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="chat-msg user">What exact number should I set the ${component} to?</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            const typingId = 'typing-' + Date.now();
+            chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is calculating...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            const currentVal = document.getElementById(inputId) ? document.getElementById(inputId).value : 'Unknown';
+            const liveSetup = getLiveSetupInfo();
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+            
+            const prompt = `You are a Forza race engineer. The driver needs to ${action} the ${component} to fix their handling issue. The current value for ${component} is ${currentVal}. 
+            Based on the vehicle setup: \n${liveSetup}\n
+            Recommend an exact new numerical value. 
+            Keep your radio response to 1 brief sentence. DO NOT include units like 'psi' or 'lbs' in the final number, just the raw digits.
+            AT THE VERY END of your response, you MUST append this exact format: |||NEW_VALUE||| (replace NEW_VALUE with just the number).`;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        systemInstruction: { parts: [{ text: "You are a Forza race engineer." }] },
+                        contents: [{ role: "user", parts: [{ text: prompt }] }]
+                    })
+                });
+
+                document.getElementById(typingId).remove();
+                const data = await response.json();
+                const rawReply = data.candidates[0].content.parts[0].text;
+                
+                const parts = rawReply.split('|||');
+                const radioText = parts[0].trim();
+                const newValue = parts.length > 1 ? parts[1].trim() : null;
+                
+                let msgHtml = `<div class="chat-msg bot flex flex-col gap-2"><span>Engineer: ${radioText}</span>`;
+                if (newValue && inputId) {
+                    msgHtml += `<button onclick="document.getElementById('${inputId}').value = '${newValue}'; this.innerText = 'APPLIED ✓'; this.classList.add('opacity-50', 'cursor-not-allowed');" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg">Apply ${newValue}</button>`;
+                }
+                msgHtml += `</div>`;
+                
+                chatBox.innerHTML += msgHtml;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                document.getElementById(typingId).remove();
+                chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`;
             }
         }
 
