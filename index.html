@@ -128,77 +128,47 @@
         <!-- Main Dashboard: 3-4-5 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- Driver Feedback (Width: 3, Narrower) -->
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px] overflow-y-auto">
-                <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2">
+            <!-- DRIVER FEEDBACK & CHAT (Width: 3, Narrower) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
+                <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
                 </div>
 
-                <div class="flex flex-col gap-4 shrink-0">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
-                        <textarea id="driver-input" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] h-[64px] resize-y font-mono"></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Make / Model</label>
-                            <input type="text" id="make-model" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Horsepower</label>
-                            <input type="number" id="hp" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Weight (LBS)</label>
-                            <input type="number" id="weight" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Front Bias (%)</label>
-                            <input type="number" id="weight-bias" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Drivetrain</label>
-                            <select id="drivetrain" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white appearance-none focus:outline-none focus:border-brand-green font-mono">
-                                <option>RWD</option><option>AWD</option><option>FWD</option>
-                            </select>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-[10px] text-gray-400 font-mono uppercase">Engine Pos</label>
-                            <select id="engine-pos" class="bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-sm text-white appearance-none focus:outline-none focus:border-brand-green font-mono">
-                                <option>Front</option><option>Mid</option><option>Rear</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="flex flex-col gap-1 shrink-0 mb-4">
+                    <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
+                    <textarea id="driver-input" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] h-[64px] resize-y font-mono"></textarea>
                 </div>
 
-                <button onclick="analyzeTelemetry()" id="analyze-btn" class="mt-6 w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-3 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-sm flex justify-center items-center gap-2 shrink-0">
+                <button onclick="analyzeTelemetry()" id="analyze-btn" class="w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-3 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-sm flex justify-center items-center gap-2 shrink-0 mb-6">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     Analyze Telemetry
                 </button>
 
-                <!-- Engineer Notes moved directly under the button -->
-                <div id="eng-notes-box" class="hidden mt-4 bg-dark-700/50 p-4 rounded border-l-4 border-brand-blue text-sm text-gray-300 italic shrink-0">
-                    <strong class="text-white block not-italic mb-1 text-[11px] font-mono tracking-wider uppercase">Engineer Notes:</strong>
-                    <span id="res-notes">--</span>
+                <!-- PIT WALL COMMS EMBEDDED -->
+                <div class="flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
+                    <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
+                        <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
+                    </div>
+                    
+                    <div class="chat-messages flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
+                        <div class="chat-msg bot">Engineer: Comms check. Select 'ASK' next to a diagnostic fix, or type a question below.</div>
+                    </div>
+
+                    <div class="p-2 border-t border-dark-600 bg-dark-800 flex items-end gap-2 shrink-0">
+                        <textarea id="chat-input" rows="2" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-green font-mono resize-none h-[40px]" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
+                        <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-1.5 rounded font-bold hover:opacity-80 h-[40px] text-xs">SEND</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- AI Diagnostics (Width: 4, Wider) -->
+            <!-- AI DIAGNOSTICS (Width: 4, Wider) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
                 </div>
 
-                <!-- TOP HALF: Diagnostic Results (50% Split) -->
                 <div class="flex-1 flex flex-col min-h-0 overflow-y-auto mb-4 pr-2">
                     <div id="diag-empty" class="h-full flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-4">
                         <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -233,19 +203,11 @@
                     </div>
                 </div>
 
-                <!-- BOTTOM HALF: Pit Wall Comms Embedded (50% Split) -->
-                <div class="flex-1 flex flex-col min-h-0 border-t border-dark-600 pt-4">
-                    <div class="bg-dark-700 p-2 border border-dark-600 rounded-t-xl flex justify-between items-center shrink-0">
-                        <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
-                    </div>
-                    
-                    <div class="chat-messages bg-dark-800/50 border-x border-dark-600 flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
-                        <div class="chat-msg bot">Engineer: Comms check. Select 'ASK' next to a diagnostic fix, or type a question below.</div>
-                    </div>
-
-                    <div class="p-2 border border-dark-600 bg-dark-800 rounded-b-xl flex items-end gap-2 shrink-0">
-                        <textarea id="chat-input" rows="2" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-green font-mono resize-none h-[40px]" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
-                        <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-1.5 rounded font-bold hover:opacity-80 h-[40px] text-xs">SEND</button>
+                <!-- ENGINEER NOTES MOVED HERE -->
+                <div id="eng-notes-box" class="hidden border-t border-dark-600 pt-4 shrink-0">
+                    <div class="bg-dark-700/50 p-4 rounded border-l-4 border-brand-blue text-sm text-gray-300 italic">
+                        <strong class="text-white block not-italic mb-1 text-[11px] font-mono tracking-wider uppercase">Engineer Notes:</strong>
+                        <span id="res-notes">--</span>
                     </div>
                 </div>
             </section>
@@ -358,25 +320,11 @@
             if (savedKey) apiKeyInput.value = savedKey;
             updateTemps({fl: 100, fr: 100, rl: 100, rr: 100});
             renderGarageList();
-            setupAutoSync();
         });
 
         apiKeyInput.addEventListener('change', () => {
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
-
-        function setupAutoSync() {
-            const syncMap = {
-                'make-model': 'set-make', 'hp': 'set-hp', 'weight': 'set-weight',
-                'weight-bias': 'set-bias', 'drivetrain': 'set-drive', 'engine-pos': 'set-eng'
-            };
-            for (let sourceId in syncMap) {
-                const srcEl = document.getElementById(sourceId);
-                const destEl = document.getElementById(syncMap[sourceId]);
-                srcEl.addEventListener('input', () => { destEl.value = srcEl.value; });
-                srcEl.addEventListener('change', () => { destEl.value = srcEl.value; });
-            }
-        }
 
         function getLiveSetupInfo() {
             const getVal = (id) => {
@@ -437,12 +385,12 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             document.getElementById('edit-id').value = car.id;
             document.getElementById('save-car-name').value = car.name;
             
-            document.getElementById('make-model').value = car.make; document.getElementById('set-make').value = car.make;
-            document.getElementById('hp').value = car.hp; document.getElementById('set-hp').value = car.hp;
-            document.getElementById('weight').value = car.weight; document.getElementById('set-weight').value = car.weight;
-            document.getElementById('weight-bias').value = car.bias; document.getElementById('set-bias').value = car.bias;
-            document.getElementById('drivetrain').value = car.drive; document.getElementById('set-drive').value = car.drive;
-            document.getElementById('engine-pos').value = car.engine; document.getElementById('set-eng').value = car.engine;
+            document.getElementById('set-make').value = car.make;
+            document.getElementById('set-hp').value = car.hp;
+            document.getElementById('set-weight').value = car.weight;
+            document.getElementById('set-bias').value = car.bias;
+            document.getElementById('set-drive').value = car.drive;
+            document.getElementById('set-eng').value = car.engine;
             
             document.getElementById('set-widthF').value = car.widthF && car.widthF !== '-' ? car.widthF : '';
             document.getElementById('set-widthR').value = car.widthR && car.widthR !== '-' ? car.widthR : '';
@@ -645,12 +593,14 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
         async function analyzeTelemetry() {
             const apiKey = apiKeyInput.value.trim();
             const input = document.getElementById('driver-input').value.trim();
-            const makeModel = document.getElementById('make-model').value.trim() || 'Unknown Vehicle';
-            const hp = document.getElementById('hp').value.trim() || 'Unknown';
-            const weight = document.getElementById('weight').value.trim() || 'Unknown';
-            const bias = document.getElementById('weight-bias').value.trim() || '50';
-            const drivetrain = document.getElementById('drivetrain').value;
-            const enginePos = document.getElementById('engine-pos').value;
+            
+            const makeModel = document.getElementById('set-make').value.trim() || 'Unknown Vehicle';
+            const hp = document.getElementById('set-hp').value.trim() || 'Unknown';
+            const weight = document.getElementById('set-weight').value.trim() || 'Unknown';
+            const bias = document.getElementById('set-bias').value.trim() || '50';
+            const drivetrain = document.getElementById('set-drive').value;
+            const enginePos = document.getElementById('set-eng').value;
+            
             const btn = document.getElementById('analyze-btn');
             
             if (!apiKey) { alert('Please enter your Gemini API Key in the top right.'); return; }
@@ -806,12 +756,12 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             const apiKey = apiKeyInput.value.trim();
             const chatBox = document.getElementById('chat-box');
 
-            const makeModel = document.getElementById('make-model').value.trim() || 'the car';
-            const hp = document.getElementById('hp').value.trim() || 'Unknown';
-            const weight = document.getElementById('weight').value.trim() || 'Unknown';
-            const bias = document.getElementById('weight-bias').value.trim() || '50';
-            const drivetrain = document.getElementById('drivetrain').value;
-            const enginePos = document.getElementById('engine-pos').value;
+            const makeModel = document.getElementById('set-make').value.trim() || 'the car';
+            const hp = document.getElementById('set-hp').value.trim() || 'Unknown';
+            const weight = document.getElementById('set-weight').value.trim() || 'Unknown';
+            const bias = document.getElementById('set-bias').value.trim() || '50';
+            const drivetrain = document.getElementById('set-drive').value;
+            const enginePos = document.getElementById('set-eng').value;
             const driverInput = document.getElementById('driver-input').value.trim();
 
             if (!text) return;
