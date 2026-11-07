@@ -125,9 +125,11 @@
             </div>
         </header>
 
+        <!-- Main Dashboard: 4-3-5 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
+            <!-- Driver Feedback (Width: 4, Wider) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px] overflow-y-auto">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
@@ -138,7 +140,7 @@
                     <textarea id="driver-input" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] h-[64px] resize-y font-mono"></textarea>
                 </div>
 
-                <button onclick="analyzeTelemetry()" id="analyze-btn" class="w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-3 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-sm flex justify-center items-center gap-2 shrink-0 mb-6">
+                <button onclick="analyzeTelemetry()" id="analyze-btn" class="w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-2 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-[10px] flex justify-center items-center gap-2 shrink-0 mb-3">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     Analyze Telemetry
                 </button>
@@ -159,7 +161,8 @@
                 </div>
             </section>
 
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
+            <!-- AI Diagnostics (Width: 3, Narrower) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
@@ -207,6 +210,7 @@
                 </div>
             </section>
 
+            <!-- Vehicle Repository (Width: 5, Wider) -->
             <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-5 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
