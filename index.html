@@ -82,7 +82,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -125,10 +125,10 @@
             </div>
         </header>
 
-        <!-- Main Dashboard: 4-3-5 Proportions -->
+        <!-- Main Dashboard: 4-4-4 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- Driver Feedback (Width: 4, Wider) -->
+            <!-- Driver Feedback (Width: 4) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px] overflow-y-auto">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -161,8 +161,8 @@
                 </div>
             </section>
 
-            <!-- AI Diagnostics (Width: 3, Narrower) -->
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
+            <!-- AI Diagnostics (Width: 4, Resized) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
@@ -210,8 +210,8 @@
                 </div>
             </section>
 
-            <!-- Vehicle Repository (Width: 5, Wider) -->
-            <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-5 h-[800px]">
+            <!-- Vehicle Repository (Width: 4, Resized) -->
+            <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
                 </div>
@@ -675,7 +675,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                     let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${comp}', '${act}', '${inputId}')" class="ml-3 text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-2 py-0.5 text-[9px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
                     
                     return `<li class="flex justify-between items-center border-b border-dark-600/50 pb-3 pt-1 last:border-0 last:pb-0">
-                                <span class="font-montserrat font-bold text-sm text-white flex items-center">${comp} ${askBtn}</span>
+                                <span class="font-montserrat font-bold text-[11px] text-white flex items-center">${comp} ${askBtn}</span>
                                 <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-xs border border-dark-600 tracking-widest">${act.toUpperCase()}</span>
                             </li>`;
                 };
@@ -697,7 +697,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 document.getElementById('diag-error').classList.remove('hidden');
                 document.getElementById('diag-error').classList.add('flex');
                 
-                // Enhanced error logging to the UI so you can see exactly what broke
                 let shortError = error.message;
                 if (shortError.includes('Unexpected token') || shortError.includes('JSON')) {
                     shortError = "AI returned conversational text instead of raw code.";
@@ -793,7 +792,9 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 
             const liveSetup = getLiveSetupInfo();
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".`;
+            
+            // Re-engineered prompt to force hidden data strings for automatic button rendering
+            const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Front Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number.`;
             
             try {
                 const response = await fetch(endpoint, {
@@ -809,8 +810,31 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 
                 if (response.ok) {
                     const data = await response.json();
-                    const reply = data.candidates[0].content.parts[0].text;
-                    chatBox.innerHTML += `<div class="chat-msg bot">Engineer: ${reply}</div>`;
+                    const rawReply = data.candidates[0].content.parts[0].text;
+                    
+                    // Advanced Parser: Extracts conversational text and hidden action data
+                    let conversationalText = rawReply;
+                    const matches = rawReply.match(/\|\|\|(.*?)\|(.*?)\|\|\|/g);
+                    let actionButtons = '';
+
+                    if (matches) {
+                        matches.forEach(match => {
+                            conversationalText = conversationalText.replace(match, '').trim();
+                            const cleanMatch = match.replace(/\|\|\|/g, '');
+                            const parts = cleanMatch.split('|');
+                            if (parts.length >= 2) {
+                                const compName = parts[0].trim();
+                                const newVal = parts[1].trim();
+                                const inputId = mapComponentToId(compName);
+                                
+                                if (inputId) {
+                                    actionButtons += `<button onclick="document.getElementById('${inputId}').value = '${newVal}'; this.innerText = 'APPLIED ✓'; this.classList.add('opacity-50', 'cursor-not-allowed');" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg mt-2 mr-2">Apply ${compName}: ${newVal}</button>`;
+                                }
+                            }
+                        });
+                    }
+
+                    chatBox.innerHTML += `<div class="chat-msg bot flex flex-col gap-1"><span>Engineer: ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`;
                 } else {
                     chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Radio interference. Say again?</div>`;
                 }
