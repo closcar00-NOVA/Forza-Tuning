@@ -36,10 +36,13 @@
         ::-webkit-scrollbar-thumb { background: #2d313b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #4a5568; }
         
+        /* UPDATED: 80% White Neon Border with Soft HUD Glow */
         .telemetry-panel {
             background: linear-gradient(145deg, #121418 0%, #0d0f12 100%);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #1e2128;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0,0,0,0.6);
         }
+        
         .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
         
         .g-meter-container {
@@ -125,10 +128,8 @@
             </div>
         </header>
 
-        <!-- Main Dashboard: 4-4-4 Proportions -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- Driver Feedback (Width: 4) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px] overflow-y-auto">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -161,7 +162,6 @@
                 </div>
             </section>
 
-            <!-- AI Diagnostics (Width: 4, Resized) -->
             <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -210,7 +210,6 @@
                 </div>
             </section>
 
-            <!-- Vehicle Repository (Width: 4, Resized) -->
             <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
@@ -793,7 +792,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             const liveSetup = getLiveSetupInfo();
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
-            // Re-engineered prompt to force hidden data strings for automatic button rendering
             const chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Front Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number.`;
             
             try {
@@ -812,7 +810,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                     const data = await response.json();
                     const rawReply = data.candidates[0].content.parts[0].text;
                     
-                    // Advanced Parser: Extracts conversational text and hidden action data
                     let conversationalText = rawReply;
                     const matches = rawReply.match(/\|\|\|(.*?)\|(.*?)\|\|\|/g);
                     let actionButtons = '';
