@@ -587,24 +587,43 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
         function mapComponentToId(componentName) {
             if (!componentName) return null;
             const name = componentName.toLowerCase();
+            
+            // Fixed mappings: Added missing Camber, Tire Width, and Rim Size
+            if (name.includes('front') && name.includes('width')) return 'set-widthF';
+            if (name.includes('rear') && name.includes('width')) return 'set-widthR';
+            if (name.includes('front') && name.includes('rim')) return 'set-rimF';
+            if (name.includes('rear') && name.includes('rim')) return 'set-rimR';
+            
             if (name.includes('front') && name.includes('tire')) return 'set-tireF';
             if (name.includes('rear') && name.includes('tire')) return 'set-tireR';
+            
+            if (name.includes('front') && name.includes('camber')) return 'set-camF';
+            if (name.includes('rear') && name.includes('camber')) return 'set-camR';
+            
             if (name.includes('front') && name.includes('roll')) return 'set-arbF';
             if (name.includes('rear') && name.includes('roll')) return 'set-arbR';
+            
             if (name.includes('front') && name.includes('spring')) return 'set-sprF';
             if (name.includes('rear') && name.includes('spring')) return 'set-sprR';
+            
             if ((name.includes('front') && name.includes('ride')) || (name.includes('front') && name.includes('height'))) return 'set-hgtF';
             if ((name.includes('rear') && name.includes('ride')) || (name.includes('rear') && name.includes('height'))) return 'set-hgtR';
+            
             if (name.includes('front') && name.includes('bump')) return 'set-bmpF';
             if (name.includes('rear') && name.includes('bump')) return 'set-bmpR';
+            
             if (name.includes('front') && name.includes('rebound')) return 'set-rebF';
             if (name.includes('rear') && name.includes('rebound')) return 'set-rebR';
+            
             if (name.includes('front') && name.includes('aero')) return 'set-aerF';
             if (name.includes('rear') && name.includes('aero')) return 'set-aerR';
+            
             if (name.includes('brake') && (name.includes('bal') || name.includes('bias'))) return 'set-brkBal';
             if (name.includes('brake') && name.includes('press')) return 'set-brkPres';
+            
             if (name.includes('accel')) return 'set-difAcc';
             if (name.includes('decel') || (name.includes('decel') && name.includes('diff'))) return 'set-difDec';
+            
             return null; 
         }
 
