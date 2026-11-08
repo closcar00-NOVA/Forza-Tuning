@@ -36,7 +36,6 @@
         ::-webkit-scrollbar-thumb { background: #2d313b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #4a5568; }
         
-        /* UPDATED: 80% White Neon Border with Soft HUD Glow */
         .telemetry-panel {
             background: linear-gradient(145deg, #121418 0%, #0d0f12 100%);
             border: 1px solid rgba(255, 255, 255, 0.8);
@@ -215,22 +214,22 @@
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
                 </div>
                 
-                <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-6">
+                <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-4">
                     <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-xs text-gray-400 font-mono uppercase">Save Active Setup</h3>
                             <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear Form</button>
                         </div>
                         
-                        <div class="flex flex-col gap-3 font-mono text-xs">
+                        <div class="flex flex-col font-mono text-xs">
                             <input type="hidden" id="edit-id" value="">
                             
-                            <div class="flex flex-col gap-0.5">
+                            <div class="flex flex-col gap-0.5 mb-3">
                                 <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Setup Name</label>
                                 <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 border-b border-dark-600">
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600">
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
@@ -239,42 +238,66 @@
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pt-1">
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
+                            <div class="flex flex-col">
+                                <!-- Upgrades -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Tires -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Alignment -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Anti-Roll Bars -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Springs & Ride Height -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Damping -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Aero -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Brakes -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
+                                </div>
                                 
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
-                                
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
-                                
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
-                                
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
+                                <!-- Tuning: Differential -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
+                                </div>
                             </div>
                             
                             <div class="flex gap-2 mt-4">
