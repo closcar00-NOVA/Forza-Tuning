@@ -224,12 +224,13 @@
                         <div class="flex flex-col font-mono text-xs">
                             <input type="hidden" id="edit-id" value="">
                             
-                            <div class="flex flex-col gap-0.5 mb-3">
+                            <div class="flex flex-col gap-0.5 mb-4">
                                 <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Setup Name</label>
                                 <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600">
+                            <!-- Make/Model/Basics -->
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
@@ -240,7 +241,7 @@
 
                             <div class="flex flex-col">
                                 <!-- Upgrades -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
@@ -248,25 +249,25 @@
                                 </div>
                                 
                                 <!-- Tuning: Tires -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
                                 </div>
                                 
                                 <!-- Tuning: Alignment -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
                                 </div>
                                 
                                 <!-- Tuning: Anti-Roll Bars -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
                                 </div>
                                 
                                 <!-- Tuning: Springs & Ride Height -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
@@ -274,7 +275,7 @@
                                 </div>
                                 
                                 <!-- Tuning: Damping -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
@@ -282,13 +283,13 @@
                                 </div>
                                 
                                 <!-- Tuning: Aero -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
                                 </div>
                                 
                                 <!-- Tuning: Brakes -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-3 mb-3 border-b border-dark-600/70">
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
                                 </div>
@@ -668,7 +669,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 
                 let rawText = data.candidates[0].content.parts[0].text.trim();
                 
-                // Bulletproof JSON Extraction
                 const jsonMatch = rawText.match(/```json\s*([\s\S]*?)\s*```/i);
                 if (jsonMatch) {
                     rawText = jsonMatch[1].trim();
