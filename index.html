@@ -84,7 +84,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -335,6 +335,7 @@
     <script>
         const apiKeyInput = document.getElementById('api-key');
         let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
+        let isCommsActive = false;
         
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
@@ -716,11 +717,14 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                     let act = item.action || '';
                     let color = (act.toLowerCase().includes('soften') || act.toLowerCase().includes('decrease')) ? 'text-brand-green' : 'text-brand-red';
                     let inputId = mapComponentToId(comp) || '';
-                    let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${comp}', '${act}', '${inputId}')" class="ml-3 text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-2 py-0.5 text-[9px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
+                    let askBtn = inputId ? `<button onclick="askEngineerForSpecifics('${comp}', '${act}', '${inputId}')" class="text-brand-blue hover:text-black bg-dark-800 hover:bg-brand-blue border border-dark-600 hover:border-brand-blue rounded px-3 py-1 text-[10px] font-mono tracking-widest transition-colors uppercase">Ask</button>` : '';
                     
-                    return `<li class="flex justify-between items-center border-b border-dark-600/50 pb-3 pt-1 last:border-0 last:pb-0">
-                                <span class="font-montserrat font-bold text-[11px] text-white flex items-center">${comp} ${askBtn}</span>
-                                <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-xs border border-dark-600 tracking-widest">${act.toUpperCase()}</span>
+                    return `<li class="flex flex-col gap-2 border-b border-dark-600/50 pb-3 pt-2 last:border-0 last:pb-0">
+                                <span class="font-montserrat font-bold text-sm text-white tracking-wide">${comp}</span>
+                                <div class="flex justify-between items-center w-full">
+                                    <span class="${color} font-bold bg-dark-900 px-3 py-1 rounded text-[11px] border border-dark-600 tracking-widest">${act.toUpperCase()}</span>
+                                    ${askBtn}
+                                </div>
                             </li>`;
                 };
 
@@ -756,15 +760,21 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
         }
 
         async function askEngineerForSpecifics(component, action, inputId) {
+            if (isCommsActive) {
+                alert("Engineer is currently processing a request. Please wait.");
+                return;
+            }
+
             const apiKey = apiKeyInput.value.trim();
             if (!apiKey) { alert('API Key required for comms.'); return; }
             
+            isCommsActive = true;
             const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += `<div class="chat-msg user">What exact number should I set the ${component} to?</div>`;
+            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg user">What exact number should I set the ${component} to?</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
             
             const typingId = 'typing-' + Date.now();
-            chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is calculating...</div>`;
+            chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is calculating...</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
             
             const currentVal = document.getElementById(inputId) ? document.getElementById(inputId).value : 'Unknown';
@@ -789,6 +799,9 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 
                 document.getElementById(typingId).remove();
                 const data = await response.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                
                 const rawReply = data.candidates[0].content.parts[0].text;
                 
                 const parts = rawReply.split('|||');
@@ -801,15 +814,23 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 }
                 msgHtml += `</div>`;
                 
-                chatBox.innerHTML += msgHtml;
+                chatBox.insertAdjacentHTML('beforeend', msgHtml);
                 chatBox.scrollTop = chatBox.scrollHeight;
             } catch (err) {
-                document.getElementById(typingId).remove();
-                chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`;
+                if (document.getElementById(typingId)) document.getElementById(typingId).remove();
+                chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } finally {
+                isCommsActive = false;
             }
         }
 
         async function sendChatMessage() {
+            if (isCommsActive) {
+                alert("Engineer is currently processing a request. Please wait.");
+                return;
+            }
+
             const inputEl = document.getElementById('chat-input');
             const text = inputEl.value.trim();
             const apiKey = apiKeyInput.value.trim();
@@ -826,7 +847,9 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             if (!text) return;
             if (!apiKey) { alert('API Key required for comms.'); return; }
 
-            chatBox.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            isCommsActive = true;
+
+            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg user">${text}</div>`);
             
             // Reset input height
             inputEl.value = '';
@@ -834,7 +857,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = 'typing-' + Date.now();
-            chatBox.innerHTML += `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`;
+            chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const liveSetup = getLiveSetupInfo();
@@ -862,6 +885,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 
                 if (response.ok) {
                     const data = await response.json();
+                    if (data.error) throw new Error(data.error.message);
                     const rawReply = data.candidates[0].content.parts[0].text;
                     
                     let conversationalText = rawReply;
@@ -885,15 +909,18 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                         });
                     }
 
-                    chatBox.innerHTML += `<div class="chat-msg bot flex flex-col gap-1"><span>Engineer: ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`;
+                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot flex flex-col gap-1"><span>Engineer: ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`);
                 } else {
-                    chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Radio interference. Say again?</div>`;
+                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot text-brand-red">Radio interference. Say again?</div>`);
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
 
             } catch (err) {
-                document.getElementById(typingId).remove();
-                chatBox.innerHTML += `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`;
+                if (document.getElementById(typingId)) document.getElementById(typingId).remove();
+                chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot text-brand-red">Comms link failed.</div>`);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } finally {
+                isCommsActive = false;
             }
         }
     </script>
