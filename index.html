@@ -84,7 +84,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -129,7 +129,8 @@
 
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px] overflow-y-auto">
+            <!-- Driver Feedback (Width: 5) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-5 flex flex-col h-[800px] overflow-y-auto">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
@@ -165,7 +166,8 @@
                 </div>
             </section>
 
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-4 flex flex-col h-[800px]">
+            <!-- AI Diagnostics (Width: 3) -->
+            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
                 <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
                     <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
@@ -213,6 +215,7 @@
                 </div>
             </section>
 
+            <!-- Vehicle Repository (Width: 4) -->
             <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[800px]">
                 <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                     <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
@@ -825,7 +828,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             }
         }
 
-async function sendChatMessage() {
+        async function sendChatMessage() {
             if (isCommsActive) {
                 alert("Engineer is currently processing a request. Please wait.");
                 return;
