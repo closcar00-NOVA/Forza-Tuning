@@ -84,7 +84,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -245,6 +245,32 @@
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
                                 <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-gray-400"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
                             </div>
+                            
+                            <!-- Driving Assists -->
+                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-gray-600">
+                                <div class="flex flex-col gap-0.5">
+                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">ABS</label>
+                                    <select id="set-abs" class="garage-input py-1.5 text-sm appearance-none text-gray-400">
+                                        <option value="Off">Off</option>
+                                        <option value="On">On</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">TCS</label>
+                                    <select id="set-tcs" class="garage-input py-1.5 text-sm appearance-none text-gray-400">
+                                        <option value="Off">Off</option>
+                                        <option value="Sport">Sport</option>
+                                        <option value="On">On</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-0.5">
+                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">STM</label>
+                                    <select id="set-stm" class="garage-input py-1.5 text-sm appearance-none text-gray-400">
+                                        <option value="Off">Off</option>
+                                        <option value="On">On</option>
+                                    </select>
+                                </div>
+                            </div>
 
                             <div class="flex flex-col">
                                 <!-- Upgrades -->
@@ -368,7 +394,8 @@ Bump (F/R): ${getVal('set-bmpF')} / ${getVal('set-bmpR')}
 Rebound (F/R): ${getVal('set-rebF')} / ${getVal('set-rebR')}
 Aero (F/R): ${getVal('set-aerF')} / ${getVal('set-aerR')}
 Brake Bias & Pres: ${getVal('set-brkBal')} / ${getVal('set-brkPres')}
-Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
+Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}
+Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document.getElementById('set-tcs').value}, STM ${document.getElementById('set-stm').value}`;
         }
 
         function toggleSensors() {
@@ -417,6 +444,10 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
             document.getElementById('set-drive').value = car.drive;
             document.getElementById('set-eng').value = car.engine;
             
+            if (document.getElementById('set-abs')) document.getElementById('set-abs').value = car.abs || 'Off';
+            if (document.getElementById('set-tcs')) document.getElementById('set-tcs').value = car.tcs || 'Off';
+            if (document.getElementById('set-stm')) document.getElementById('set-stm').value = car.stm || 'Off';
+            
             document.getElementById('set-widthF').value = car.widthF && car.widthF !== '-' ? car.widthF : '';
             document.getElementById('set-widthR').value = car.widthR && car.widthR !== '-' ? car.widthR : '';
             document.getElementById('set-rimF').value = car.rimF && car.rimF !== '-' ? car.rimF : '';
@@ -463,6 +494,9 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}`;
                 bias: document.getElementById('set-bias').value || 50,
                 drive: document.getElementById('set-drive').value || 'RWD',
                 engine: document.getElementById('set-eng').value || 'Front',
+                abs: document.getElementById('set-abs').value || 'Off',
+                tcs: document.getElementById('set-tcs').value || 'Off',
+                stm: document.getElementById('set-stm').value || 'Off',
                 widthF: document.getElementById('set-widthF').value || '-', widthR: document.getElementById('set-widthR').value || '-',
                 rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
                 tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
