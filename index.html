@@ -84,7 +84,7 @@
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2-2h-2a2 2 0 01-2-2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
 
@@ -825,7 +825,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             }
         }
 
-        async function sendChatMessage() {
+async function sendChatMessage() {
             if (isCommsActive) {
                 alert("Engineer is currently processing a request. Please wait.");
                 return;
@@ -857,7 +857,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const typingId = 'typing-' + Date.now();
-            chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="chat-msg bot opacity-50">Engineer is typing...</div>`);
+            chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="chat-msg bot opacity-50">Comms linking...</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const liveSetup = getLiveSetupInfo();
@@ -869,7 +869,7 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             if (chatMode === "engineer") {
                 chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Front Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number.`;
             } else {
-                chatPrompt = `You are a Forza Chief Mechanic. The driver is asking for advice on which car parts or upgrades to purchase/install next (e.g., Race Tires vs Weight Reduction vs Camshaft). You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nHere is the current setup and unlocked parts (LOCKED means the part is not yet upgraded): \n${liveSetup}\n\nThe driver previously noted: "${driverInput}". \n\nProvide detailed, conversational advice on the best upgrade path to solve their handling issues or improve lap times. You do not need to be brief. Do NOT use the hidden tuning data strings.`;
+                chatPrompt = `You are a Forza Chief Mechanic. The driver is asking for advice on which car parts or upgrades to purchase/install next (e.g., Race Tires vs Weight Reduction vs Camshaft). You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nHere is the current setup and unlocked parts (LOCKED means the part is not yet upgraded): \n${liveSetup}\n\nThe driver previously noted: "${driverInput}". \n\nCRITICAL RULE: Give punchy, direct advice. Recommend exactly 1 to 2 specific upgrades. Keep your entire response under 3 short sentences or use a quick bulleted list. Do NOT write long paragraphs. Do NOT use the hidden tuning data strings.`;
             }            
             try {
                 const response = await fetch(endpoint, {
@@ -909,9 +909,15 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                         });
                     }
 
-                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot flex flex-col gap-1"><span>Engineer: ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`);
+                    // Format Markdown bullets to basic HTML if the mechanic uses them
+                    conversationalText = conversationalText.replace(/\n\*/g, '<br>•').replace(/\n-/g, '<br>•');
+
+                    let prefix = chatMode === "engineer" ? "Engineer:" : "Mechanic:";
+                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot flex flex-col gap-1"><span><strong class="text-white">${prefix}</strong> ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`);
                 } else {
-                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot text-brand-red">Radio interference. Say again?</div>`);
+                    const errorData = await response.json().catch(() => ({}));
+                    const errMsg = errorData?.error?.message || response.statusText;
+                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot text-brand-red">Radio interference (API Error ${response.status}: ${errMsg}). Say again?</div>`);
                 }
                 chatBox.scrollTop = chatBox.scrollHeight;
 
