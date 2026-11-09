@@ -224,7 +224,7 @@
                 <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-4">
                     <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xs text-gray-400 font-mono uppercase">Save Active Setup</h3>
+                            <h3 class="text-xs text-gray-400 font-mono uppercase">Live Tuning Values</h3>
                             <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear Form</button>
                         </div>
                         
@@ -333,11 +333,6 @@
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
                                 </div>
                             </div>
-                            
-                            <div class="flex gap-2 mt-4">
-                                <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-3 rounded hover:opacity-80 transition-opacity tracking-widest text-[11px] uppercase">Save Active</button>
-                                <button onclick="saveToGarage(true)" class="flex-1 bg-dark-700 text-brand-gold border border-brand-gold font-bold py-3 rounded hover:bg-brand-gold hover:text-black transition-colors tracking-widest text-[11px] uppercase">Save As New</button>
-                            </div>
                         </div>
                     </div>
 
@@ -347,14 +342,25 @@
                     </div>
                 </div>
 
-                <div class="p-5 border-t border-dark-600 shrink-0 bg-dark-800/50 rounded-b-xl">
-                    <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-2 text-center">Data Management</h3>
-                    <div class="flex gap-2">
-                        <button onclick="exportGarage()" class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-green border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-green">Export Backup</button>
-                        <label class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-gold border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-gold text-center cursor-pointer flex items-center justify-center">
-                            Import Backup
-                            <input type="file" id="import-file" class="hidden" accept=".json" onchange="importGarage(event)">
-                        </label>
+                <!-- Combined Footer for Save Actions and Data Management -->
+                <div class="flex flex-col shrink-0 bg-dark-800/50 rounded-b-xl border-t border-dark-600">
+                    <div class="p-5 border-b border-dark-600">
+                        <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-3 text-center tracking-wider">Vehicle Record</h3>
+                        <div class="flex gap-2">
+                            <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-3 rounded hover:opacity-80 transition-opacity tracking-widest text-[11px] uppercase">Save Active</button>
+                            <button onclick="saveToGarage(true)" class="flex-1 bg-dark-700 text-brand-gold border border-brand-gold font-bold py-3 rounded hover:bg-brand-gold hover:text-black transition-colors tracking-widest text-[11px] uppercase">Save As New</button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5">
+                        <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-3 text-center tracking-wider">Data Management</h3>
+                        <div class="flex gap-2">
+                            <button onclick="exportGarage()" class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-green border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-green">Export Backup</button>
+                            <label class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-gold border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-gold text-center cursor-pointer flex items-center justify-center">
+                                Import Backup
+                                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importGarage(event)">
+                            </label>
+                        </div>
                     </div>
                 </div>
             </section>
