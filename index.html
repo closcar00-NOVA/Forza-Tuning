@@ -81,7 +81,24 @@
                 <p class="text-gray-500 font-mono text-sm mt-1 uppercase tracking-wider">Live Diagnostics & Tuning Interface</p>
             </div>
             
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Turning Help Button & Modal -->
+                <div class="relative">
+                    <button onclick="toggleTurningHelp()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Turning Help
+                    </button>
+
+                    <div id="turning-help-modal" class="hidden absolute top-full mt-3 right-0 w-80 md:w-[460px] z-50 telemetry-panel rounded-xl p-4 flex-col items-center shadow-2xl border border-brand-blue">
+                        <div class="w-full flex items-center justify-between gap-2 mb-3 border-b border-dark-600 pb-2">
+                            <h2 class="text-sm font-bold text-white tracking-wide uppercase">Oversteer vs. Understeer</h2>
+                            <button onclick="toggleTurningHelp()" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
+                        </div>
+                        <img src="oversteerundersteer.png" alt="Oversteer vs Understeer Reference" class="w-full h-auto rounded-lg border border-dark-600 bg-dark-900">
+                    </div>
+                </div>
+
+                <!-- Live Sensors Button & Modal -->
                 <div class="relative">
                     <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -414,9 +431,26 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}
 Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document.getElementById('set-tcs').value}, STM ${document.getElementById('set-stm').value}`;
         }
 
+        function toggleTurningHelp() {
+            const helpModal = document.getElementById('turning-help-modal');
+            const sensorsModal = document.getElementById('live-sensors-modal');
+            if (helpModal.classList.contains('hidden')) {
+                sensorsModal.classList.add('hidden');
+                sensorsModal.classList.remove('flex');
+                helpModal.classList.remove('hidden');
+                helpModal.classList.add('flex');
+            } else {
+                helpModal.classList.add('hidden');
+                helpModal.classList.remove('flex');
+            }
+        }
+
         function toggleSensors() {
             const modal = document.getElementById('live-sensors-modal');
+            const helpModal = document.getElementById('turning-help-modal');
             if (modal.classList.contains('hidden')) {
+                helpModal.classList.add('hidden');
+                helpModal.classList.remove('flex');
                 modal.classList.remove('hidden'); modal.classList.add('flex');
             } else {
                 modal.classList.add('hidden'); modal.classList.remove('flex');
