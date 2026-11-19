@@ -715,14 +715,14 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             if (name.includes('front') && name.includes('camber')) return 'set-camF';
             if (name.includes('rear') && name.includes('camber')) return 'set-camR';
             
-            if (name.includes('front') && name.includes('roll')) return 'set-arbF';
-            if (name.includes('rear') && name.includes('roll')) return 'set-arbR';
+            if (name.includes('front') && (name.includes('roll') || name.includes('sway') || name.includes('arb'))) return 'set-arbF';
+            if (name.includes('rear') && (name.includes('roll') || name.includes('sway') || name.includes('arb'))) return 'set-arbR';
             
             if (name.includes('front') && name.includes('spring')) return 'set-sprF';
             if (name.includes('rear') && name.includes('spring')) return 'set-sprR';
             
-            if ((name.includes('front') && name.includes('ride')) || (name.includes('front') && name.includes('height'))) return 'set-hgtF';
-            if ((name.includes('rear') && name.includes('ride')) || (name.includes('rear') && name.includes('height'))) return 'set-hgtR';
+            if (name.includes('front') && (name.includes('ride') || name.includes('height'))) return 'set-hgtF';
+            if (name.includes('rear') && (name.includes('ride') || name.includes('height'))) return 'set-hgtR';
             
             if (name.includes('front') && name.includes('bump')) return 'set-bmpF';
             if (name.includes('rear') && name.includes('bump')) return 'set-bmpR';
@@ -730,14 +730,14 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             if (name.includes('front') && name.includes('rebound')) return 'set-rebF';
             if (name.includes('rear') && name.includes('rebound')) return 'set-rebR';
             
-            if (name.includes('front') && name.includes('aero')) return 'set-aerF';
-            if (name.includes('rear') && name.includes('aero')) return 'set-aerR';
+            if (name.includes('front') && (name.includes('aero') || name.includes('downforce'))) return 'set-aerF';
+            if (name.includes('rear') && (name.includes('aero') || name.includes('downforce'))) return 'set-aerR';
             
             if (name.includes('brake') && (name.includes('bal') || name.includes('bias'))) return 'set-brkBal';
             if (name.includes('brake') && name.includes('press')) return 'set-brkPres';
             
             if (name.includes('accel')) return 'set-difAcc';
-            if (name.includes('decel') || (name.includes('decel') && name.includes('diff'))) return 'set-difDec';
+            if (name.includes('decel')) return 'set-difDec';
             
             return null; 
         }
@@ -984,14 +984,14 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             let chatPrompt = "";
             
             if (chatMode === "engineer") {
-                chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Front Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number.`;
+                chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Brake Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number with raw digits only (no % or psi).`;
             } else {
-                chatPrompt = `You are a Forza Chief Mechanic having a natural back-and-forth conversation with the driver. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nCurrent setup (LOCKED means not upgraded/adjustable): \n${liveSetup}\n\nDriver's current telemetry note: "${driverInput}". \n\nSTYLE & MEMORY RULES:
+                chatPrompt = `You are a Forza Chief Mechanic having a natural back-and-forth conversation with the driver. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nCurrent setup (LOCKED means not upgraded/adjustable): \n${liveSetup}\n\nDriver's current telemetry note: "${driverInput}". \n\nSTYLE, MEMORY & APPLY RULES:
 1. Answer the driver's specific question directly in a relaxed, conversational tone (1-2 sentences).
 2. Follow with 2-3 short, scannable bullet points (using "-") highlighting key things to consider. Avoid dense walls of text.
 3. NEVER repeat advice or upgrades you already suggested earlier in the conversation.
 4. Do NOT push upgrades on every turn—only mention upgrades if the driver asks or it directly solves a bottleneck, and immediately drop any upgrade the driver says isn't available for this car.
-5. Do NOT use the hidden ||| tuning data strings.`;
+5. EXACT NUMBERS & APPLY BUTTONS: Whenever you suggest adjusting an UNLOCKED tuning setting, commit to ONE exact optimal number (never give a range like "52%-54%"). At the very end of your response, append a hidden data tag for each unlocked setting you recommend formatted exactly like: |||ComponentName|ExactNumber||| (raw digits only, no units like % or psi). For example: |||Brake Bias|53||| |||Diff Decel|22||| |||Diff Accel|42|||. ONLY generate tags for components that are NOT listed as LOCKED.`;
             }
 
             // Build conversation payload with memory
