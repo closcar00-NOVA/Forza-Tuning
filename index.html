@@ -40,6 +40,7 @@
             background: linear-gradient(145deg, #121418 0%, #0d0f12 100%);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0,0,0,0.6);
+            transition: all 0.25s ease;
         }
         
         .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
@@ -67,6 +68,11 @@
             background-color: #1e2128; border: 1px solid #2d313b; border-radius: 4px; padding: 4px 8px; color: white; width: 100%; transition: border-color 0.2s;
         }
         .garage-input:focus { outline: none; border-color: #FFD700; }
+
+        .vertical-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-6 lg:p-8 font-sans">
@@ -82,9 +88,32 @@
             </div>
             
             <div class="flex items-center gap-3 flex-wrap">
+                <!-- Data Management Button & Modal -->
+                <div class="relative">
+                    <button onclick="toggleHeaderModal('data-mgmt-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                        Data Mgmt
+                    </button>
+
+                    <div id="data-mgmt-modal" class="hidden absolute top-full mt-3 right-0 w-72 z-50 telemetry-panel rounded-xl p-4 flex-col gap-3 shadow-2xl border border-brand-blue">
+                        <div class="w-full flex items-center justify-between gap-2 border-b border-dark-600 pb-2">
+                            <h2 class="text-sm font-bold text-white tracking-wide uppercase">Data Management</h2>
+                            <button onclick="toggleHeaderModal('data-mgmt-modal')" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
+                        </div>
+                        <p class="text-[11px] text-gray-400 font-mono">Back up or restore your saved vehicle profiles.</p>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="exportGarage()" class="w-full bg-dark-700 hover:bg-dark-600 text-brand-green border border-dark-600 text-xs font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-green">Export Backup</button>
+                            <label class="w-full bg-dark-700 hover:bg-dark-600 text-brand-gold border border-dark-600 text-xs font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-gold text-center cursor-pointer flex items-center justify-center">
+                                Import Backup
+                                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importGarage(event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Turning Help Button & Modal -->
                 <div class="relative">
-                    <button onclick="toggleTurningHelp()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
+                    <button onclick="toggleHeaderModal('turning-help-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Turning Help
                     </button>
@@ -92,7 +121,7 @@
                     <div id="turning-help-modal" class="hidden absolute top-full mt-3 right-0 w-80 md:w-[460px] z-50 telemetry-panel rounded-xl p-4 flex-col items-center shadow-2xl border border-brand-blue">
                         <div class="w-full flex items-center justify-between gap-2 mb-3 border-b border-dark-600 pb-2">
                             <h2 class="text-sm font-bold text-white tracking-wide uppercase">Oversteer vs. Understeer</h2>
-                            <button onclick="toggleTurningHelp()" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
+                            <button onclick="toggleHeaderModal('turning-help-modal')" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
                         </div>
                         <img src="oversteerundersteer.png" alt="Oversteer vs Understeer Reference" class="w-full h-auto rounded-lg border border-dark-600 bg-dark-900">
                     </div>
@@ -100,7 +129,7 @@
 
                 <!-- Live Sensors Button & Modal -->
                 <div class="relative">
-                    <button onclick="toggleSensors()" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
+                    <button onclick="toggleHeaderModal('live-sensors-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         Live Sensors
                     </button>
@@ -144,254 +173,279 @@
             </div>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Dynamic 3-Way Collapsible Flexbox Dashboard -->
+        <main class="flex flex-col lg:flex-row gap-6 items-stretch">
             
-            <!-- Driver Feedback (Width: 5) -->
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-5 flex flex-col h-[800px] overflow-y-auto">
-                <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
-                    <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-                    <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
+            <!-- Panel 1: Driver Feedback (Default Weight: 5) -->
+            <section id="panel-feedback" class="telemetry-panel rounded-xl w-full lg:flex-[5] min-w-0 flex flex-col h-[800px] overflow-hidden">
+                <!-- Collapsed Rail -->
+                <div id="rail-feedback" onclick="togglePanel('feedback')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand Driver Feedback">
+                    <svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    <span class="lg:vertical-label text-xs font-bold text-white tracking-[0.2em] uppercase whitespace-nowrap">Driver Feedback</span>
+                    <span class="text-brand-green font-mono text-sm font-bold">+</span>
                 </div>
 
-                <div class="flex flex-col gap-1 shrink-0 mb-4">
-                    <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
-                    <textarea id="driver-input" rows="2" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] max-h-[160px] overflow-y-auto resize-none font-mono transition-all" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
-                </div>
-
-                <button onclick="analyzeTelemetry()" id="analyze-btn" class="w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-2 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-[10px] flex justify-center items-center gap-2 shrink-0 mb-3">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Analyze Telemetry
-                </button>
-
-                <div class="flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
-                    <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
-                        <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
+                <!-- Expanded Content -->
+                <div id="body-feedback" class="p-5 flex flex-col h-full min-h-0">
+                    <div class="flex items-center justify-between gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
                         <div class="flex items-center gap-2">
-                            <button onclick="clearChat()" title="Clear chat memory" class="text-[9px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-1.5 py-1 transition-colors">CLR</button>
-                            <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
-                                <option value="engineer">Tuning Engineer</option>
-                                <option value="mechanic">Chief Mechanic</option>
-                            </select>
+                            <svg class="w-5 h-5 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                            <h2 class="text-lg font-bold text-white tracking-wide uppercase">Driver Feedback</h2>
                         </div>
-                    </div>
-                    
-                    <div class="chat-messages flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
-                        <div class="chat-msg bot">Engineer: Comms check. Select 'ASK' next to a diagnostic fix, or type a question below.</div>
+                        <button onclick="togglePanel('feedback')" title="Collapse panel" class="text-gray-400 hover:text-white font-mono text-xs px-2 py-0.5 rounded border border-dark-600 hover:border-gray-400 transition-colors">—</button>
                     </div>
 
-                    <div class="p-2 border-t border-dark-600 bg-dark-800 flex items-end gap-2 shrink-0">
-                        <textarea id="chat-input" rows="1" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-green font-mono resize-none min-h-[40px] max-h-[120px] overflow-y-auto transition-all" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
-                        <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-1.5 rounded font-bold hover:opacity-80 min-h-[40px] text-xs shrink-0 self-end">SEND</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AI Diagnostics (Width: 3) -->
-            <section class="telemetry-panel rounded-xl p-5 lg:col-span-3 flex flex-col h-[800px]">
-                <div class="flex items-center gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                    <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
-                </div>
-
-                <div class="flex-1 flex flex-col min-h-0 overflow-y-auto mb-4 pr-2">
-                    <div id="diag-empty" class="h-full flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-4">
-                        <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        WAITING FOR TELEMETRY INPUT
+                    <div class="flex flex-col gap-1 shrink-0 mb-4">
+                        <label class="text-xs text-gray-400 font-mono uppercase">Telemetry Notes</label>
+                        <textarea id="driver-input" rows="2" placeholder="Describe the car's behavior..." class="bg-dark-700 border border-dark-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green min-h-[64px] max-h-[160px] overflow-y-auto resize-none font-mono transition-all" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
                     </div>
 
-                    <div id="diag-loading" class="hidden h-full flex flex-col items-center justify-center text-brand-green font-mono text-sm">
-                        <div class="w-8 h-8 border-2 border-brand-green border-t-transparent rounded-full animate-spin mb-4"></div>
-                        PROCESSING PHYSICS DATA...
-                    </div>
+                    <button onclick="analyzeTelemetry()" id="analyze-btn" class="w-full bg-dark-700 hover:bg-brand-green text-brand-green hover:text-black border border-brand-green font-bold py-2 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-[10px] flex justify-center items-center gap-2 shrink-0 mb-3">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Analyze Telemetry
+                    </button>
 
-                    <div id="diag-error" class="hidden h-full flex-col items-center justify-center text-brand-red font-mono text-sm text-center p-4">
-                        <span id="error-msg">Error</span>
-                    </div>
-
-                    <div id="diag-results" class="hidden flex-col gap-4 h-full">
-                        <div class="flex flex-col gap-2 font-mono text-xs shrink-0">
-                            <div class="bg-dark-600 border-l-2 border-brand-red px-3 py-1 text-white w-full" id="res-phase">PHASE: --</div>
-                            <div class="bg-dark-600 border-l-2 border-brand-gold px-3 py-1 text-white w-full" id="res-symptom">SYMPTOM: --</div>
-                        </div>
-                        
-                        <div class="flex flex-col gap-4 shrink-0">
-                            <div class="bg-dark-800 border border-dark-600 rounded p-4">
-                                <h3 class="text-[11px] text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Primary Fix</h3>
-                                <ul class="font-mono flex flex-col gap-2" id="res-primary"></ul>
-                            </div>
-                            <div class="bg-dark-800 border border-dark-600 rounded p-4">
-                                <h3 class="text-[11px] text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Secondary Options</h3>
-                                <ul class="font-mono flex flex-col gap-2" id="res-secondary"></ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="eng-notes-box" class="hidden border-t border-dark-600 pt-4 shrink-0">
-                    <div class="bg-dark-700/50 p-4 rounded border-l-4 border-brand-blue text-sm text-gray-300 italic">
-                        <strong class="text-white block not-italic mb-1 text-[11px] font-mono tracking-wider uppercase">Engineer Notes:</strong>
-                        <span id="res-notes">--</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Vehicle Repository (Width: 4) -->
-            <section class="telemetry-panel rounded-xl flex flex-col lg:col-span-4 h-[800px]">
-                <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
-                    <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
-                </div>
-                
-                <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-4">
-                    <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xs text-gray-400 font-mono uppercase">Live Tuning Values</h3>
-                            <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear Form</button>
-                        </div>
-                        
-                        <div class="flex flex-col font-mono text-xs">
-                            <input type="hidden" id="edit-id" value="">
-                            
-                            <div class="flex flex-col gap-0.5 mb-4">
-                                <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Setup Name</label>
-                                <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
-                            </div>
-                            
-                            <!-- Make/Model/Basics -->
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
-                                <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
-                            </div>
-                            
-                            <!-- Driving Assists -->
-                            <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                <div class="flex flex-col gap-0.5">
-                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">ABS</label>
-                                    <select id="set-abs" class="garage-input py-1.5 text-sm appearance-none text-white">
-                                        <option value="Off">Off</option>
-                                        <option value="On">On</option>
-                                    </select>
-                                </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">TCS</label>
-                                    <select id="set-tcs" class="garage-input py-1.5 text-sm appearance-none text-white">
-                                        <option value="Off">Off</option>
-                                        <option value="Sport">Sport</option>
-                                        <option value="On">On</option>
-                                    </select>
-                                </div>
-                                <div class="flex flex-col gap-0.5">
-                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">STM</label>
-                                    <select id="set-stm" class="garage-input py-1.5 text-sm appearance-none text-white">
-                                        <option value="Off">Off</option>
-                                        <option value="Sport">Sport</option>
-                                        <option value="On">On</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col">
-                                <!-- Upgrades -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Tires -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Alignment -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Anti-Roll Bars -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Springs & Ride Height -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Damping -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Aero -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Brakes -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
-                                </div>
-                                
-                                <!-- Tuning: Differential -->
-                                <div class="grid grid-cols-2 gap-x-3 gap-y-2">
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Collapsible Saved Profiles Dropdown -->
-                    <div class="bg-dark-800 rounded border border-dark-600 shadow-inner overflow-hidden shrink-0">
-                        <button onclick="toggleSavedProfiles()" class="w-full p-3 flex justify-between items-center text-left hover:bg-dark-700/50 transition-colors focus:outline-none">
+                    <div class="flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
+                        <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
+                            <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
                             <div class="flex items-center gap-2">
-                                <h3 class="text-xs text-brand-gold font-mono uppercase tracking-wider font-bold">Saved Profiles</h3>
-                                <span id="garage-count" class="text-[10px] font-mono bg-dark-900 text-gray-400 border border-dark-600 px-1.5 py-0.5 rounded">0</span>
+                                <button onclick="clearChat()" title="Clear chat memory" class="text-[9px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-1.5 py-1 transition-colors">CLR</button>
+                                <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
+                                    <option value="engineer">Tuning Engineer</option>
+                                    <option value="mechanic">Chief Mechanic</option>
+                                </select>
                             </div>
-                            <svg id="profiles-chevron" class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div id="saved-profiles-container" class="hidden border-t border-dark-600 p-3">
-                            <ul id="garage-list" class="flex flex-col gap-2"></ul>
+                        </div>
+                        
+                        <div class="chat-messages flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
+                            <div class="chat-msg bot">Engineer: Comms check. Select 'ASK' next to a diagnostic fix, or type a question below.</div>
+                        </div>
+
+                        <div class="p-2 border-t border-dark-600 bg-dark-800 flex items-end gap-2 shrink-0">
+                            <textarea id="chat-input" rows="1" placeholder="Ask engineer..." class="flex-grow bg-dark-700 border border-dark-600 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-green font-mono resize-none min-h-[40px] max-h-[120px] overflow-y-auto transition-all" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }"></textarea>
+                            <button onclick="sendChatMessage()" class="bg-brand-green text-black px-3 py-1.5 rounded font-bold hover:opacity-80 min-h-[40px] text-xs shrink-0 self-end">SEND</button>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Combined Footer for Save Actions and Data Management -->
-                <div class="flex flex-col shrink-0 bg-dark-800/50 rounded-b-xl border-t border-dark-600">
-                    <div class="p-5 border-b border-dark-600">
-                        <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-3 text-center tracking-wider">Vehicle Record</h3>
-                        <div class="flex gap-2">
-                            <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-3 rounded hover:opacity-80 transition-opacity tracking-widest text-[11px] uppercase">Save Active</button>
-                            <button onclick="saveToGarage(true)" class="flex-1 bg-dark-700 text-brand-gold border border-brand-gold font-bold py-3 rounded hover:bg-brand-gold hover:text-black transition-colors tracking-widest text-[11px] uppercase">Save As New</button>
+            <!-- Panel 2: AI Diagnostics (Default Weight: 3) -->
+            <section id="panel-diagnostics" class="telemetry-panel rounded-xl w-full lg:flex-[3] min-w-0 flex flex-col h-[800px] overflow-hidden">
+                <!-- Collapsed Rail -->
+                <div id="rail-diagnostics" onclick="togglePanel('diagnostics')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand AI Diagnostics">
+                    <svg class="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    <span class="lg:vertical-label text-xs font-bold text-white tracking-[0.2em] uppercase whitespace-nowrap">AI Diagnostics</span>
+                    <span class="text-brand-green font-mono text-sm font-bold">+</span>
+                </div>
+
+                <!-- Expanded Content -->
+                <div id="body-diagnostics" class="p-5 flex flex-col h-full min-h-0">
+                    <div class="flex items-center justify-between gap-2 mb-4 border-b border-dark-600 pb-2 shrink-0">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <h2 class="text-lg font-bold text-white tracking-wide uppercase">AI Diagnostics</h2>
+                        </div>
+                        <button onclick="togglePanel('diagnostics')" title="Collapse panel" class="text-gray-400 hover:text-white font-mono text-xs px-2 py-0.5 rounded border border-dark-600 hover:border-gray-400 transition-colors">—</button>
+                    </div>
+
+                    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto mb-4 pr-2">
+                        <div id="diag-empty" class="h-full flex flex-col items-center justify-center text-gray-500 font-mono text-sm opacity-50 text-center p-4">
+                            <svg class="w-12 h-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            WAITING FOR TELEMETRY INPUT
+                        </div>
+
+                        <div id="diag-loading" class="hidden h-full flex flex-col items-center justify-center text-brand-green font-mono text-sm">
+                            <div class="w-8 h-8 border-2 border-brand-green border-t-transparent rounded-full animate-spin mb-4"></div>
+                            PROCESSING PHYSICS DATA...
+                        </div>
+
+                        <div id="diag-error" class="hidden h-full flex-col items-center justify-center text-brand-red font-mono text-sm text-center p-4">
+                            <span id="error-msg">Error</span>
+                        </div>
+
+                        <div id="diag-results" class="hidden flex-col gap-4 h-full">
+                            <div class="flex flex-col gap-2 font-mono text-xs shrink-0">
+                                <div class="bg-dark-600 border-l-2 border-brand-red px-3 py-1 text-white w-full" id="res-phase">PHASE: --</div>
+                                <div class="bg-dark-600 border-l-2 border-brand-gold px-3 py-1 text-white w-full" id="res-symptom">SYMPTOM: --</div>
+                            </div>
+                            
+                            <div class="flex flex-col gap-4 shrink-0">
+                                <div class="bg-dark-800 border border-dark-600 rounded p-4">
+                                    <h3 class="text-[11px] text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Primary Fix</h3>
+                                    <ul class="font-mono flex flex-col gap-2" id="res-primary"></ul>
+                                </div>
+                                <div class="bg-dark-800 border border-dark-600 rounded p-4">
+                                    <h3 class="text-[11px] text-brand-gold font-bold mb-3 uppercase tracking-wider border-b border-dark-600 pb-1">Secondary Options</h3>
+                                    <ul class="font-mono flex flex-col gap-2" id="res-secondary"></ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <div id="eng-notes-box" class="hidden border-t border-dark-600 pt-4 shrink-0">
+                        <div class="bg-dark-700/50 p-4 rounded border-l-4 border-brand-blue text-sm text-gray-300 italic">
+                            <strong class="text-white block not-italic mb-1 text-[11px] font-mono tracking-wider uppercase">Engineer Notes:</strong>
+                            <span id="res-notes">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Panel 3: Vehicle Repository (Default Weight: 4) -->
+            <section id="panel-repository" class="telemetry-panel rounded-xl w-full lg:flex-[4] min-w-0 flex flex-col h-[800px] overflow-hidden">
+                <!-- Collapsed Rail -->
+                <div id="rail-repository" onclick="togglePanel('repository')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand Vehicle Repository">
+                    <svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                    <span class="lg:vertical-label text-xs font-bold text-brand-gold tracking-[0.2em] uppercase whitespace-nowrap">Vehicle Repository</span>
+                    <span class="text-brand-green font-mono text-sm font-bold">+</span>
+                </div>
+
+                <!-- Expanded Content -->
+                <div id="body-repository" class="flex flex-col h-full min-h-0">
+                    <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
+                        <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
+                        <button onclick="togglePanel('repository')" title="Collapse panel" class="text-gray-400 hover:text-white font-mono text-xs px-2 py-0.5 rounded border border-dark-600 hover:border-gray-400 transition-colors">—</button>
+                    </div>
                     
-                    <div class="p-5">
-                        <h3 class="text-[10px] text-gray-500 font-mono uppercase mb-3 text-center tracking-wider">Data Management</h3>
+                    <div class="p-5 overflow-y-auto flex-grow flex flex-col gap-4">
+                        <div class="bg-dark-800 p-4 rounded border border-dark-600 shadow-inner">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xs text-gray-400 font-mono uppercase">Live Tuning Values</h3>
+                                <button onclick="clearForm()" class="text-[10px] text-brand-red font-mono uppercase hover:underline">Clear Form</button>
+                            </div>
+                            
+                            <div class="flex flex-col font-mono text-xs">
+                                <input type="hidden" id="edit-id" value="">
+                                
+                                <div class="flex flex-col gap-0.5 mb-4">
+                                    <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Setup Name</label>
+                                    <input type="text" id="save-car-name" placeholder="e.g., Wet Track NSX" class="garage-input py-1.5 text-sm font-bold text-brand-gold border-brand-gold/30">
+                                </div>
+                                
+                                <!-- Make/Model/Basics -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
+                                </div>
+                                
+                                <!-- Driving Assists -->
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                    <div class="flex flex-col gap-0.5">
+                                        <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">ABS</label>
+                                        <select id="set-abs" class="garage-input py-1.5 text-sm appearance-none text-white">
+                                            <option value="Off">Off</option>
+                                            <option value="On">On</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-0.5">
+                                        <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">TCS</label>
+                                        <select id="set-tcs" class="garage-input py-1.5 text-sm appearance-none text-white">
+                                            <option value="Off">Off</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="On">On</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-0.5">
+                                        <label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">STM</label>
+                                        <select id="set-stm" class="garage-input py-1.5 text-sm appearance-none text-white">
+                                            <option value="Off">Off</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="On">On</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <!-- Upgrades -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width F</label><input type="text" id="set-widthF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Width R</label><input type="text" id="set-widthR" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size F</label><input type="text" id="set-rimF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rim Size R</label><input type="text" id="set-rimR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Tires -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Alignment -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Anti-Roll Bars -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar F</label><input type="text" id="set-arbF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Anti-Roll Bar R</label><input type="text" id="set-arbR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Springs & Ride Height -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs F</label><input type="text" id="set-sprF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Springs R</label><input type="text" id="set-sprR" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height F</label><input type="text" id="set-hgtF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Ride Height R</label><input type="text" id="set-hgtR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Damping -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping F</label><input type="text" id="set-bmpF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Bump Damping R</label><input type="text" id="set-bmpR" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping F</label><input type="text" id="set-rebF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Rebound Damping R</label><input type="text" id="set-rebR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Aero -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero F</label><input type="text" id="set-aerF" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Aero R</label><input type="text" id="set-aerR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Brakes -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Bal (F/R)</label><input type="text" id="set-brkBal" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Brake Pressure</label><input type="text" id="set-brkPres" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                    
+                                    <!-- Tuning: Differential -->
+                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Accel</label><input type="text" id="set-difAcc" class="garage-input py-1 text-sm"></div>
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Diff Decel</label><input type="text" id="set-difDec" class="garage-input py-1 text-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Saved Profiles Dropdown -->
+                        <div class="bg-dark-800 rounded border border-dark-600 shadow-inner overflow-hidden shrink-0">
+                            <button onclick="toggleSavedProfiles()" class="w-full p-3 flex justify-between items-center text-left hover:bg-dark-700/50 transition-colors focus:outline-none">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="text-xs text-brand-gold font-mono uppercase tracking-wider font-bold">Saved Profiles</h3>
+                                    <span id="garage-count" class="text-[10px] font-mono bg-dark-900 text-gray-400 border border-dark-600 px-1.5 py-0.5 rounded">0</span>
+                                </div>
+                                <svg id="profiles-chevron" class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="saved-profiles-container" class="hidden border-t border-dark-600 p-3">
+                                <ul id="garage-list" class="flex flex-col gap-2"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Condensed Footer for Vehicle Record -->
+                    <div class="p-3 bg-dark-800/50 rounded-b-xl border-t border-dark-600 shrink-0">
+                        <h3 class="text-[9px] text-gray-500 font-mono uppercase mb-1.5 text-center tracking-wider">Vehicle Record</h3>
                         <div class="flex gap-2">
-                            <button onclick="exportGarage()" class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-green border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-green">Export Backup</button>
-                            <label class="flex-1 bg-dark-700 hover:bg-dark-600 text-brand-gold border border-dark-600 text-[10px] font-mono py-2 rounded transition-colors uppercase font-bold tracking-wider hover:border-brand-gold text-center cursor-pointer flex items-center justify-center">
-                                Import Backup
-                                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importGarage(event)">
-                            </label>
+                            <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-2 rounded hover:opacity-80 transition-opacity tracking-widest text-[10px] uppercase">Save Active</button>
+                            <button onclick="saveToGarage(true)" class="flex-1 bg-dark-700 text-brand-gold border border-brand-gold font-bold py-2 rounded hover:bg-brand-gold hover:text-black transition-colors tracking-widest text-[10px] uppercase">Save As New</button>
                         </div>
                     </div>
                 </div>
@@ -404,6 +458,12 @@
         let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
         let isCommsActive = false;
         let chatHistory = [];
+
+        const panelStates = {
+            feedback: { open: true, flexClass: 'lg:flex-[5]' },
+            diagnostics: { open: true, flexClass: 'lg:flex-[3]' },
+            repository: { open: true, flexClass: 'lg:flex-[4]' }
+        };
         
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
@@ -415,6 +475,54 @@
         apiKeyInput.addEventListener('change', () => {
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
+
+        function toggleHeaderModal(modalId) {
+            const allModals = ['data-mgmt-modal', 'turning-help-modal', 'live-sensors-modal'];
+            allModals.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (id === modalId) {
+                    if (el.classList.contains('hidden')) {
+                        el.classList.remove('hidden');
+                        el.classList.add('flex');
+                    } else {
+                        el.classList.add('hidden');
+                        el.classList.remove('flex');
+                    }
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
+        }
+
+        function togglePanel(key) {
+            const openCount = Object.values(panelStates).filter(p => p.open).length;
+            if (panelStates[key].open && openCount <= 1) {
+                return; // Keep at least one panel open
+            }
+
+            panelStates[key].open = !panelStates[key].open;
+            const panel = document.getElementById(`panel-${key}`);
+            const body = document.getElementById(`body-${key}`);
+            const rail = document.getElementById(`rail-${key}`);
+
+            if (panelStates[key].open) {
+                panel.classList.remove('lg:flex-none', 'lg:w-12', 'h-auto');
+                panel.classList.add(panelStates[key].flexClass, 'h-[800px]');
+                body.classList.remove('hidden');
+                body.classList.add('flex');
+                rail.classList.add('hidden');
+                rail.classList.remove('flex');
+            } else {
+                panel.classList.remove(panelStates[key].flexClass, 'h-[800px]');
+                panel.classList.add('lg:flex-none', 'lg:w-12', 'h-auto', 'lg:h-[800px]');
+                body.classList.add('hidden');
+                body.classList.remove('flex');
+                rail.classList.remove('hidden');
+                rail.classList.add('flex');
+            }
+        }
 
         function clearChat() {
             chatHistory = [];
@@ -450,32 +558,6 @@ Diff Accel & Decel: ${getVal('set-difAcc')} / ${getVal('set-difDec')}
 Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document.getElementById('set-tcs').value}, STM ${document.getElementById('set-stm').value}`;
         }
 
-        function toggleTurningHelp() {
-            const helpModal = document.getElementById('turning-help-modal');
-            const sensorsModal = document.getElementById('live-sensors-modal');
-            if (helpModal.classList.contains('hidden')) {
-                sensorsModal.classList.add('hidden');
-                sensorsModal.classList.remove('flex');
-                helpModal.classList.remove('hidden');
-                helpModal.classList.add('flex');
-            } else {
-                helpModal.classList.add('hidden');
-                helpModal.classList.remove('flex');
-            }
-        }
-
-        function toggleSensors() {
-            const modal = document.getElementById('live-sensors-modal');
-            const helpModal = document.getElementById('turning-help-modal');
-            if (modal.classList.contains('hidden')) {
-                helpModal.classList.add('hidden');
-                helpModal.classList.remove('flex');
-                modal.classList.remove('hidden'); modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden'); modal.classList.remove('flex');
-            }
-        }
-
         function renderGarageList() {
             const list = document.getElementById('garage-list');
             const countBadge = document.getElementById('garage-count');
@@ -486,7 +568,11 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
                 list.innerHTML = `<li class="text-xs text-gray-500 font-mono italic p-2 text-center">No saved profiles.</li>`;
                 return;
             }
-            garage.forEach(car => {
+
+            // Sort by most recently added or updated
+            const sortedGarage = [...garage].sort((a, b) => (b.updatedAt || b.id || 0) - (a.updatedAt || a.id || 0));
+
+            sortedGarage.forEach(car => {
                 list.innerHTML += `
                     <li class="bg-dark-700 p-2 rounded border border-dark-600 flex flex-col gap-1 group transition-colors">
                         <div class="flex justify-between items-start">
@@ -558,8 +644,10 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
                 editId = ''; 
             }
             
+            const now = Date.now();
             const newCar = {
-                id: editId ? parseInt(editId) : Date.now(),
+                id: editId ? parseInt(editId) : now,
+                updatedAt: now,
                 name: name,
                 make: document.getElementById('set-make').value || 'Unknown',
                 hp: document.getElementById('set-hp').value || 0,
@@ -920,7 +1008,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 const radioText = parts[0].trim();
                 const newValue = parts.length > 1 ? parts[1].trim() : null;
                 
-                // Log to chat history so Mechanic/Engineer know what was just applied
                 chatHistory.push({ role: "user", parts: [{ text: userQuestion }] });
                 chatHistory.push({ role: "model", parts: [{ text: radioText }] });
                 if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
@@ -968,7 +1055,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 
             chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg user">${text}</div>`);
             
-            // Reset input height
             inputEl.value = '';
             inputEl.style.height = 'auto';
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -994,7 +1080,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 5. EXACT NUMBERS & APPLY BUTTONS: Whenever you suggest adjusting an UNLOCKED tuning setting, commit to ONE exact optimal number (never give a range like "52%-54%"). At the very end of your response, append a hidden data tag for each unlocked setting you recommend formatted exactly like: |||ComponentName|ExactNumber||| (raw digits only, no units like % or psi). For example: |||Brake Bias|53||| |||Diff Decel|22||| |||Diff Accel|42|||. ONLY generate tags for components that are NOT listed as LOCKED.`;
             }
 
-            // Build conversation payload with memory
             const requestContents = [
                 ...chatHistory,
                 { role: "user", parts: [{ text: text }] }
@@ -1038,12 +1123,10 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                         });
                     }
 
-                    // Save clean turn to chat history (keep last 10 messages / 5 turns)
                     chatHistory.push({ role: "user", parts: [{ text: text }] });
                     chatHistory.push({ role: "model", parts: [{ text: conversationalText }] });
                     if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
 
-                    // Format Markdown bold, bullets, and line breaks for clean readability
                     let formattedText = conversationalText
                         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
                         .replace(/^\s*[\*\-]\s+/gm, '• ')
