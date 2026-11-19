@@ -59,7 +59,7 @@
         .rec-dot { animation: blink 2s infinite; }
         
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 95%; }
+        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 95%; line-height: 1.5; }
         .chat-msg.user { background: #2d313b; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
         
@@ -149,10 +149,13 @@
                 <div class="flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
                     <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
                         <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
-                        <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
-                            <option value="engineer">Tuning Engineer</option>
-                            <option value="mechanic">Chief Mechanic</option>
-                        </select>
+                        <div class="flex items-center gap-2">
+                            <button onclick="clearChat()" title="Clear chat memory" class="text-[9px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-1.5 py-1 transition-colors">CLR</button>
+                            <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
+                                <option value="engineer">Tuning Engineer</option>
+                                <option value="mechanic">Chief Mechanic</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="chat-messages flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
@@ -371,6 +374,7 @@
         const apiKeyInput = document.getElementById('api-key');
         let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
         let isCommsActive = false;
+        let chatHistory = [];
         
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
@@ -382,6 +386,12 @@
         apiKeyInput.addEventListener('change', () => {
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
+
+        function clearChat() {
+            chatHistory = [];
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = `<div class="chat-msg bot">Engineer: Comms reset. Ready for your next question.</div>`;
+        }
 
         function getLiveSetupInfo() {
             const getVal = (id) => {
@@ -479,6 +489,7 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             document.getElementById('set-difAcc').value = car.difAcc && car.difAcc !== '-' ? car.difAcc : '';
             document.getElementById('set-difDec').value = car.difDec && car.difDec !== '-' ? car.difDec : '';
             
+            chatHistory = [];
             alert(`Loaded: ${car.name}\nLive telemetry boxes updated.`);
         }
 
@@ -548,6 +559,7 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             document.getElementById('save-car-name').value = '';
             const inputs = document.querySelectorAll('.garage-input');
             inputs.forEach(input => input.value = '');
+            chatHistory = [];
         }
 
         function exportGarage() {
@@ -813,7 +825,8 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             
             isCommsActive = true;
             const chatBox = document.getElementById('chat-box');
-            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg user">What exact number should I set the ${component} to?</div>`);
+            const userQuestion = `What exact number should I set the ${component} to?`;
+            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg user">${userQuestion}</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
             
             const typingId = 'typing-' + Date.now();
@@ -851,6 +864,11 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 const radioText = parts[0].trim();
                 const newValue = parts.length > 1 ? parts[1].trim() : null;
                 
+                // Log to chat history so Mechanic/Engineer know what was just applied
+                chatHistory.push({ role: "user", parts: [{ text: userQuestion }] });
+                chatHistory.push({ role: "model", parts: [{ text: radioText }] });
+                if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+
                 let msgHtml = `<div class="chat-msg bot flex flex-col gap-2"><span>Engineer: ${radioText}</span>`;
                 if (newValue && inputId) {
                     msgHtml += `<button onclick="document.getElementById('${inputId}').value = '${newValue}'; this.innerText = 'APPLIED ✓'; this.classList.add('opacity-50', 'cursor-not-allowed');" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg">Apply ${newValue}</button>`;
@@ -912,15 +930,27 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             if (chatMode === "engineer") {
                 chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Front Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number.`;
             } else {
-                chatPrompt = `You are a Forza Chief Mechanic. The driver is discussing upgrade paths and car balance. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nHere is the current setup and unlocked parts (LOCKED means the part is not yet upgraded): \n${liveSetup}\n\nThe driver previously noted: "${driverInput}". \n\nCRITICAL RULE: Act as a conversational, experienced mentor guiding the driver's upgrade path. Offer practical suggestions (e.g., Race Tires vs Weight Reduction) and briefly explain *why* those parts will solve their specific issue. Keep your response to a conversational medium length (about 3 to 5 sentences). Guide them naturally without just listing parts. Do NOT write massive essays, but don't be overly brief either. Do NOT use the hidden tuning data strings.`;
-            }            
+                chatPrompt = `You are a Forza Chief Mechanic having a natural back-and-forth conversation with the driver. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nCurrent setup (LOCKED means not upgraded/adjustable): \n${liveSetup}\n\nDriver's current telemetry note: "${driverInput}". \n\nSTYLE & MEMORY RULES:
+1. Answer the driver's specific question directly in a relaxed, conversational tone (1-2 sentences).
+2. Follow with 2-3 short, scannable bullet points (using "-") highlighting key things to consider. Avoid dense walls of text.
+3. NEVER repeat advice or upgrades you already suggested earlier in the conversation.
+4. Do NOT push upgrades on every turn—only mention upgrades if the driver asks or it directly solves a bottleneck, and immediately drop any upgrade the driver says isn't available for this car.
+5. Do NOT use the hidden ||| tuning data strings.`;
+            }
+
+            // Build conversation payload with memory
+            const requestContents = [
+                ...chatHistory,
+                { role: "user", parts: [{ text: text }] }
+            ];
+
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         systemInstruction: { parts: [{ text: chatPrompt }] },
-                        contents: [{ role: "user", parts: [{ text: text }] }]
+                        contents: requestContents
                     })
                 });
 
@@ -952,11 +982,19 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                         });
                     }
 
-                    // Format Markdown bullets to basic HTML if the mechanic uses them
-                    conversationalText = conversationalText.replace(/\n\*/g, '<br>•').replace(/\n-/g, '<br>•');
+                    // Save clean turn to chat history (keep last 10 messages / 5 turns)
+                    chatHistory.push({ role: "user", parts: [{ text: text }] });
+                    chatHistory.push({ role: "model", parts: [{ text: conversationalText }] });
+                    if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+
+                    // Format Markdown bold, bullets, and line breaks for clean readability
+                    let formattedText = conversationalText
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+                        .replace(/^\s*[\*\-]\s+/gm, '• ')
+                        .replace(/\n/g, '<br>');
 
                     let prefix = chatMode === "engineer" ? "Engineer:" : "Mechanic:";
-                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot flex flex-col gap-1"><span><strong class="text-white">${prefix}</strong> ${conversationalText}</span><div class="flex flex-wrap">${actionButtons}</div></div>`);
+                    chatBox.insertAdjacentHTML('beforeend', `<div class="chat-msg bot flex flex-col gap-1"><div><strong class="text-white">${prefix}</strong> ${formattedText}</div><div class="flex flex-wrap">${actionButtons}</div></div>`);
                 } else {
                     const errorData = await response.json().catch(() => ({}));
                     const errMsg = errorData?.error?.message || response.statusText;
