@@ -381,10 +381,17 @@
                                         <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
                                     </div>
                                     
-                                    <!-- Tuning: Alignment -->
-                                    <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
-                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
-                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                    <!-- Tuning: Alignment (2-col Camber + 3-col Toe & Caster) -->
+                                    <div class="flex flex-col gap-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+                                            <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber F</label><input type="text" id="set-camF" class="garage-input py-1 text-sm"></div>
+                                            <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Camber R</label><input type="text" id="set-camR" class="garage-input py-1 text-sm"></div>
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-x-2 gap-y-2">
+                                            <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.12em]">Toe F</label><input type="text" id="set-toeF" class="garage-input py-1 text-sm"></div>
+                                            <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.12em]">Toe R</label><input type="text" id="set-toeR" class="garage-input py-1 text-sm"></div>
+                                            <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.12em]">Caster F</label><input type="text" id="set-casF" class="garage-input py-1 text-sm"></div>
+                                        </div>
                                     </div>
                                     
                                     <!-- Tuning: Anti-Roll Bars -->
@@ -544,6 +551,28 @@
             chevron.classList.toggle('rotate-180');
         }
 
+        function applyTuningValue(inputId, newValue, btnEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            input.value = newValue;
+
+            const editId = document.getElementById('edit-id').value;
+            const carName = document.getElementById('save-car-name').value.trim();
+            let autoSaved = false;
+
+            if (editId && carName && garage.some(c => c.id === parseInt(editId))) {
+                saveToGarage(false, true);
+                autoSaved = true;
+            }
+
+            if (btnEl) {
+                btnEl.innerText = autoSaved ? 'APPLIED & SAVED ✓' : 'APPLIED ✓';
+                btnEl.disabled = true;
+                btnEl.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
         function getLiveSetupInfo() {
             const getVal = (id) => {
                 let v = document.getElementById(id).value.trim();
@@ -554,6 +583,8 @@ Tire Width (F/R): ${getVal('set-widthF')} / ${getVal('set-widthR')}
 Rim Size (F/R): ${getVal('set-rimF')} / ${getVal('set-rimR')}
 Tire Pressures (F/R): ${getVal('set-tireF')} / ${getVal('set-tireR')}
 Camber (F/R): ${getVal('set-camF')} / ${getVal('set-camR')}
+Toe (F/R): ${getVal('set-toeF')} / ${getVal('set-toeR')}
+Front Caster: ${getVal('set-casF')}
 Anti-Roll Bars (F/R): ${getVal('set-arbF')} / ${getVal('set-arbR')}
 Springs (F/R): ${getVal('set-sprF')} / ${getVal('set-sprR')}
 Ride Height (F/R): ${getVal('set-hgtF')} / ${getVal('set-hgtR')}
@@ -622,6 +653,9 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             document.getElementById('set-tireR').value = car.tireR && car.tireR !== '-' ? car.tireR : '';
             document.getElementById('set-camF').value = car.camF && car.camF !== '-' ? car.camF : '';
             document.getElementById('set-camR').value = car.camR && car.camR !== '-' ? car.camR : '';
+            document.getElementById('set-toeF').value = car.toeF && car.toeF !== '-' ? car.toeF : '';
+            document.getElementById('set-toeR').value = car.toeR && car.toeR !== '-' ? car.toeR : '';
+            document.getElementById('set-casF').value = car.casF && car.casF !== '-' ? car.casF : '';
             document.getElementById('set-arbF').value = car.arbF && car.arbF !== '-' ? car.arbF : '';
             document.getElementById('set-arbR').value = car.arbR && car.arbR !== '-' ? car.arbR : '';
             document.getElementById('set-sprF').value = car.sprF && car.sprF !== '-' ? car.sprF : '';
@@ -643,9 +677,12 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             alert(`Loaded: ${car.name}\nLive telemetry boxes updated.`);
         }
 
-        function saveToGarage(isNew = false) {
-            const name = document.getElementById('save-car-name').value;
-            if(!name) { alert("Please name this setup."); return; }
+        function saveToGarage(isNew = false, silent = false) {
+            const name = document.getElementById('save-car-name').value.trim();
+            if(!name) {
+                if (!silent) alert("Please name this setup.");
+                return;
+            }
             
             let editId = document.getElementById('edit-id').value;
             if (isNew) {
@@ -671,6 +708,8 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
                 rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
                 tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
                 camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
+                toeF: document.getElementById('set-toeF').value || '-', toeR: document.getElementById('set-toeR').value || '-',
+                casF: document.getElementById('set-casF').value || '-',
                 arbF: document.getElementById('set-arbF').value || '-', arbR: document.getElementById('set-arbR').value || '-',
                 sprF: document.getElementById('set-sprF').value || '-', sprR: document.getElementById('set-sprR').value || '-',
                 hgtF: document.getElementById('set-hgtF').value || '-', hgtR: document.getElementById('set-hgtR').value || '-',
@@ -692,10 +731,12 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             localStorage.setItem('forza_garage_v3', JSON.stringify(garage));
             renderGarageList();
             
-            if (isNew) {
-                alert(`New setup "${name}" saved to repository.`);
-            } else {
-                alert(`Setup "${name}" updated successfully.`);
+            if (!silent) {
+                if (isNew) {
+                    alert(`New setup "${name}" saved to repository.`);
+                } else {
+                    alert(`Setup "${name}" updated successfully.`);
+                }
             }
         }
 
@@ -815,6 +856,10 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             
             if (name.includes('front') && name.includes('camber')) return 'set-camF';
             if (name.includes('rear') && name.includes('camber')) return 'set-camR';
+
+            if (name.includes('front') && name.includes('toe')) return 'set-toeF';
+            if (name.includes('rear') && name.includes('toe')) return 'set-toeR';
+            if (name.includes('caster')) return 'set-casF';
             
             if (name.includes('front') && (name.includes('roll') || name.includes('sway') || name.includes('arb'))) return 'set-arbF';
             if (name.includes('rear') && (name.includes('roll') || name.includes('sway') || name.includes('arb'))) return 'set-arbR';
@@ -1027,7 +1072,8 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
 
                 let msgHtml = `<div class="chat-msg bot flex flex-col gap-2"><span>Engineer: ${radioText}</span>`;
                 if (newValue && inputId) {
-                    msgHtml += `<button onclick="document.getElementById('${inputId}').value = '${newValue}'; this.innerText = 'APPLIED ✓'; this.classList.add('opacity-50', 'cursor-not-allowed');" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg">Apply ${newValue}</button>`;
+                    const safeVal = newValue.replace(/'/g, "\\'");
+                    msgHtml += `<button onclick="applyTuningValue('${inputId}', '${safeVal}', this)" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg">Apply ${newValue}</button>`;
                 }
                 msgHtml += `</div>`;
                 
@@ -1130,7 +1176,8 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                                 const inputId = mapComponentToId(compName);
                                 
                                 if (inputId) {
-                                    actionButtons += `<button onclick="document.getElementById('${inputId}').value = '${newVal}'; this.innerText = 'APPLIED ✓'; this.classList.add('opacity-50', 'cursor-not-allowed');" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg mt-2 mr-2">Apply ${compName}: ${newVal}</button>`;
+                                    const safeVal = newVal.replace(/'/g, "\\'");
+                                    actionButtons += `<button onclick="applyTuningValue('${inputId}', '${safeVal}', this)" class="bg-brand-blue text-black font-bold font-mono text-[10px] py-1.5 px-3 rounded uppercase tracking-widest hover:bg-white transition-colors w-fit border border-black shadow-lg mt-2 mr-2">Apply ${compName}: ${newVal}</button>`;
                                 }
                             }
                         });
