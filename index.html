@@ -301,7 +301,7 @@
                 </div>
 
                 <!-- Expanded Content -->
-                <div id="body-repository" class="flex flex-col h-full min-h-0">
+                <div id="body-repository" class="flex flex-col h-full min-h-0 relative">
                     <div class="p-5 border-b border-dark-600 flex justify-between items-center shrink-0">
                         <h2 class="text-lg font-bold text-brand-gold tracking-wide uppercase">Vehicle Repository</h2>
                         <button onclick="togglePanel('repository')" title="Collapse panel" class="text-gray-400 hover:text-white font-mono text-xs px-2 py-0.5 rounded border border-dark-600 hover:border-gray-400 transition-colors">—</button>
@@ -454,8 +454,12 @@
                         </div>
                     </div>
 
-                    <!-- Condensed Footer for Vehicle Record -->
-                    <div class="p-3 bg-dark-800/50 rounded-b-xl border-t border-dark-600 shrink-0">
+                    <!-- Condensed Footer for Vehicle Record + Anchored Toast Notification -->
+                    <div class="relative p-3 bg-dark-800/50 rounded-b-xl border-t border-dark-600 shrink-0">
+                        <div id="repo-toast" onclick="hideRepoToast()" class="hidden absolute bottom-full left-3 right-3 mb-2 z-30 bg-dark-900 border border-brand-green text-brand-green px-3 py-2 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.9)] flex items-center justify-between gap-2 cursor-pointer transition-opacity duration-200">
+                            <span id="repo-toast-msg" class="text-[11px] font-mono font-bold tracking-wide"></span>
+                            <span class="text-[10px] font-mono text-gray-400 hover:text-white shrink-0">✕</span>
+                        </div>
                         <h3 class="text-[9px] text-gray-500 font-mono uppercase mb-1.5 text-center tracking-wider">Vehicle Record</h3>
                         <div class="flex gap-2">
                             <button onclick="saveToGarage(false)" class="flex-1 bg-brand-gold text-black font-bold py-2 rounded hover:opacity-80 transition-opacity tracking-widest text-[10px] uppercase">Save Active</button>
@@ -472,6 +476,7 @@
         let garage = JSON.parse(localStorage.getItem('forza_garage_v3')) || [];
         let isCommsActive = false;
         let chatHistory = [];
+        let repoToastTimer = null;
 
         const panelStates = {
             feedback: { open: true, flexClass: 'lg:flex-[5]' },
@@ -489,6 +494,34 @@
         apiKeyInput.addEventListener('change', () => {
             localStorage.setItem('forza_gemini_api_key', apiKeyInput.value.trim());
         });
+
+        function showRepoToast(message, type = 'success') {
+            const toast = document.getElementById('repo-toast');
+            const msgEl = document.getElementById('repo-toast-msg');
+            if (!toast || !msgEl) return;
+
+            msgEl.innerText = message;
+            toast.classList.remove('hidden', 'border-brand-green', 'text-brand-green', 'border-brand-red', 'text-brand-red', 'border-brand-gold', 'text-brand-gold');
+
+            if (type === 'error') {
+                toast.classList.add('border-brand-red', 'text-brand-red');
+            } else if (type === 'info') {
+                toast.classList.add('border-brand-gold', 'text-brand-gold');
+            } else {
+                toast.classList.add('border-brand-green', 'text-brand-green');
+            }
+
+            if (repoToastTimer) clearTimeout(repoToastTimer);
+            repoToastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function hideRepoToast() {
+            const toast = document.getElementById('repo-toast');
+            if (toast) toast.classList.add('hidden');
+            if (repoToastTimer) clearTimeout(repoToastTimer);
+        }
 
         function toggleHeaderModal(modalId) {
             const allModals = ['data-mgmt-modal', 'turning-help-modal', 'live-sensors-modal'];
@@ -674,13 +707,13 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             document.getElementById('set-difDec').value = car.difDec && car.difDec !== '-' ? car.difDec : '';
             
             chatHistory = [];
-            alert(`Loaded: ${car.name}\nLive telemetry boxes updated.`);
+            showRepoToast(`Loaded "${car.name}"`, 'info');
         }
 
         function saveToGarage(isNew = false, silent = false) {
             const name = document.getElementById('save-car-name').value.trim();
             if(!name) {
-                if (!silent) alert("Please name this setup.");
+                if (!silent) showRepoToast("Please name this setup first.", 'error');
                 return;
             }
             
@@ -733,9 +766,9 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             
             if (!silent) {
                 if (isNew) {
-                    alert(`New setup "${name}" saved to repository.`);
+                    showRepoToast(`Saved new setup "${name}" ✓`, 'success');
                 } else {
-                    alert(`Setup "${name}" updated successfully.`);
+                    showRepoToast(`Updated "${name}" ✓`, 'success');
                 }
             }
         }
