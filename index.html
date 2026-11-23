@@ -45,17 +45,6 @@
         
         .data-glow { text-shadow: 0 0 10px rgba(0, 250, 154, 0.4); }
         
-        .g-meter-container {
-            position: relative; width: 200px; height: 200px; border-radius: 50%; border: 2px solid #2d313b;
-            background: repeating-radial-gradient(circle, transparent, transparent 20px, rgba(45, 49, 59, 0.4) 21px, rgba(45, 49, 59, 0.4) 22px);
-        }
-        .g-meter-crosshair { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
-        .g-meter-crosshair.vert { top: 0; bottom: 0; left: 50%; width: 1px; height: 100%; }
-        .g-dot {
-            position: absolute; width: 12px; height: 12px; background-color: #FFD700; border-radius: 50%;
-            top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 10px #FFD700;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .rec-dot { animation: blink 2s infinite; }
         
@@ -111,6 +100,27 @@
                     </div>
                 </div>
 
+                <!-- App Guide Button & Modal -->
+                <div class="relative">
+                    <button onclick="toggleHeaderModal('app-guide-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        App Guide
+                    </button>
+
+                    <div id="app-guide-modal" class="hidden absolute top-full mt-3 right-0 w-80 md:w-96 z-50 telemetry-panel rounded-xl p-4 flex-col gap-3 shadow-2xl border border-brand-blue">
+                        <div class="w-full flex items-center justify-between gap-2 border-b border-dark-600 pb-2">
+                            <h2 class="text-sm font-bold text-white tracking-wide uppercase">App Quick Guide</h2>
+                            <button onclick="toggleHeaderModal('app-guide-modal')" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
+                        </div>
+                        <ul class="flex flex-col gap-2.5 text-xs text-gray-300 font-sans leading-relaxed">
+                            <li><strong class="text-brand-gold font-mono uppercase text-[11px]">Blank = Locked:</strong> Leaving any tuning box empty tells the AI that upgrade isn't unlocked yet, so it won't suggest adjusting it.</li>
+                            <li><strong class="text-brand-blue font-mono uppercase text-[11px]">One-Click Apply & Auto-Save:</strong> Clicking an <em>Apply</em> button in chat updates the tuning box and automatically saves it to your active vehicle profile.</li>
+                            <li><strong class="text-brand-green font-mono uppercase text-[11px]">Comms Memory (CLR):</strong> Pit Wall Comms remembers your last 5 exchanges and resets automatically when you load a new car or hit <em>CLR</em>.</li>
+                            <li><strong class="text-white font-mono uppercase text-[11px]">Collapsible Workspace:</strong> Click <strong>—</strong> on any panel to tuck it away and expand the panels you're actively using.</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <!-- Turning Help Button & Modal -->
                 <div class="relative">
                     <button onclick="toggleHeaderModal('turning-help-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
@@ -124,44 +134,6 @@
                             <button onclick="toggleHeaderModal('turning-help-modal')" class="text-gray-400 hover:text-white font-mono text-xs px-1.5 py-0.5 rounded border border-dark-600 hover:border-white transition-colors">✕</button>
                         </div>
                         <img src="oversteerundersteer.png" alt="Oversteer vs Understeer Reference" class="w-full h-auto rounded-lg border border-dark-600 bg-dark-900">
-                    </div>
-                </div>
-
-                <!-- Live Sensors Button & Modal -->
-                <div class="relative">
-                    <button onclick="toggleHeaderModal('live-sensors-modal')" class="bg-dark-700 hover:bg-brand-blue text-brand-blue hover:text-black border border-brand-blue font-bold py-1.5 px-4 rounded transition-colors duration-200 uppercase tracking-widest text-xs flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        Live Sensors
-                    </button>
-
-                    <div id="live-sensors-modal" class="hidden absolute top-full mt-3 right-0 w-80 z-50 telemetry-panel rounded-xl p-5 flex-col items-center shadow-2xl border border-brand-blue">
-                        <div class="w-full flex items-center justify-between gap-2 mb-4 border-b border-dark-600 pb-2">
-                            <h2 class="text-sm font-bold text-white tracking-wide uppercase">Live Sensors</h2>
-                            <span id="sensor-status" class="text-[10px] text-brand-red animate-pulse font-mono border border-brand-red px-1 py-0.5 rounded">AWAITING DATA</span>
-                        </div>
-                        <div class="flex flex-col w-full justify-around items-center gap-6">
-                            <div class="flex flex-col items-center gap-2">
-                                <div class="text-[10px] text-gray-400 font-mono uppercase tracking-widest">Estimated Load (G)</div>
-                                <div class="g-meter-container w-32 h-32" id="g-meter">
-                                    <div class="g-meter-crosshair"></div><div class="g-meter-crosshair vert"></div><div class="g-dot" id="g-dot"></div>
-                                </div>
-                                <div class="font-mono text-xl font-bold text-white data-glow text-center" id="g-text">0.00 G</div>
-                            </div>
-                            <div class="w-full mt-2">
-                                <div class="text-[10px] text-gray-400 font-mono uppercase tracking-widest text-center mb-2">Tire Surface Temps (F)</div>
-                                <div class="relative w-32 h-48 mx-auto border border-dark-600 rounded-xl p-2 flex flex-col justify-between" style="background: rgba(45, 49, 59, 0.1);">
-                                    <div class="absolute inset-x-6 inset-y-4 border border-dashed border-dark-600 rounded-lg pointer-events-none"></div>
-                                    <div class="flex justify-between z-10">
-                                        <div class="w-6 h-10 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black" id="tire-fl"><span class="text-[8px] font-mono text-white font-bold transform -rotate-90">---</span></div>
-                                        <div class="w-6 h-10 rounded bg-gradient-to-t from-brand-blue to-blue-500 flex items-center justify-center border border-black" id="tire-fr"><span class="text-[8px] font-mono text-white font-bold transform -rotate-90">---</span></div>
-                                    </div>
-                                    <div class="flex justify-between z-10">
-                                        <div class="w-6 h-10 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black" id="tire-rl"><span class="text-[8px] font-mono text-white font-bold transform -rotate-90">---</span></div>
-                                        <div class="w-6 h-10 rounded bg-gradient-to-b from-brand-blue to-blue-500 flex items-center justify-center border border-black" id="tire-rr"><span class="text-[8px] font-mono text-white font-bold transform -rotate-90">---</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -205,16 +177,31 @@
                         Analyze Telemetry
                     </button>
 
-                    <div class="flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
+                    <div class="relative flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
                         <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
                             <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5">
                                 <button onclick="clearChat()" title="Clear chat memory" class="text-[9px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-1.5 py-1 transition-colors">CLR</button>
                                 <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
                                     <option value="engineer">Tuning Engineer</option>
                                     <option value="mechanic">Chief Mechanic</option>
                                 </select>
+                                <button onclick="toggleCommsHelp()" title="How Engineer & Mechanic work" class="text-[10px] text-brand-blue hover:text-black hover:bg-brand-blue font-mono font-bold border border-dark-600 hover:border-brand-blue rounded px-1.5 py-0.5 transition-colors">?</button>
                             </div>
+                        </div>
+
+                        <!-- Comms Persona Help Popover -->
+                        <div id="comms-help-modal" class="hidden absolute top-11 left-2 right-2 z-30 bg-dark-900 border border-brand-blue rounded-lg p-3 shadow-2xl flex-col gap-2">
+                            <div class="flex justify-between items-center border-b border-dark-600 pb-1.5">
+                                <span class="text-[10px] font-mono font-bold text-brand-blue uppercase tracking-wider">Pit Wall Roles</span>
+                                <button onclick="toggleCommsHelp()" class="text-gray-400 hover:text-white font-mono text-[10px] px-1">✕</button>
+                            </div>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                <strong class="text-brand-gold">Tuning Engineer:</strong> Short, punchy radio calls focused on immediate numerical fixes for handling issues. Best for quick mid-session adjustments.
+                            </p>
+                            <p class="text-xs text-gray-300 leading-relaxed">
+                                <strong class="text-brand-green">Chief Mechanic:</strong> Conversational, bulleted advisor for talking through driving style, overall balance, and upgrade paths—while still giving one-click <em>Apply</em> numbers for unlocked parts.
+                            </p>
                         </div>
                         
                         <div class="chat-messages flex-1 overflow-y-auto p-3 flex flex-col gap-2" id="chat-box">
@@ -487,7 +474,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('forza_gemini_api_key');
             if (savedKey) apiKeyInput.value = savedKey;
-            updateTemps({fl: 100, fr: 100, rl: 100, rr: 100});
             renderGarageList();
         });
 
@@ -524,7 +510,7 @@
         }
 
         function toggleHeaderModal(modalId) {
-            const allModals = ['data-mgmt-modal', 'turning-help-modal', 'live-sensors-modal'];
+            const allModals = ['data-mgmt-modal', 'app-guide-modal', 'turning-help-modal'];
             allModals.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -541,6 +527,18 @@
                     el.classList.remove('flex');
                 }
             });
+        }
+
+        function toggleCommsHelp() {
+            const modal = document.getElementById('comms-help-modal');
+            if (!modal) return;
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
         }
 
         function togglePanel(key) {
@@ -823,58 +821,6 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             reader.readAsText(file);
         }
 
-        let gDot = document.getElementById('g-dot');
-        let gText = document.getElementById('g-text');
-        let currentTx = 0, currentTy = 0, targetTx = 0, targetTy = 0;
-
-        function animateTelemetry() {
-            currentTx += (targetTx - currentTx) * 0.1;
-            currentTy += (targetTy - currentTy) * 0.1;
-            let jitterX = (Math.random() - 0.5) * 2; let jitterY = (Math.random() - 0.5) * 2;
-            if(targetTx === 0 && targetTy === 0) { jitterX = 0; jitterY = 0; } 
-            gDot.style.transform = `translate(calc(-50% + ${currentTx + jitterX}px), calc(-50% + ${currentTy + jitterY}px))`;
-            let gVal = Math.sqrt(Math.pow(currentTx, 2) + Math.pow(currentTy, 2)) / (100 / 1.5);
-            gText.innerText = gVal.toFixed(2) + ' G';
-            requestAnimationFrame(animateTelemetry);
-        }
-        animateTelemetry();
-
-        function updateTemps(tData) {
-            const getColor = (temp) => {
-                if(temp < 150) return 'from-brand-blue to-blue-500 text-white'; 
-                if(temp < 210) return 'from-brand-blue to-green-400 text-black shadow-[0_0_10px_rgba(0,250,154,0.3)]'; 
-                return 'from-yellow-400 to-brand-red text-black shadow-[0_0_15px_rgba(255,51,102,0.6)]'; 
-            };
-            const tires = ['fl', 'fr', 'rl', 'rr'];
-            tires.forEach(pos => {
-                let el = document.getElementById(`tire-${pos}`);
-                let temp = tData[pos] + Math.floor(Math.random()*3); 
-                el.className = `w-6 h-10 rounded bg-gradient-to-t flex items-center justify-center border border-black transition-all duration-700 ${getColor(temp)}`;
-                el.innerHTML = `<span class="text-[8px] font-mono font-bold transform -rotate-90">${temp}°</span>`;
-            });
-        }
-
-        function simulateSensors(phase, symptom) {
-            document.getElementById('sensor-status').innerText = "LIVE SIMULATION";
-            document.getElementById('sensor-status').className = "text-[10px] text-brand-green font-mono border border-brand-green px-1 py-0.5 rounded";
-            let p = (phase || '').toLowerCase(); let s = (symptom || '').toLowerCase();
-            let temps = {fl: 180, fr: 180, rl: 180, rr: 180};
-            let gx = 0, gy = 0;
-            if (p.includes('entry') || p.includes('brak')) {
-                gy = -1.2; 
-                if (s.includes('under')) { temps.fl = 220; temps.fr = 220; } 
-                if (s.includes('over')) { temps.rl = 210; temps.rr = 210; } 
-            } else if (p.includes('exit') || p.includes('accel')) {
-                gy = 0.9; 
-                if (s.includes('over')) { temps.rl = 240; temps.rr = 240; } 
-                if (s.includes('under')) { temps.fl = 205; temps.fr = 205; } 
-            } else if (p.includes('mid')) {
-                gx = 1.3; temps = {fl: 210, fr: 170, rl: 215, rr: 175}; 
-            }
-            targetTx = (gx / 1.5) * 100; targetTy = (gy / 1.5) * 100;
-            updateTemps(temps);
-        }
-
         function mapComponentToId(componentName) {
             if (!componentName) return null;
             const name = componentName.toLowerCase();
@@ -996,8 +942,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                 
                 const parsedData = JSON.parse(rawText);
 
-                simulateSensors(parsedData.diagnostics?.identified_phase, parsedData.diagnostics?.identified_symptom);
-
                 document.getElementById('res-phase').innerText = `PHASE: ${parsedData.diagnostics?.identified_phase || '--'}`;
                 document.getElementById('res-symptom').innerText = `SYMPTOM: ${parsedData.diagnostics?.identified_symptom || '--'}`;
                 document.getElementById('res-notes').innerText = parsedData.engineer_notes || 'No notes provided.';
@@ -1040,10 +984,6 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
                     shortError = "AI returned conversational text instead of raw code.";
                 }
                 document.getElementById('error-msg').innerText = `Diagnostic Failure: ${shortError}`;
-                
-                targetTx = 0; targetTy = 0;
-                document.getElementById('sensor-status').innerText = "ERROR";
-                document.getElementById('sensor-status').className = "text-[10px] text-brand-red font-mono border border-brand-red px-1 py-0.5 rounded";
             } finally {
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
