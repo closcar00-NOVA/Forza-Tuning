@@ -178,20 +178,20 @@
                     </button>
 
                     <div class="relative flex-1 flex flex-col min-h-0 border border-dark-600 rounded-xl overflow-hidden bg-dark-800/50">
-                        <div class="bg-dark-700 p-2 border-b border-dark-600 flex justify-between items-center shrink-0">
-                            <span class="text-white font-bold font-mono tracking-wide text-xs flex items-center gap-2 pl-1"><div class="w-2 h-2 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="clearChat()" title="Clear chat memory" class="text-[9px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-1.5 py-1 transition-colors">CLR</button>
-                                <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-[10px] text-brand-gold font-mono rounded px-2 py-1 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
+                        <div class="bg-dark-700 px-3 py-3 border-b border-dark-600 flex justify-between items-center shrink-0">
+                            <span class="text-white font-extrabold font-mono tracking-widest text-sm flex items-center gap-2.5 pl-1"><div class="w-2.5 h-2.5 bg-brand-green rounded-full"></div> PIT WALL COMMS</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="clearChat()" title="Clear chat memory" class="text-[10px] text-gray-400 hover:text-brand-red font-mono uppercase border border-dark-600 hover:border-brand-red rounded px-2 py-1.5 transition-colors">CLR</button>
+                                <select id="chat-mode" class="bg-dark-800 border border-dark-600 text-xs font-bold text-brand-gold font-mono rounded px-2.5 py-1.5 outline-none focus:border-brand-gold uppercase tracking-wider cursor-pointer">
                                     <option value="engineer">Tuning Engineer</option>
                                     <option value="mechanic">Chief Mechanic</option>
                                 </select>
-                                <button onclick="toggleCommsHelp()" title="How Engineer & Mechanic work" class="text-[10px] text-brand-blue hover:text-black hover:bg-brand-blue font-mono font-bold border border-dark-600 hover:border-brand-blue rounded px-1.5 py-0.5 transition-colors">?</button>
+                                <button onclick="toggleCommsHelp()" title="How Engineer & Mechanic work" class="text-xs text-brand-blue hover:text-black hover:bg-brand-blue font-mono font-bold border border-dark-600 hover:border-brand-blue rounded px-2 py-1 transition-colors">?</button>
                             </div>
                         </div>
 
                         <!-- Comms Persona Help Popover -->
-                        <div id="comms-help-modal" class="hidden absolute top-11 left-2 right-2 z-30 bg-dark-900 border border-brand-blue rounded-lg p-3 shadow-2xl flex-col gap-2">
+                        <div id="comms-help-modal" class="hidden absolute top-14 left-2 right-2 z-30 bg-dark-900 border border-brand-blue rounded-lg p-3 shadow-2xl flex-col gap-2">
                             <div class="flex justify-between items-center border-b border-dark-600 pb-1.5">
                                 <span class="text-[10px] font-mono font-bold text-brand-blue uppercase tracking-wider">Pit Wall Roles</span>
                                 <button onclick="toggleCommsHelp()" class="text-gray-400 hover:text-white font-mono text-[10px] px-1">✕</button>
