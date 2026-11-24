@@ -314,7 +314,7 @@
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Make / Model</label><input type="text" id="set-make" class="garage-input py-1.5 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Horsepower</label><input type="text" id="set-hp" class="garage-input py-1.5 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Weight (lbs)</label><input type="text" id="set-weight" class="garage-input py-1.5 text-sm"></div>
-                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Front Bias (%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
+                                    <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Distribution (F%)</label><input type="text" id="set-bias" class="garage-input py-1.5 text-sm"></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Drivetrain</label><select id="set-drive" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>AWD</option><option>RWD</option><option>FWD</option></select></div>
                                     <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Engine Pos</label><select id="set-eng" class="garage-input py-1.5 text-sm appearance-none text-white"><option value="">...</option><option>Front</option><option>Mid</option><option>Rear</option></select></div>
                                 </div>
@@ -366,6 +366,11 @@
                                     <div class="grid grid-cols-2 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
                                         <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (F)</label><input type="text" id="set-tireF" class="garage-input py-1 text-sm"></div>
                                         <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Tire Press (R)</label><input type="text" id="set-tireR" class="garage-input py-1 text-sm"></div>
+                                    </div>
+
+                                    <!-- Tuning: Gearing -->
+                                    <div class="grid grid-cols-1 gap-x-3 gap-y-2 pb-4 mb-4 border-b-2 border-[#7ed957]">
+                                        <div class="flex flex-col gap-0.5"><label class="text-[12px] font-medium text-brand-orange font-montserrat uppercase tracking-[0.15em]">Final Drive</label><input type="text" id="set-finalDrive" class="garage-input py-1 text-sm"></div>
                                     </div>
                                     
                                     <!-- Tuning: Alignment (2-col Camber + 3-col Toe & Caster) -->
@@ -613,6 +618,7 @@
 Tire Width (F/R): ${getVal('set-widthF')} / ${getVal('set-widthR')}
 Rim Size (F/R): ${getVal('set-rimF')} / ${getVal('set-rimR')}
 Tire Pressures (F/R): ${getVal('set-tireF')} / ${getVal('set-tireR')}
+Final Drive: ${getVal('set-finalDrive')}
 Camber (F/R): ${getVal('set-camF')} / ${getVal('set-camR')}
 Toe (F/R): ${getVal('set-toeF')} / ${getVal('set-toeR')}
 Front Caster: ${getVal('set-casF')}
@@ -682,6 +688,7 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             document.getElementById('set-rimR').value = car.rimR && car.rimR !== '-' ? car.rimR : '';
             document.getElementById('set-tireF').value = car.tireF && car.tireF !== '-' ? car.tireF : '';
             document.getElementById('set-tireR').value = car.tireR && car.tireR !== '-' ? car.tireR : '';
+            document.getElementById('set-finalDrive').value = car.finalDrive && car.finalDrive !== '-' ? car.finalDrive : '';
             document.getElementById('set-camF').value = car.camF && car.camF !== '-' ? car.camF : '';
             document.getElementById('set-camR').value = car.camR && car.camR !== '-' ? car.camR : '';
             document.getElementById('set-toeF').value = car.toeF && car.toeF !== '-' ? car.toeF : '';
@@ -738,6 +745,7 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
                 widthF: document.getElementById('set-widthF').value || '-', widthR: document.getElementById('set-widthR').value || '-',
                 rimF: document.getElementById('set-rimF').value || '-', rimR: document.getElementById('set-rimR').value || '-',
                 tireF: document.getElementById('set-tireF').value || '-', tireR: document.getElementById('set-tireR').value || '-',
+                finalDrive: document.getElementById('set-finalDrive').value || '-',
                 camF: document.getElementById('set-camF').value || '-', camR: document.getElementById('set-camR').value || '-',
                 toeF: document.getElementById('set-toeF').value || '-', toeR: document.getElementById('set-toeR').value || '-',
                 casF: document.getElementById('set-casF').value || '-',
@@ -832,6 +840,8 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             
             if (name.includes('front') && name.includes('tire')) return 'set-tireF';
             if (name.includes('rear') && name.includes('tire')) return 'set-tireR';
+
+            if (name.includes('final') || name.includes('gear')) return 'set-finalDrive';
             
             if (name.includes('front') && name.includes('camber')) return 'set-camF';
             if (name.includes('rear') && name.includes('camber')) return 'set-camR';
@@ -892,7 +902,7 @@ Driving Assists: ABS ${document.getElementById('set-abs').value}, TCS ${document
             btn.classList.add('opacity-50', 'cursor-not-allowed');
 
             const liveSetup = getLiveSetupInfo();
-            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Bias), Engine: ${enginePos}, Drivetrain: ${drivetrain}.\n\n${liveSetup}\n\nDriver Complaint: ${input}`;
+            const fullContext = `Vehicle Profile: ${makeModel}, ${hp} HP, ${weight} lbs (${bias}% Front Weight Distribution), Engine: ${enginePos}, Drivetrain: ${drivetrain}.\n\n${liveSetup}\n\nDriver Complaint: ${input}`;
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
             
             const systemPrompt = `You are an expert Forza Motorsport Race Engineer. Translate the driver's complaint into tuning adjustments based on the rule: the end of the car tuned stiffer loses grip first. If the driver does not specify a corner phase, default to "Mid-Corner".
@@ -1102,9 +1112,9 @@ Respond ONLY with a valid JSON object matching this schema exactly without any m
             let chatPrompt = "";
             
             if (chatMode === "engineer") {
-                chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Brake Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number with raw digits only (no % or psi).`;
+                chatPrompt = `You are a Forza race engineer communicating via radio. Keep responses to 1-2 brief sentences. Be direct and use racing terminology. You are tuning a ${hp}HP ${makeModel}, ${weight}lbs (${bias}% Front Weight Distribution, ${drivetrain}, ${enginePos} engine). \n\n${liveSetup}\n\nCRITICAL RULE: Review the 'Available Tuning Options' provided. If a component is listed as 'LOCKED', do not suggest adjusting it. Only suggest changes to unlocked components.\n\nThe driver previously noted: "${driverInput}".\n\nNEW RULE: If you suggest adjusting a tuning setting to a specific numerical value, you MUST append a hidden data string to the very end of your response formatted exactly like this: |||ComponentName|ExactNumber|||. For example: |||Brake Pressure|85||| or |||Brake Bias|48|||. If suggesting multiple changes, append multiple strings. Do not use ranges in the data string, pick one specific optimal number with raw digits only (no % or psi).`;
             } else {
-                chatPrompt = `You are a Forza Chief Mechanic having a natural back-and-forth conversation with the driver. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${drivetrain}, ${enginePos} engine). \n\nCurrent setup (LOCKED means not upgraded/adjustable): \n${liveSetup}\n\nDriver's current telemetry note: "${driverInput}". \n\nSTYLE, MEMORY & APPLY RULES:
+                chatPrompt = `You are a Forza Chief Mechanic having a natural back-and-forth conversation with the driver. You are working on a ${hp}HP ${makeModel}, weighing ${weight}lbs (${bias}% Front Weight Distribution, ${drivetrain}, ${enginePos} engine). \n\nCurrent setup (LOCKED means not upgraded/adjustable): \n${liveSetup}\n\nDriver's current telemetry note: "${driverInput}". \n\nSTYLE, MEMORY & APPLY RULES:
 1. Answer the driver's specific question directly in a relaxed, conversational tone (1-2 sentences).
 2. Follow with 2-3 short, scannable bullet points (using "-") highlighting key things to consider. Avoid dense walls of text.
 3. NEVER repeat advice or upgrades you already suggested earlier in the conversation.
