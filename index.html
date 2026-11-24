@@ -49,7 +49,7 @@
         .rec-dot { animation: blink 2s infinite; }
         
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
-        .chat-msg { padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.875rem; max-width: 95%; line-height: 1.5; }
+        .chat-msg { padding: 0.625rem 0.875rem; border-radius: 8px; font-size: 1rem; max-width: 95%; line-height: 1.55; }
         .chat-msg.user { background: #2d313b; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .chat-msg.bot { background: rgba(0,250,154,0.1); color: #00FA9A; border: 1px solid rgba(0,250,154,0.3); align-self: flex-start; border-bottom-left-radius: 0; }
         
@@ -64,17 +64,14 @@
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-6 lg:p-8 font-sans">
+<body class="min-h-screen p-3 md:p-5 lg:p-6 font-sans">
 
-    <div class="max-w-[1600px] mx-auto flex flex-col gap-6">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-dark-600 pb-4 gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold text-white tracking-widest uppercase flex items-center gap-3">
-                    <div class="w-3 h-3 bg-brand-red rounded-full rec-dot"></div>
-                    Telemetry <span class="text-brand-green font-light">//</span> Race Engineer
-                </h1>
-                <p class="text-gray-500 font-mono text-sm mt-1 uppercase tracking-wider">Live Diagnostics & Tuning Interface</p>
-            </div>
+    <div class="max-w-[1600px] mx-auto flex flex-col gap-4">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-dark-600 pb-3 gap-3">
+            <h1 class="text-lg md:text-xl font-extrabold text-white tracking-widest uppercase flex items-center gap-2.5">
+                <div class="w-2.5 h-2.5 bg-brand-red rounded-full rec-dot shrink-0"></div>
+                <span>Live Diagnostics <span class="text-brand-green font-light">&amp;</span> Tuning Interface</span>
+            </h1>
             
             <div class="flex items-center gap-3 flex-wrap">
                 <!-- Data Management Button & Modal -->
@@ -139,7 +136,7 @@
 
                 <input type="password" id="api-key" placeholder="Gemini API Key" class="bg-dark-800 border border-dark-600 rounded px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-green font-mono w-48">
                 
-                <div class="hidden md:flex gap-4 font-mono text-xs text-gray-400 ml-4">
+                <div class="hidden md:flex gap-4 font-mono text-xs text-gray-400 ml-2">
                     <div class="flex flex-col items-end"><span>SYS STATUS</span><span class="text-brand-green">ONLINE</span></div>
                 </div>
             </div>
@@ -149,7 +146,7 @@
         <main class="flex flex-col lg:flex-row gap-6 items-stretch">
             
             <!-- Panel 1: Driver Feedback (Default Weight: 5) -->
-            <section id="panel-feedback" class="telemetry-panel rounded-xl w-full lg:flex-[5] min-w-0 flex flex-col h-[800px] overflow-hidden">
+            <section id="panel-feedback" class="telemetry-panel rounded-xl w-full lg:flex-[5] min-w-0 flex flex-col h-[860px] overflow-hidden">
                 <!-- Collapsed Rail -->
                 <div id="rail-feedback" onclick="togglePanel('feedback')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand Driver Feedback">
                     <svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
@@ -217,7 +214,7 @@
             </section>
 
             <!-- Panel 2: AI Diagnostics (Default Weight: 3) -->
-            <section id="panel-diagnostics" class="telemetry-panel rounded-xl w-full lg:flex-[3] min-w-0 flex flex-col h-[800px] overflow-hidden">
+            <section id="panel-diagnostics" class="telemetry-panel rounded-xl w-full lg:flex-[3] min-w-0 flex flex-col h-[860px] overflow-hidden">
                 <!-- Collapsed Rail -->
                 <div id="rail-diagnostics" onclick="togglePanel('diagnostics')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand AI Diagnostics">
                     <svg class="w-5 h-5 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
@@ -279,7 +276,7 @@
             </section>
 
             <!-- Panel 3: Vehicle Repository (Default Weight: 4) -->
-            <section id="panel-repository" class="telemetry-panel rounded-xl w-full lg:flex-[4] min-w-0 flex flex-col h-[800px] overflow-hidden">
+            <section id="panel-repository" class="telemetry-panel rounded-xl w-full lg:flex-[4] min-w-0 flex flex-col h-[860px] overflow-hidden">
                 <!-- Collapsed Rail -->
                 <div id="rail-repository" onclick="togglePanel('repository')" class="hidden h-full w-full cursor-pointer flex-row lg:flex-col items-center justify-between py-4 px-3 hover:bg-dark-700/40 transition-colors" title="Expand Vehicle Repository">
                     <svg class="w-5 h-5 text-brand-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
@@ -559,14 +556,14 @@
 
             if (panelStates[key].open) {
                 panel.classList.remove('lg:flex-none', 'lg:w-12', 'h-auto');
-                panel.classList.add(panelStates[key].flexClass, 'h-[800px]');
+                panel.classList.add(panelStates[key].flexClass, 'h-[860px]');
                 body.classList.remove('hidden');
                 body.classList.add('flex');
                 rail.classList.add('hidden');
                 rail.classList.remove('flex');
             } else {
-                panel.classList.remove(panelStates[key].flexClass, 'h-[800px]');
-                panel.classList.add('lg:flex-none', 'lg:w-12', 'h-auto', 'lg:h-[800px]');
+                panel.classList.remove(panelStates[key].flexClass, 'h-[860px]');
+                panel.classList.add('lg:flex-none', 'lg:w-12', 'h-auto', 'lg:h-[860px]');
                 body.classList.add('hidden');
                 body.classList.remove('flex');
                 rail.classList.remove('hidden');
